@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "hk.gavin.navik"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    maven {
+        url "http://developer.skobbler.com/maven/"
+    }
+}
+
+configurations {
+    skobblersdk
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    wearApp project(':wear')
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.android.support:support-v4:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.google.android.gms:play-services:8.1.0'
+    compile 'com.android.support:design:23.1.0'
+
+    skobblersdk "com.skobbler.ngx:SKMaps:2.5.1"
+    compile files('libs/SKMaps.jar')
+
+    apt 'com.google.dagger:dagger-compiler:2.0.2'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    compile 'com.google.dagger:dagger:2.0.2'
+
+    compile 'com.jakewharton:butterknife:7.0.1'
+}
+
+def assetsPath = "$projectDir/src/main/assets"
+def libsPath = "$projectDir/libs"
+def jniLibsPath = "$projectDir/src/main/jniLibs"
+
+task installSKMaps << {
+    copy {
+        from configurations.skobblersdk
+        into "$buildDir/skobblersdk-down"
+        rename { String fileName -> 'skobblersdkres.zip' }
+    }
+    copy {
+        from zipTree("$buildDir/skobblersdk-down/skobblersdkres.zip")
+        into "$buildDir/skobblersdk-down"
+    }
+    delete("$jniLibsPath",
+            "$assetsPath/SKMaps.zip",
+            "$libsPath/SKMaps.jar")
+    copy {
+        from "${buildDir}/skobblersdk-down/jniLibs"
+        into "$jniLibsPath"
+    }
+    copy {
+        from "${buildDir}/skobblersdk-down/SKMaps.zip"
+        into "$assetsPath"
+    }
+    copy {
+        from "${buildDir}/skobblersdk-down/SKMaps.jar"
+        into "$libsPath"
+    }
+    delete("$buildDir/skobblersdk-down")
+    delete(configurations.skobblersdk)
+}

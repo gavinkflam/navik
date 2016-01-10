@@ -1,0 +1,12 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+
+# Skobbler sdk
+/mobile/libs/SKMaps.jar
+/mobile/src/main/assets/SKMaps.zip
+/mobile/src/main/jniLibs
