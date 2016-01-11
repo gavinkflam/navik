@@ -98,6 +98,7 @@ public class NavikMapFragment extends Fragment
         mMap = mMapHolder.getMapSurfaceView();
         mMap.getMapSettings().setShowBicycleLanes(true);
         mMap.getMapSettings().setCurrentPositionShown(true);
+        mMap.getMapSettings().setCompassPosition(new SKScreenPoint(-50, -50));
         mLocationProvider.addPositionUpdateListener(this);
 
         // Trigger location update immediately if applicable
@@ -134,7 +135,9 @@ public class NavikMapFragment extends Fragment
 
     @Override
     public void onRotateMap() {
-
+        if (!mMap.getMapSettings().isCompassShown()) {
+            mMap.getMapSettings().setCompassShown(true);
+        }
     }
 
     @Override
@@ -179,7 +182,10 @@ public class NavikMapFragment extends Fragment
 
     @Override
     public void onCompassSelected() {
-
+        mMap.rotateTheMapToNorthSmooth(200);
+        if (mMap.getMapSettings().isCompassShown()) {
+            mMap.getMapSettings().setCompassShown(false);
+        }
     }
 
     @Override
