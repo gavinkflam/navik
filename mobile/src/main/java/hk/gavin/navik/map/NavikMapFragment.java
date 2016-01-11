@@ -28,7 +28,7 @@ public class NavikMapFragment extends Fragment
 
     @Inject NavikLocationProvider mLocationProvider;
 
-    @Bind(R.id.mapHolder) SKMapViewHolder mMapHolder;
+    @Bind(R.id.mapHolder) @Getter SKMapViewHolder mMapHolder;
     @Getter private SKMapSurfaceView mMap;
     @Setter private MapEventsListener mMapEventsListener;
 

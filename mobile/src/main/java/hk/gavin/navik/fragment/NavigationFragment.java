@@ -7,16 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import com.skobbler.ngx.SKCoordinate;
-import com.skobbler.ngx.navigation.SKNavigationListener;
-import com.skobbler.ngx.navigation.SKNavigationManager;
+import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
-import com.skobbler.ngx.navigation.SKNavigationState;
 import com.skobbler.ngx.routing.*;
+import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
+import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
+import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.NavigationActivity;
 import hk.gavin.navik.map.NavikMapFragment;
+import hk.gavin.navik.preference.MainPreferences;
+
+import javax.inject.Inject;
 
 public class NavigationFragment extends Fragment implements NavikMapFragment.MapEventsListener {
+
+    @Inject MainPreferences mMainPreferences;
 
     NavikMapFragment mNavikMapFragment;
 
@@ -92,14 +98,21 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
 
         @Override
         public void onAllRoutesCompleted() {
-            SKNavigationSettings navigationSettings = new SKNavigationSettings();
-            navigationSettings.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
-            navigationSettings.setNavigationMode(SKNavigationSettings.SKNavigationMode.BIKE);
+            SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
+            configuration.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
+            configuration.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
+            configuration.setDayStyle(
+                    new SKMapViewStyle(mMainPreferences.getMapResourcesPath() + ".DayStyle/", "daystyle.json")
+            );
+            configuration.setNightStyle(
+                    new SKMapViewStyle(mMainPreferences.getMapResourcesPath() + ".NightStyle/", "nightstyle.json")
+            );
+            configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
+            configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
 
-            SKNavigationManager navigationManager = SKNavigationManager.getInstance();
-            navigationManager.setMapView(mNavikMapFragment.getMap());
+            SKToolsNavigationManager navigationManager = new SKToolsNavigationManager(getActivity(), R.id.navigationRoot);
             navigationManager.setNavigationListener(mNavigationListener);
-            navigationManager.startNavigation(navigationSettings);
+            navigationManager.startNavigation(configuration, mNavikMapFragment.getMapHolder());
         }
 
         @Override
@@ -113,60 +126,30 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
         }
     }
 
-    private class NavigationListener implements SKNavigationListener {
+    private class NavigationListener implements SKToolsNavigationListener {
 
         @Override
-        public void onDestinationReached() {
+        public void onNavigationStarted() {
 
         }
 
         @Override
-        public void onSignalNewAdviceWithInstruction(String s) {
+        public void onNavigationEnded() {
 
         }
 
         @Override
-        public void onSignalNewAdviceWithAudioFiles(String[] strings, boolean b) {
+        public void onRouteCalculationStarted() {
 
         }
 
         @Override
-        public void onSpeedExceededWithAudioFiles(String[] strings, boolean b) {
+        public void onRouteCalculationCompleted() {
 
         }
 
         @Override
-        public void onSpeedExceededWithInstruction(String s, boolean b) {
-
-        }
-
-        @Override
-        public void onUpdateNavigationState(SKNavigationState skNavigationState) {
-
-        }
-
-        @Override
-        public void onReRoutingStarted() {
-
-        }
-
-        @Override
-        public void onFreeDriveUpdated(String s, String s1, String s2, SKNavigationState.SKStreetType skStreetType, double v, double v1) {
-
-        }
-
-        @Override
-        public void onViaPointReached(int i) {
-
-        }
-
-        @Override
-        public void onVisualAdviceChanged(boolean b, boolean b1, SKNavigationState skNavigationState) {
-
-        }
-
-        @Override
-        public void onTunnelEvent(boolean b) {
+        public void onRouteCalculationCanceled() {
 
         }
     }
