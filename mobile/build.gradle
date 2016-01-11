@@ -32,16 +32,17 @@ configurations {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    wearApp project(':wear')
     testCompile 'junit:junit:4.12'
 
-    compile 'com.android.support:support-v4:23.1.0'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.google.android.gms:play-services:8.1.0'
-    compile 'com.android.support:design:23.1.0'
-
+    compile project (':sdktools')
     skobblersdk "com.skobbler.ngx:SKMaps:2.5.1"
-    compile files('libs/SKMaps.jar')
+
+    wearApp project(':wear')
+    compile 'com.google.android.gms:play-services-wearable:8.4.0'
+
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
 
     provided "org.projectlombok:lombok:1.16.6"
     apt "org.projectlombok:lombok:1.16.6"
@@ -78,10 +79,10 @@ task installSKMaps << {
         from "${buildDir}/skobblersdk-down/SKMaps.zip"
         into "$assetsPath"
     }
-    copy {
-        from "${buildDir}/skobblersdk-down/SKMaps.jar"
-        into "$libsPath"
-    }
+//    copy {
+//        from "${buildDir}/skobblersdk-down/SKMaps.jar"
+//        into "$libsPath"
+//    }
     delete("$buildDir/skobblersdk-down")
     delete(configurations.skobblersdk)
 }
