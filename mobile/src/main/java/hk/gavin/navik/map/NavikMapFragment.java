@@ -17,9 +17,11 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.activity.AbstractNavikActivity;
 import hk.gavin.navik.location.NavikLocationProvider;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import javax.inject.Inject;
 
+@Accessors(prefix = "m")
 public class NavikMapFragment extends Fragment
         implements SKMapSurfaceListener, NavikLocationProvider.OnLocationUpdateListener {
 
