@@ -1,10 +1,22 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:showIn="@layout/activity_select_location_on_map"
-              tools:context=".fragment.SelectLocationOnMapFragment">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".fragment.SelectLocationOnMapFragment"
+             tools:showIn="@layout/activity_select_location_on_map">
 
-</LinearLayout>
+    <com.skobbler.ngx.map.SKMapViewHolder
+                  android:id="@+id/mapHolder"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_place_white_36dp"
+        android:backgroundTint="@color/colorPrimaryTint1"
+        android:layout_marginBottom="18dp"
+        android:layout_gravity="center"/>
+
+</FrameLayout>
