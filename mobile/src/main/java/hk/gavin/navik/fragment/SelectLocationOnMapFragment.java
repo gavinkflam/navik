@@ -29,6 +29,6 @@ public class SelectLocationOnMapFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mNavikMapFragment = (NavikMapFragment) getFragmentManager().findFragmentById(R.id.navikMap);
+        mNavikMapFragment = (NavikMapFragment) getFragmentManager().findFragmentById(R.id.locationSelectionMap);
     }
 }

@@ -7,7 +7,7 @@
              tools:showIn="@layout/activity_select_location_on_map">
 
     <fragment
-        android:id="@+id/navikMap"
+        android:id="@+id/locationSelectionMap"
         android:name="hk.gavin.navik.map.NavikMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

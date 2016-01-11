@@ -7,7 +7,7 @@
              tools:showIn="@layout/activity_navigation">
 
     <fragment
-        android:id="@+id/navikMap"
+        android:id="@+id/navigationMap"
         android:name="hk.gavin.navik.map.NavikMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
