@@ -50,6 +50,7 @@ public class SkobblerUtility {
         advisorSettings.setResourcePath(mapResourcesPath + "/Advisor/Languages");
         advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
         advisorSettings.setAdvisorVoice("en");
+        advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
         mapsInitSettings.setAdvisorSettings(advisorSettings);
 
         try {
