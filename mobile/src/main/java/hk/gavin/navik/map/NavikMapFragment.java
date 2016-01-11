@@ -17,6 +17,7 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.activity.AbstractNavikActivity;
 import hk.gavin.navik.location.NavikLocationProvider;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ public class NavikMapFragment extends Fragment
 
     @Bind(R.id.mapHolder) SKMapViewHolder mMapHolder;
     @Getter private SKMapSurfaceView mMap;
+    @Setter private MapEventsListener mMapEventsListener;
 
     private boolean mWaitingForCurrentLocation = true;
 
@@ -107,6 +109,10 @@ public class NavikMapFragment extends Fragment
         if (mLocationProvider.isLastLocationAvailable()) {
             Pair<Double, Double> location = mLocationProvider.getLastLocation();
             onLocationUpdated(location.first, location.second, mLocationProvider.getLastLocationAccuracy());
+        }
+
+        if (mMapEventsListener != null) {
+            mMapEventsListener.onMapLoadComplete();
         }
     }
 
@@ -220,4 +226,7 @@ public class NavikMapFragment extends Fragment
 
     }
 
+    public interface MapEventsListener {
+        void onMapLoadComplete();
+    }
 }
