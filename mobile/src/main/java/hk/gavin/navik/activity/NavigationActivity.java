@@ -14,7 +14,8 @@ import hk.gavin.navik.injection.ActivityModule;
 import hk.gavin.navik.injection.DaggerNavigationComponent;
 import hk.gavin.navik.injection.NavigationComponent;
 
-public class NavigationActivity extends AppCompatActivity {
+public class NavigationActivity extends AppCompatActivity
+        implements AbstractNavikActivity<NavigationComponent> {
 
     private NavigationComponent mComponent;
 

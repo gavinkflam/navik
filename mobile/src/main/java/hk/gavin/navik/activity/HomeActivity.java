@@ -19,7 +19,8 @@ import hk.gavin.navik.location.NavikLocationProvider;
 
 import javax.inject.Inject;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+        implements AbstractNavikActivity<HomeComponent> {
 
     private HomeComponent mComponent;
 

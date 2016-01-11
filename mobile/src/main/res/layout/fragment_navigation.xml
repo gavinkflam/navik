@@ -6,17 +6,10 @@
              tools:context=".fragment.NavigationFragment"
              tools:showIn="@layout/activity_navigation">
 
-    <com.skobbler.ngx.map.SKMapViewHolder
-                  android:id="@+id/mapHolder"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent" />
-
-    <android.support.v7.widget.AppCompatImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_place_white_36dp"
-        android:backgroundTint="@color/colorPrimaryTint1"
-        android:layout_marginBottom="18dp"
-        android:layout_gravity="center"/>
-
+    <fragment
+        android:id="@+id/navikMap"
+        android:name="hk.gavin.navik.map.NavikMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_navik_map" />
 </FrameLayout>

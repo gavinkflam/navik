@@ -10,17 +10,16 @@ import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NavikApplication;
 import hk.gavin.navik.contract.UiContract;
-import hk.gavin.navik.fragment.SelectLocationOnMapFragment;
 import hk.gavin.navik.injection.ActivityModule;
 import hk.gavin.navik.injection.DaggerSelectLocationOnMapComponent;
 import hk.gavin.navik.injection.SelectLocationOnMapComponent;
 
-public class SelectLocationOnMapActivity extends AppCompatActivity {
+public class SelectLocationOnMapActivity extends AppCompatActivity
+        implements AbstractNavikActivity<SelectLocationOnMapComponent> {
 
     private SelectLocationOnMapComponent mComponent;
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    SelectLocationOnMapFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +32,6 @@ public class SelectLocationOnMapActivity extends AppCompatActivity {
 
     protected void onViewCreated() {
         ButterKnife.bind(this);
-        mFragment = (SelectLocationOnMapFragment)
-                getSupportFragmentManager().findFragmentById(R.id.select_location_on_map_fragment);
 
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
@@ -59,11 +56,6 @@ public class SelectLocationOnMapActivity extends AppCompatActivity {
     void confirmLocationSelection() {
         setResult(UiContract.RESULT_OK);
         finish();
-    }
-
-    @OnClick(R.id.moveToCurrentLocation)
-    void moveToCurrentLocation() {
-        mFragment.moveToCurrentLocation();
     }
 
     public SelectLocationOnMapComponent component() {
