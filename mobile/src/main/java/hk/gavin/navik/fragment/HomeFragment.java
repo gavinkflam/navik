@@ -20,6 +20,9 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
 
+    StartingPointHandler mStartingPointHandler = new StartingPointHandler();
+    DestinationPointHandler mDestinationPointHandler = new DestinationPointHandler();
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -38,5 +41,60 @@ public class HomeFragment extends Fragment {
         mStartingPoint.setLocation(
                 new NavikLocation(getString(R.string.current_location), 0, 0)
         );
+
+        mStartingPoint.setOnLocationUpdatedListener(mStartingPointHandler);
+        mStartingPoint.setOnMenuItemClickListener(mStartingPointHandler);
+
+        mDestination.setOnLocationUpdatedListener(mDestinationPointHandler);
+        mDestination.setOnMenuItemClickListener(mDestinationPointHandler);
     }
+
+    private class StartingPointHandler implements LocationSelector.OnLocationUpdatedListener,
+            LocationSelector.OnMenuItemClickListener {
+
+        @Override
+        public void onLocationUpdated(NavikLocation location) {
+
+        }
+
+        @Override
+        public void onCurrentLocationClicked() {
+
+        }
+
+        @Override
+        public void onHistoryClicked() {
+
+        }
+
+        @Override
+        public void onSelectLocationOnMapClicked() {
+
+        }
+    }
+
+    private class DestinationPointHandler implements LocationSelector.OnLocationUpdatedListener,
+            LocationSelector.OnMenuItemClickListener {
+
+        @Override
+        public void onLocationUpdated(NavikLocation location) {
+
+        }
+
+        @Override
+        public void onCurrentLocationClicked() {
+
+        }
+
+        @Override
+        public void onHistoryClicked() {
+
+        }
+
+        @Override
+        public void onSelectLocationOnMapClicked() {
+
+        }
+    }
+
 }

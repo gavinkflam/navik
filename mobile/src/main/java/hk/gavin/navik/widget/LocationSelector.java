@@ -16,7 +16,9 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.location.NavikLocation;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
+@Accessors(prefix = "m")
 public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener {
 
     @Bind(R.id.prefix) TextView mPrefix;
@@ -26,9 +28,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
 
     @Getter NavikLocation mLocation;
     @Setter OnLocationUpdatedListener mOnLocationUpdatedListener;
-    @Setter OnCurrentLocationClickListener mOnCurrentLocationClickListener;
-    @Setter OnHistoryClickListener mOnHistoryClickListener;
-    @Setter OnSelectLocationOnMapClickListener mOnSelectLocationOnMapClickListener;
+    @Setter OnMenuItemClickListener mOnMenuItemClickListener;
 
     public LocationSelector(Context context) {
         super(context);
@@ -118,20 +118,20 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.current_location: {
-                if (mOnCurrentLocationClickListener != null) {
-                    mOnCurrentLocationClickListener.onCurrentLocationClicked();
+                if (mOnMenuItemClickListener != null) {
+                    mOnMenuItemClickListener.onCurrentLocationClicked();
                 }
                 return true;
             }
             case R.id.history: {
-                if (mOnHistoryClickListener != null) {
-                    mOnHistoryClickListener.onHistoryClicked();
+                if (mOnMenuItemClickListener != null) {
+                    mOnMenuItemClickListener.onHistoryClicked();
                 }
                 return true;
             }
             case R.id.select_on_map: {
-                if (mOnSelectLocationOnMapClickListener != null) {
-                    mOnSelectLocationOnMapClickListener.onSelectLocationOnMapClicked();
+                if (mOnMenuItemClickListener != null) {
+                    mOnMenuItemClickListener.onSelectLocationOnMapClicked();
                 }
                 return true;
             }
@@ -143,15 +143,9 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         void onLocationUpdated(NavikLocation location);
     }
 
-    public interface OnCurrentLocationClickListener {
+    public interface OnMenuItemClickListener {
         void onCurrentLocationClicked();
-    }
-
-    public interface OnHistoryClickListener {
         void onHistoryClicked();
-    }
-
-    public interface OnSelectLocationOnMapClickListener {
         void onSelectLocationOnMapClicked();
     }
 
