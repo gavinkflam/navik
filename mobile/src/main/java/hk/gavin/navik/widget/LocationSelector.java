@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,7 +25,10 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     PopupMenu mPopupMenu;
 
     @Getter NavikLocation mLocation;
-    @Setter LocationUpdatedListener mLocationUpdatedListener;
+    @Setter OnLocationUpdatedListener mOnLocationUpdatedListener;
+    @Setter OnCurrentLocationClickListener mOnCurrentLocationClickListener;
+    @Setter OnHistoryClickListener mOnHistoryClickListener;
+    @Setter OnSelectLocationOnMapClickListener mOnSelectLocationOnMapClickListener;
 
     public LocationSelector(Context context) {
         super(context);
@@ -88,8 +90,8 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mLocation = location;
         invalidateLocationDisplay();
 
-        if (mLocationUpdatedListener != null) {
-            mLocationUpdatedListener.onLocationUpdated(mLocation);
+        if (mOnLocationUpdatedListener != null) {
+            mOnLocationUpdatedListener.onLocationUpdated(mLocation);
         }
     }
 
@@ -116,23 +118,41 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.current_location: {
-                Toast.makeText(getContext(), "Current Location", Toast.LENGTH_SHORT).show();
+                if (mOnCurrentLocationClickListener != null) {
+                    mOnCurrentLocationClickListener.onCurrentLocationClicked();
+                }
                 return true;
             }
             case R.id.history: {
-                Toast.makeText(getContext(), "History", Toast.LENGTH_SHORT).show();
+                if (mOnHistoryClickListener != null) {
+                    mOnHistoryClickListener.onHistoryClicked();
+                }
                 return true;
             }
             case R.id.select_on_map: {
-                Toast.makeText(getContext(), "Select On Map", Toast.LENGTH_SHORT).show();
+                if (mOnSelectLocationOnMapClickListener != null) {
+                    mOnSelectLocationOnMapClickListener.onSelectLocationOnMapClicked();
+                }
                 return true;
             }
         }
         return false;
     }
 
-    public interface LocationUpdatedListener {
+    public interface OnLocationUpdatedListener {
         void onLocationUpdated(NavikLocation location);
+    }
+
+    public interface OnCurrentLocationClickListener {
+        void onCurrentLocationClicked();
+    }
+
+    public interface OnHistoryClickListener {
+        void onHistoryClicked();
+    }
+
+    public interface OnSelectLocationOnMapClickListener {
+        void onSelectLocationOnMapClicked();
     }
 
 }
