@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.location.NavikLocation;
 import lombok.Getter;
+import lombok.Setter;
 
 public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener {
 
@@ -25,6 +26,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     PopupMenu mPopupMenu;
 
     @Getter NavikLocation mLocation;
+    @Setter LocationUpdatedListener mLocationUpdatedListener;
 
     public LocationSelector(Context context) {
         super(context);
@@ -85,6 +87,10 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     public void setLocation(NavikLocation location) {
         mLocation = location;
         invalidateLocationDisplay();
+
+        if (mLocationUpdatedListener != null) {
+            mLocationUpdatedListener.onLocationUpdated(mLocation);
+        }
     }
 
     public void invalidateLocationDisplay() {
@@ -124,4 +130,9 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         }
         return false;
     }
+
+    public interface LocationUpdatedListener {
+        void onLocationUpdated(NavikLocation location);
+    }
+
 }
