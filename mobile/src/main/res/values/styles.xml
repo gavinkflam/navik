@@ -29,4 +29,13 @@
     <style name="AppTheme.TextAppearance.Smaller">
         <item name="android:textSize">14sp</item>
     </style>
+
+    <!-- UI regions -->
+    <style name="AppTheme.ElevatedSheet">
+        <item name="android:background">@drawable/elevated_sheet</item>
+        <item name="android:paddingLeft">@dimen/ui_region_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/ui_region_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/ui_region_vertical_margin</item>
+        <item name="android:paddingBottom">@dimen/ui_region_vertical_margin</item>
+    </style>
 </resources>
