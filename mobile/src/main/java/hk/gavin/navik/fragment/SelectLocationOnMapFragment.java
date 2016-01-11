@@ -57,6 +57,17 @@ public class SelectLocationOnMapFragment extends Fragment {
         super.onResume();
     }
 
+    public void moveToCurrentLocation() {
+        if (mMap != null && mLocationProvider.isLastLocationAvailable()) {
+            Pair<Double, Double> location = mLocationProvider.getLastLocation();
+            mMap.setPositionAsCurrent(
+                    new SKCoordinate(location.second, location.first),
+                    (float) mLocationProvider.getLastLocationAccuracy(),
+                    true
+            );
+        }
+    }
+
     private class MapHandler implements SKMapSurfaceListener, NavikLocationProvider.OnLocationUpdateListener {
 
         boolean mWaitingForCurrentLocation = true;
