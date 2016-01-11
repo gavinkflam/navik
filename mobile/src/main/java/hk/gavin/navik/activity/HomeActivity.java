@@ -15,6 +15,9 @@ import hk.gavin.navik.application.NavikApplication;
 import hk.gavin.navik.injection.ActivityModule;
 import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
+import hk.gavin.navik.location.NavikLocationProvider;
+
+import javax.inject.Inject;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -22,6 +25,8 @@ public class HomeActivity extends AppCompatActivity {
 
     @Bind(R.id.startBikeNavigation) FloatingActionButton mStartBikeNavigation;
     @Bind(R.id.toolbar) Toolbar mToolbar;
+
+    @Inject NavikLocationProvider mLocationProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

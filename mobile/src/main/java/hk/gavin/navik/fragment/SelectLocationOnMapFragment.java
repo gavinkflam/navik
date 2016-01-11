@@ -3,20 +3,27 @@ package hk.gavin.navik.fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.SelectLocationOnMapActivity;
+import hk.gavin.navik.location.NavikLocationProvider;
+
+import javax.inject.Inject;
 
 public class SelectLocationOnMapFragment extends Fragment {
 
     @Bind(R.id.mapHolder) SKMapViewHolder mMapHolder;
     SKMapSurfaceView mMap;
     MapHandler mMapHandler = new MapHandler();
+
+    @Inject NavikLocationProvider mLocationProvider;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -38,6 +45,7 @@ public class SelectLocationOnMapFragment extends Fragment {
 
     @Override
     public void onPause() {
+        mLocationProvider.removePositionUpdateListener(mMapHandler);
         mMapHolder.onPause();
         super.onPause();
     }
@@ -45,10 +53,23 @@ public class SelectLocationOnMapFragment extends Fragment {
     @Override
     public void onResume() {
         mMapHolder.onResume();
+        mLocationProvider.addPositionUpdateListener(mMapHandler);
         super.onResume();
     }
 
-    private class MapHandler implements SKMapSurfaceListener {
+    private class MapHandler implements SKMapSurfaceListener, NavikLocationProvider.OnLocationUpdateListener {
+
+        boolean mWaitingForCurrentLocation = true;
+
+        @Override
+        public void onLocationUpdated(double latitude, double longitude, double accuracy) {
+            if (mMap != null) {
+                mMap.setPositionAsCurrent(
+                        new SKCoordinate(longitude, latitude), (float) accuracy, mWaitingForCurrentLocation
+                );
+                mWaitingForCurrentLocation = false;
+            }
+        }
 
         @Override
         public void onActionPan() {
@@ -65,6 +86,13 @@ public class SelectLocationOnMapFragment extends Fragment {
             mMap = mMapHolder.getMapSurfaceView();
             mMap.getMapSettings().setShowBicycleLanes(true);
             mMap.getMapSettings().setCurrentPositionShown(true);
+            mLocationProvider.addPositionUpdateListener(this);
+
+            // Trigger location update immediately if applicable
+            if (mLocationProvider.isLastLocationAvailable()) {
+                Pair<Double, Double> location = mLocationProvider.getLastLocation();
+                onLocationUpdated(location.first, location.second, mLocationProvider.getLastLocationAccuracy());
+            }
         }
 
         @Override
