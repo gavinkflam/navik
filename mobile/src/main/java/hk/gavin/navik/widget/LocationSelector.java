@@ -14,16 +14,22 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
+import hk.gavin.navik.location.NavikLocation;
+import lombok.Getter;
 
 public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener {
 
     @Bind(R.id.prefix) TextView mPrefix;
     @Bind(R.id.location_text) TextView mLocationText;
+    @Bind(R.id.placeholder) TextView mPlaceholder;
     PopupMenu mPopupMenu;
+
+    @Getter NavikLocation mLocation;
 
     public LocationSelector(Context context) {
         super(context);
         initView(context);
+        invalidateLocationDisplay();
         preparePopupMenu(context);
     }
 
@@ -31,6 +37,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         super(context, attrs);
         initView(context);
         applyStyledAttributes(context, attrs);
+        invalidateLocationDisplay();
         preparePopupMenu(context);
     }
 
@@ -55,6 +62,9 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
             mPrefix.setText(
                     array.getString(R.styleable.LocationSelector_prefix)
             );
+            mPlaceholder.setText(
+                    array.getString(R.styleable.LocationSelector_placeholder)
+            );
         }
         finally {
             array.recycle();
@@ -70,6 +80,25 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         }
         mPopupMenu.inflate(R.menu.popup_menu_location_selector);
         mPopupMenu.setOnMenuItemClickListener(this);
+    }
+
+    public void setLocation(NavikLocation location) {
+        mLocation = location;
+        invalidateLocationDisplay();
+    }
+
+    public void invalidateLocationDisplay() {
+        if (mLocation == null) {
+            mPrefix.setVisibility(GONE);
+            mLocationText.setVisibility(GONE);
+            mPlaceholder.setVisibility(VISIBLE);
+        }
+        else {
+            mPrefix.setVisibility(VISIBLE);
+            mLocationText.setVisibility(VISIBLE);
+            mPlaceholder.setVisibility(GONE);
+            mLocationText.setText(mLocation.getName());
+        }
     }
 
     @OnClick

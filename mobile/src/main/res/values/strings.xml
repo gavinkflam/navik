@@ -9,4 +9,6 @@
     <string name="current_location">Current location</string>
     <string name="history">History</string>
     <string name="select_on_map">Select on map</string>
+    <string name="select_starting_point">Select Starting Point</string>
+    <string name="select_destination">Select Destination</string>
 </resources>
