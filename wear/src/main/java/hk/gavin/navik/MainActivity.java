@@ -3,62 +3,50 @@ package hk.gavin.navik;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
-import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import butterknife.Bind;
+import butterknife.BindColor;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends WearableActivity {
 
-    private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
-            new SimpleDateFormat("HH:mm", Locale.US);
+    @Bind(R.id.container) BoxInsetLayout mContainer;
+    @Bind(R.id.visualAdvisor) ImageView mVisualAdvisor;
+    @Bind(R.id.metersToTurn) TextView mMetersToTurn;
+    @Bind(R.id.streetName) TextView mStreesName;
+    @Bind(R.id.progress) TextView mProgress;
 
-    private BoxInsetLayout mContainerView;
-    private TextView mTextView;
-    private TextView mClockView;
+    private int mColorMode = 0;
+    @BindColor(R.color.colorSafe) int mColorSafe;
+    @BindColor(R.color.colorSoon) int mColorSoon;
+    @BindColor(R.color.colorImmediate) int mColorImmediate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setAmbientEnabled();
-
-        mContainerView = (BoxInsetLayout) findViewById(R.id.container);
-        mTextView = (TextView) findViewById(R.id.text);
-        mClockView = (TextView) findViewById(R.id.clock);
+        ButterKnife.bind(this);
     }
 
-    @Override
-    public void onEnterAmbient(Bundle ambientDetails) {
-        super.onEnterAmbient(ambientDetails);
-        updateDisplay();
-    }
-
-    @Override
-    public void onUpdateAmbient() {
-        super.onUpdateAmbient();
-        updateDisplay();
-    }
-
-    @Override
-    public void onExitAmbient() {
-        updateDisplay();
-        super.onExitAmbient();
-    }
-
-    private void updateDisplay() {
-        if (isAmbient()) {
-            mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
-            mTextView.setTextColor(getResources().getColor(android.R.color.white));
-            mClockView.setVisibility(View.VISIBLE);
-
-            mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
-        } else {
-            mContainerView.setBackground(null);
-            mTextView.setTextColor(getResources().getColor(android.R.color.black));
-            mClockView.setVisibility(View.GONE);
+    @OnClick(R.id.visualAdvisor)
+    void changeBackgroundColor() {
+        switch (mColorMode) {
+            case 0: {
+                mContainer.setBackgroundColor(mColorSoon);
+                mColorMode = 1;
+                break;
+            }
+            case 1: {
+                mContainer.setBackgroundColor(mColorImmediate);
+                mColorMode = 2;
+                break;
+            }
+            default: {
+                mContainer.setBackgroundColor(mColorSafe);
+                mColorMode = 0;
+            }
         }
     }
 }
