@@ -26,18 +26,13 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
 
     NavikMapFragment mNavikMapFragment;
 
-    private RouteCalculationListener mRouteCalculationListener = new RouteCalculationListener();
     private NavigationListener mNavigationListener = new NavigationListener();
-
-    private SKRouteManager mRouteManager;
     private SKToolsNavigationManager mNavigationManager;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((NavigationActivity) getActivity()).component().inject(this);
-
-        mRouteManager = SKRouteManager.getInstance();
         mNavigationManager =  new SKToolsNavigationManager(getActivity(), R.id.navigationRoot);
     }
 
@@ -66,75 +61,20 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
     }
 
     private void startNavigationSimulation() {
-        SKRouteSettings route = new SKRouteSettings();
+        SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
+        configuration.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
+        configuration.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
+        configuration.setDayStyle(
+                new SKMapViewStyle(mMainPreferences.getMapResourcesPath() + ".DayStyle/", "daystyle.json")
+        );
+        configuration.setNightStyle(
+                new SKMapViewStyle(mMainPreferences.getMapResourcesPath() + ".NightStyle/", "nightstyle.json")
+        );
+        configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
+        configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
 
-        route.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
-        route.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
-
-        /*
-        route.setDestinationCoordinate(new SKCoordinate(114.1957007, 22.3955298));
-
-        ArrayList<SKViaPoint> viaPoints = new ArrayList<>();
-        viaPoints.add(new SKViaPoint(0, new SKCoordinate(114.1783895, 22.4452662)));
-        viaPoints.add(new SKViaPoint(1, new SKCoordinate(114.2132063, 22.414166)));
-        route.setViaPoints(viaPoints);
-        */
-
-        route.setNoOfRoutes(1);
-        route.setRouteMode(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
-
-        route.setAvoidFerries(true);
-        route.setBicycleCarryAvoided(true);
-        route.setBicycleWalkAvoided(true);
-        route.setHighWaysAvoided(true);
-        route.setTollRoadsAvoided(true);
-        route.setUseRoadSlopes(true);
-        route.setFilterAlternatives(true);
-        route.setRouteExposed(true);
-
-        mRouteManager.setRouteListener(mRouteCalculationListener);
-        mRouteManager.calculateRoute(route);
-    }
-
-    private class RouteCalculationListener implements SKRouteListener {
-
-        @Override
-        public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo) {
-
-        }
-
-        @Override
-        public void onRouteCalculationFailed(SKRoutingErrorCode skRoutingErrorCode) {
-
-        }
-
-        @Override
-        public void onAllRoutesCompleted() {
-            SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-            configuration.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
-            configuration.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
-            configuration.setDayStyle(
-                    new SKMapViewStyle(mMainPreferences.getMapResourcesPath() + ".DayStyle/", "daystyle.json")
-            );
-            configuration.setNightStyle(
-                    new SKMapViewStyle(mMainPreferences.getMapResourcesPath() + ".NightStyle/", "nightstyle.json")
-            );
-            configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
-            configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
-
-            mNavigationManager.setNavigationListener(mNavigationListener);
-            mNavigationManager.startNavigation(configuration, mNavikMapFragment.getMapHolder());
-        }
-
-        @Override
-        public void onServerLikeRouteCalculationCompleted(SKRouteJsonAnswer skRouteJsonAnswer) {
-
-        }
-
-        @Override
-        public void onOnlineRouteComputationHanging(int i) {
-
-        }
+        mNavigationManager.setNavigationListener(mNavigationListener);
+        mNavigationManager.startNavigation(configuration, mNavikMapFragment.getMapHolder());
     }
 
     private class NavigationListener implements SKToolsNavigationListener {
