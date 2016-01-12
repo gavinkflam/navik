@@ -23,7 +23,6 @@ public class NavikLocationProvider implements SKCurrentPositionListener {
     public NavikLocationProvider(Context context) {
         mProvider = new SKCurrentPositionProvider(context);
         mProvider.setCurrentPositionListener(this);
-        mProvider.requestLocationUpdates(true, true, true);
     }
 
     @Override
@@ -45,11 +44,19 @@ public class NavikLocationProvider implements SKCurrentPositionListener {
     }
 
     public boolean addPositionUpdateListener(OnLocationUpdateListener listener) {
+        if (mListeners.size() == 0) {
+            mProvider.requestLocationUpdates(true, true, true);
+        }
+
         return mListeners.add(listener);
     }
 
     public boolean removePositionUpdateListener(OnLocationUpdateListener listener) {
-        return mListeners.remove(listener);
+        boolean result = mListeners.remove(listener);
+        if (mListeners.size() == 0) {
+            mProvider.stopLocationUpdates();
+        }
+        return result;
     }
 
     public interface OnLocationUpdateListener {
