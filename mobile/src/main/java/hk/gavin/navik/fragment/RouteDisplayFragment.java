@@ -35,6 +35,8 @@ public class RouteDisplayFragment extends Fragment implements NavikMapFragment.M
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         mNavikMapFragment = (NavikMapFragment) getChildFragmentManager().findFragmentById(R.id.routeDisplayMap);
+        mNavikMapFragment.hideMoveToCurrentLocationButton();
+        mNavikMapFragment.moveToCurrentLocationOnceAvailable();
         mNavikMapFragment.setMapEventsListener(this);
     }
 

@@ -3,6 +3,7 @@ package hk.gavin.navik.map;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -29,10 +30,12 @@ public class NavikMapFragment extends Fragment
     @Inject NavikLocationProvider mLocationProvider;
 
     @Bind(R.id.mapHolder) @Getter SKMapViewHolder mMapHolder;
+    @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
     @Getter private SKMapSurfaceView mMap;
     @Setter private MapEventsListener mMapEventsListener;
 
-    private boolean mWaitingForCurrentLocation = true;
+    private boolean mPendingMoveToCurrentLocation = false;
+    private boolean mDisplayMoveToCurrentLocationButton = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class NavikMapFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         mMapHolder.setMapSurfaceListener(this);
+        updateMoveToCurrentLocationButtonDisplay();
     }
 
     @Override
@@ -66,9 +70,39 @@ public class NavikMapFragment extends Fragment
         super.onResume();
     }
 
+    public void moveToCurrentLocationOnceAvailable() {
+        if (mLocationProvider != null && mLocationProvider.isLastLocationAvailable()) {
+            moveToCurrentLocation();
+        }
+        else {
+            mPendingMoveToCurrentLocation = true;
+        }
+    }
+
+    private void updateMoveToCurrentLocationButtonDisplay() {
+        if (mMoveToCurrentLocationButton != null) {
+            if (mDisplayMoveToCurrentLocationButton) {
+                mMoveToCurrentLocationButton.show();
+            }
+            else {
+                mMoveToCurrentLocationButton.hide();
+            }
+        }
+    }
+
+    public void showMoveToCurrentLocationButton() {
+        mDisplayMoveToCurrentLocationButton = true;
+        updateMoveToCurrentLocationButtonDisplay();
+    }
+
+    public void hideMoveToCurrentLocationButton() {
+        mDisplayMoveToCurrentLocationButton = false;
+        updateMoveToCurrentLocationButtonDisplay();
+    }
+
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
-        if (mMap != null && mLocationProvider.isLastLocationAvailable()) {
+        if (mMap != null && mLocationProvider != null && mLocationProvider.isLastLocationAvailable()) {
             Pair<Double, Double> location = mLocationProvider.getLastLocation();
             SKCoordinate coordinate = new SKCoordinate(location.second, location.first);
 
@@ -81,9 +115,9 @@ public class NavikMapFragment extends Fragment
     public void onLocationUpdated(double latitude, double longitude, double accuracy) {
         if (mMap != null) {
             mMap.setPositionAsCurrent(
-                    new SKCoordinate(longitude, latitude), (float) accuracy, mWaitingForCurrentLocation
+                    new SKCoordinate(longitude, latitude), (float) accuracy, mPendingMoveToCurrentLocation
             );
-            mWaitingForCurrentLocation = false;
+            mPendingMoveToCurrentLocation = false;
         }
     }
 
