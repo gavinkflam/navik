@@ -29,10 +29,16 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
     private RouteCalculationListener mRouteCalculationListener = new RouteCalculationListener();
     private NavigationListener mNavigationListener = new NavigationListener();
 
+    private SKRouteManager mRouteManager;
+    private SKToolsNavigationManager mNavigationManager;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((NavigationActivity) getActivity()).component().inject(this);
+
+        mRouteManager = SKRouteManager.getInstance();
+        mNavigationManager =  new SKToolsNavigationManager(getActivity(), R.id.navigationRoot);
     }
 
     @Override
@@ -46,6 +52,12 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
         ButterKnife.bind(this, view);
         mNavikMapFragment = (NavikMapFragment) getChildFragmentManager().findFragmentById(R.id.navigationMap);
         mNavikMapFragment.setMapEventsListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        mNavigationManager.stopNavigation();
+        super.onStop();
     }
 
     @Override
@@ -80,8 +92,8 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
         route.setFilterAlternatives(true);
         route.setRouteExposed(true);
 
-        SKRouteManager.getInstance().setRouteListener(mRouteCalculationListener);
-        SKRouteManager.getInstance().calculateRoute(route);
+        mRouteManager.setRouteListener(mRouteCalculationListener);
+        mRouteManager.calculateRoute(route);
     }
 
     private class RouteCalculationListener implements SKRouteListener {
@@ -110,9 +122,8 @@ public class NavigationFragment extends Fragment implements NavikMapFragment.Map
             configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
             configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
 
-            SKToolsNavigationManager navigationManager = new SKToolsNavigationManager(getActivity(), R.id.navigationRoot);
-            navigationManager.setNavigationListener(mNavigationListener);
-            navigationManager.startNavigation(configuration, mNavikMapFragment.getMapHolder());
+            mNavigationManager.setNavigationListener(mNavigationListener);
+            mNavigationManager.startNavigation(configuration, mNavikMapFragment.getMapHolder());
         }
 
         @Override
