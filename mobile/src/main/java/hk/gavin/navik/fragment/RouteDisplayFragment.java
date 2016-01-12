@@ -19,6 +19,8 @@ public class RouteDisplayFragment extends Fragment implements NavikMapFragment.M
     private SKRouteManager mRouteManager = SKRouteManager.getInstance();
     private RouteHandler mRouteHandler = new RouteHandler();
 
+    private SKRouteSettings mRoute;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -42,34 +44,33 @@ public class RouteDisplayFragment extends Fragment implements NavikMapFragment.M
 
     @Override
     public void onMapLoadComplete() {
-        SKRouteSettings route = new SKRouteSettings();
-
-        route.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
-        route.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
+        mRoute = new SKRouteSettings();
+        mRoute.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
+        mRoute.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
 
         /*
-        route.setDestinationCoordinate(new SKCoordinate(114.1957007, 22.3955298));
+        mRoute.setDestinationCoordinate(new SKCoordinate(114.1957007, 22.3955298));
 
         ArrayList<SKViaPoint> viaPoints = new ArrayList<>();
         viaPoints.add(new SKViaPoint(0, new SKCoordinate(114.1783895, 22.4452662)));
         viaPoints.add(new SKViaPoint(1, new SKCoordinate(114.2132063, 22.414166)));
-        route.setViaPoints(viaPoints);
+        mRoute.setViaPoints(viaPoints);
         */
 
-        route.setNoOfRoutes(1);
-        route.setRouteMode(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
+        mRoute.setNoOfRoutes(1);
+        mRoute.setRouteMode(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
 
-        route.setAvoidFerries(true);
-        route.setBicycleCarryAvoided(true);
-        route.setBicycleWalkAvoided(true);
-        route.setHighWaysAvoided(true);
-        route.setTollRoadsAvoided(true);
-        route.setUseRoadSlopes(true);
-        route.setFilterAlternatives(true);
-        route.setRouteExposed(true);
+        mRoute.setAvoidFerries(true);
+        mRoute.setBicycleCarryAvoided(true);
+        mRoute.setBicycleWalkAvoided(true);
+        mRoute.setHighWaysAvoided(true);
+        mRoute.setTollRoadsAvoided(true);
+        mRoute.setUseRoadSlopes(true);
+        mRoute.setFilterAlternatives(true);
+        mRoute.setRouteExposed(true);
 
         mRouteManager.setRouteListener(mRouteHandler);
-        mRouteManager.calculateRoute(route);
+        mRouteManager.calculateRoute(mRoute);
     }
 
     private class RouteHandler implements SKRouteListener {

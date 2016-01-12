@@ -37,6 +37,11 @@ public class NavikMapFragment extends Fragment
     private boolean mPendingMoveToCurrentLocation = false;
     private boolean mDisplayMoveToCurrentLocationButton = false;
 
+    static {
+        // In order to support multiple maps
+        SKMapSurfaceView.preserveGLContext = false;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -58,16 +63,16 @@ public class NavikMapFragment extends Fragment
 
     @Override
     public void onPause() {
-        mLocationProvider.removePositionUpdateListener(this);
         mMapHolder.onPause();
+        mLocationProvider.removePositionUpdateListener(this);
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        mMapHolder.onResume();
-        mLocationProvider.addPositionUpdateListener(this);
         super.onResume();
+        mLocationProvider.addPositionUpdateListener(this);
+        mMapHolder.onResume();
     }
 
     public void moveToCurrentLocationOnceAvailable() {
@@ -133,6 +138,10 @@ public class NavikMapFragment extends Fragment
 
     @Override
     public void onSurfaceCreated(SKMapViewHolder skMapViewHolder) {
+        if (mMap != null) {
+            return;
+        }
+
         mMap = mMapHolder.getMapSurfaceView();
         mMap.getMapSettings().setShowBicycleLanes(true);
         mMap.getMapSettings().setCurrentPositionShown(true);
