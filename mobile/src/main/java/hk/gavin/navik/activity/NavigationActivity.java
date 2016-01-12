@@ -3,7 +3,7 @@ package hk.gavin.navik.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import hk.gavin.navik.R;
@@ -36,18 +36,21 @@ public class NavigationActivity extends AppCompatActivity
         mFragment = (NavigationFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_fragment);
 
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                cancelNavigation();
-            }
-
-        });
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.navigation);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                cancelNavigation();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void cancelNavigation() {

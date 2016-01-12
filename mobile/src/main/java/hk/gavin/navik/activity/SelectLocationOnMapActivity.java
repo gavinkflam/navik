@@ -3,7 +3,7 @@ package hk.gavin.navik.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -33,18 +33,21 @@ public class SelectLocationOnMapActivity extends AppCompatActivity
     protected void onViewCreated() {
         ButterKnife.bind(this);
 
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dismissLocationSelection();
-            }
-
-        });
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getIntent().getStringExtra(UiContract.DATA_TITLE));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                dismissLocationSelection();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void dismissLocationSelection() {
