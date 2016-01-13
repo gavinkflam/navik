@@ -44,6 +44,9 @@ public class HomeFragment extends Fragment {
         mStartingPoint.setLocation(
                 new NavikLocation(getString(R.string.current_location), 0, 0)
         );
+        mDestination.setLocation(
+                new NavikLocation("Sam Mun Tsai", 0, 0)
+        );
 
         mStartingPoint.setOnLocationUpdatedListener(mStartingPointHandler);
         mStartingPoint.setOnMenuItemClickListener(mStartingPointHandler);

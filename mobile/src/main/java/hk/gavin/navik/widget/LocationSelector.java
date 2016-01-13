@@ -123,12 +123,12 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
                 }
                 return true;
             }
-            case R.id.history: {
-                if (mOnMenuItemClickListener != null) {
-                    mOnMenuItemClickListener.onHistoryClicked();
-                }
-                return true;
-            }
+//            case R.id.history: {
+//                if (mOnMenuItemClickListener != null) {
+//                    mOnMenuItemClickListener.onHistoryClicked();
+//                }
+//                return true;
+//            }
             case R.id.select_on_map: {
                 if (mOnMenuItemClickListener != null) {
                     mOnMenuItemClickListener.onSelectLocationOnMapClicked();

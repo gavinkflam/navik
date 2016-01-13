@@ -45,8 +45,8 @@ public class RouteDisplayFragment extends Fragment implements NavikMapFragment.M
     @Override
     public void onMapLoadComplete() {
         mRoute = new SKRouteSettings();
-        mRoute.setStartCoordinate(new SKCoordinate(114.1707187, 22.4440508));
-        mRoute.setDestinationCoordinate(new SKCoordinate(114.2353906, 22.4660219));
+        mRoute.setStartCoordinate(new SKCoordinate(114.162574, 22.434520));
+        mRoute.setDestinationCoordinate(new SKCoordinate(114.213902, 22.455445));
 
         /*
         mRoute.setDestinationCoordinate(new SKCoordinate(114.1957007, 22.3955298));
