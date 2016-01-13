@@ -35,16 +35,19 @@ public class MainActivity extends WearableActivity {
         switch (mColorMode) {
             case 0: {
                 mContainer.setBackgroundColor(mColorSoon);
+                mMetersToTurn.setText("200 m");
                 mColorMode = 1;
                 break;
             }
             case 1: {
                 mContainer.setBackgroundColor(mColorImmediate);
+                mMetersToTurn.setText("90 m");
                 mColorMode = 2;
                 break;
             }
             default: {
                 mContainer.setBackgroundColor(mColorSafe);
+                mMetersToTurn.setText("300 m");
                 mColorMode = 0;
             }
         }
