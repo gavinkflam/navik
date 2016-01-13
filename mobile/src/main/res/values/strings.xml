@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Navik</string>
     <string name="action_settings">Settings</string>
+    <string name="action_offline_data">Offline Data</string>
 
     <string name="downward_triangle">&#9660;</string>
 
