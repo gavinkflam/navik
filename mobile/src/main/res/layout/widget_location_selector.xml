@@ -47,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/AppTheme.TextAppearance.Medium"
+        android:singleLine="true"
         android:ellipsize="end"
         android:text="@string/current_location"
         android:textColor="@android:color/white"/>
