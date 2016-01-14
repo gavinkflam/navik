@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -38,6 +36,10 @@ public class HomeFragment extends AbstractUiFragment {
 
     LocationSelectorController mLocationSelectorController= new LocationSelectorController();
 
+    public HomeFragment() {
+        setHasOptionsMenu(true);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -45,6 +47,11 @@ public class HomeFragment extends AbstractUiFragment {
 
         initializeFragments();
         initializeViews();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_home, menu);
     }
 
     @Override
@@ -92,6 +99,20 @@ public class HomeFragment extends AbstractUiFragment {
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_offline_data: {
+                return true;
+            }
+            case R.id.action_settings: {
+                return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @OnClick(R.id.startBikeNavigation)
