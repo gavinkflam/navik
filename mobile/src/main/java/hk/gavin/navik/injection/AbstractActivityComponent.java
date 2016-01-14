@@ -9,7 +9,7 @@ import hk.gavin.navik.core.map.NKMapFragment;
 @Component(dependencies = ApplicationComponent.class, modules = ActivityModule.class)
 public interface AbstractActivityComponent {
 
-    void inject(NKMapFragment nkMapFragment);
+    void inject(NKMapFragment mapFragment);
 
     Activity activity();
     @PerActivity Context activityContext();

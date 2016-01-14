@@ -10,31 +10,40 @@ import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
+import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
+import hk.gavin.navik.core.location.NKLocationProvider;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
-public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener {
+public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener, NKLocationProvider.OnLocationUpdateListener {
 
     @Bind(R.id.prefix) TextView mPrefix;
     @Bind(R.id.location_text) TextView mLocationText;
     @Bind(R.id.placeholder) TextView mPlaceholder;
     PopupMenu mPopupMenu;
 
-    @Getter
-    NKLocation mLocation;
+    @BindString(R.string.current_location) String mCurrentLocationString;
+
+    @Getter boolean mUseCurrentLocation = false;
+    @Getter NKLocation mLocation;
+    @Getter @Setter String mLocationName;
     @Setter OnLocationUpdatedListener mOnLocationUpdatedListener;
     @Setter OnMenuItemClickListener mOnMenuItemClickListener;
+
+    private NKLocationProvider mLocationProvider;
+    private NKReverseGeocoder mReverseGeocoder;
 
     public LocationSelector(Context context) {
         super(context);
         initView(context);
-        invalidateLocationDisplay();
+        updateLocationDisplay();
         preparePopupMenu(context);
     }
 
@@ -42,7 +51,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         super(context, attrs);
         initView(context);
         applyStyledAttributes(context, attrs);
-        invalidateLocationDisplay();
+        updateLocationDisplay();
         preparePopupMenu(context);
     }
 
@@ -87,17 +96,50 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mPopupMenu.setOnMenuItemClickListener(this);
     }
 
+    public void initialize(NKLocationProvider locationProvider, NKReverseGeocoder reverseGeocoder) {
+        mLocationProvider = locationProvider;
+        mReverseGeocoder = reverseGeocoder;
+    }
+
     public void setLocation(NKLocation location) {
         mLocation = location;
-        invalidateLocationDisplay();
+        mUseCurrentLocation = false;
+        mLocationProvider.removePositionUpdateListener(this);
+        updateLocationDisplay();
+        invokeOnLocationUpdatedListener();
+    }
 
-        if (mOnLocationUpdatedListener != null) {
-            mOnLocationUpdatedListener.onLocationUpdated(mLocation);
+    public void useCurrentLocation() {
+        mLocation = null;
+        mUseCurrentLocation = true;
+        mLocationProvider.addPositionUpdateListener(this);
+        updateLocationDisplay();
+
+        if (mLocationProvider.isLastLocationAvailable()) {
+            mLocation = mLocationProvider.getLastLocation();
+            invokeOnLocationUpdatedListener();
         }
     }
 
-    public void invalidateLocationDisplay() {
-        if (mLocation == null) {
+    private void invokeOnLocationUpdatedListener() {
+        if (mOnLocationUpdatedListener != null) {
+            mOnLocationUpdatedListener.onLocationUpdated(this, mLocation);
+        }
+    }
+
+    private void updateLocationName() {
+        if (mUseCurrentLocation) {
+            mLocationText.setText(mCurrentLocationString);
+        }
+        else if (mReverseGeocoder != null) {
+            mLocationText.setText(
+                    mReverseGeocoder.getNameFromLocation(mLocation)
+            );
+        }
+    }
+
+    public void updateLocationDisplay() {
+        if (!mUseCurrentLocation && mLocation == null) {
             mPrefix.setVisibility(GONE);
             mLocationText.setVisibility(GONE);
             mPlaceholder.setVisibility(VISIBLE);
@@ -106,7 +148,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
             mPrefix.setVisibility(VISIBLE);
             mLocationText.setVisibility(VISIBLE);
             mPlaceholder.setVisibility(GONE);
-            // mLocationText.setText(mLocation.getName());
+            updateLocationName();
         }
     }
 
@@ -116,11 +158,19 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     @Override
+    public void onLocationUpdated(NKLocation location, double accuracy) {
+        if (mUseCurrentLocation) {
+            mLocation = location;
+            invokeOnLocationUpdatedListener();
+        }
+    }
+
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.current_location: {
                 if (mOnMenuItemClickListener != null) {
-                    mOnMenuItemClickListener.onCurrentLocationClicked();
+                    mOnMenuItemClickListener.onCurrentLocationClicked(this);
                 }
                 return true;
             }
@@ -132,7 +182,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
 //            }
             case R.id.select_on_map: {
                 if (mOnMenuItemClickListener != null) {
-                    mOnMenuItemClickListener.onSelectLocationOnMapClicked();
+                    mOnMenuItemClickListener.onSelectLocationOnMapClicked(this);
                 }
                 return true;
             }
@@ -141,13 +191,13 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     public interface OnLocationUpdatedListener {
-        void onLocationUpdated(NKLocation location);
+        void onLocationUpdated(LocationSelector selector, NKLocation location);
     }
 
     public interface OnMenuItemClickListener {
-        void onCurrentLocationClicked();
-        void onHistoryClicked();
-        void onSelectLocationOnMapClicked();
+        void onCurrentLocationClicked(LocationSelector selector);
+        void onHistoryClicked(LocationSelector selector);
+        void onSelectLocationOnMapClicked(LocationSelector selector);
     }
 
 }

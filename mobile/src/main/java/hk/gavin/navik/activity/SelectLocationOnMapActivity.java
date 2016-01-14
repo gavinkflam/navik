@@ -1,5 +1,6 @@
 package hk.gavin.navik.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +11,7 @@ import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.contract.UiContract;
+import hk.gavin.navik.fragment.SelectLocationOnMapFragment;
 import hk.gavin.navik.injection.ActivityModule;
 import hk.gavin.navik.injection.DaggerSelectLocationOnMapComponent;
 import hk.gavin.navik.injection.SelectLocationOnMapComponent;
@@ -17,9 +19,10 @@ import hk.gavin.navik.injection.SelectLocationOnMapComponent;
 public class SelectLocationOnMapActivity extends AppCompatActivity
         implements AbstractNavikActivity<SelectLocationOnMapComponent> {
 
-    private SelectLocationOnMapComponent mComponent;
-
     @Bind(R.id.toolbar) Toolbar mToolbar;
+    private SelectLocationOnMapFragment mSelectLocationOnMapFragment;
+
+    private SelectLocationOnMapComponent mComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,10 @@ public class SelectLocationOnMapActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getIntent().getStringExtra(UiContract.DATA_TITLE));
+        getSupportActionBar().setTitle(getIntent().getStringExtra(UiContract.DataKey.TITLE));
+
+        mSelectLocationOnMapFragment = (SelectLocationOnMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.select_location_on_map_fragment);
     }
 
     @Override
@@ -51,13 +57,16 @@ public class SelectLocationOnMapActivity extends AppCompatActivity
     }
 
     public void dismissLocationSelection() {
-        setResult(UiContract.RESULT_CANCEL);
+        setResult(UiContract.ResultCode.CANCEL);
         finish();
     }
 
     @OnClick(R.id.confirm)
     void confirmLocationSelection() {
-        setResult(UiContract.RESULT_OK);
+        Intent result = getIntent();
+        result.putExtra(UiContract.DataKey.LOCATION, mSelectLocationOnMapFragment.getLocation());
+        setResult(UiContract.ResultCode.OK, result);
+
         finish();
     }
 

@@ -76,6 +76,10 @@ public class NKMapFragment extends Fragment
         mMapHolder.onResume();
     }
 
+    public NKLocation getMapCenter() {
+        return NKLocation.fromSKCoordinate(mMap.getMapCenter());
+    }
+
     public void moveToCurrentLocationOnceAvailable() {
         if (mLocationProvider != null && mLocationProvider.isLastLocationAvailable()) {
             moveToCurrentLocation();

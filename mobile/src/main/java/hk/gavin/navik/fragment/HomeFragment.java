@@ -1,8 +1,8 @@
 package hk.gavin.navik.fragment;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +12,31 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.activity.SelectLocationOnMapActivity;
 import hk.gavin.navik.contract.UiContract;
+import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
+import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.widget.LocationSelector;
+
+import javax.inject.Inject;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class HomeFragment extends Fragment {
 
+    @Inject NKLocationProvider mLocationProvider;
+    @Inject NKReverseGeocoder mReverseGeocoder;
+
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
 
-    StartingPointHandler mStartingPointHandler = new StartingPointHandler();
-    DestinationPointHandler mDestinationPointHandler = new DestinationPointHandler();
+    LocationSelectorController mLocationSelectorController= new LocationSelectorController();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((HomeActivity) getActivity()).component().inject(this);
+        initializeViews();
     }
 
     @Override
@@ -41,81 +48,88 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mStartingPoint.setLocation(
-                new NKLocation(0, 0)
-        );
-        mDestination.setLocation(
-                new NKLocation(0, 0)
-        );
+        initializeViews();
+    }
 
-        mStartingPoint.setOnLocationUpdatedListener(mStartingPointHandler);
-        mStartingPoint.setOnMenuItemClickListener(mStartingPointHandler);
+    private void initializeViews() {
+        if (mLocationProvider == null || mStartingPoint == null) {
+            return;
+        }
 
-        mDestination.setOnLocationUpdatedListener(mDestinationPointHandler);
-        mDestination.setOnMenuItemClickListener(mDestinationPointHandler);
+        mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
+        mDestination.initialize(mLocationProvider, mReverseGeocoder);
+        mStartingPoint.useCurrentLocation();
+        mDestination.setLocation(null);
+
+        mStartingPoint.setOnLocationUpdatedListener(mLocationSelectorController);
+        mStartingPoint.setOnMenuItemClickListener(mLocationSelectorController);
+
+        mDestination.setOnLocationUpdatedListener(mLocationSelectorController);
+        mDestination.setOnMenuItemClickListener(mLocationSelectorController);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        switch (requestCode) {
+            case UiContract.RequestCode.STARTING_POINT_LOCATION: {
+                if (resultCode == UiContract.ResultCode.OK) {
+                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
+                    mStartingPoint.setLocation(location);
+                }
+                break;
+            }
+            case UiContract.RequestCode.DESTINATION_LOCATION: {
+                if (resultCode == UiContract.ResultCode.OK) {
+                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
+                    mDestination.setLocation(location);
+                }
+                break;
+            }
+        }
     }
 
-    public static class RequestCode {
-        public static int STARTING_POINT_LOCATION = 1;
-        public static int STARTING_POINT_HISTORY = 1;
-        public static int DESTINATION_LOCATION = 3;
-        public static int DESTINATION_HISTORY = 3;
-    }
-
-    private class StartingPointHandler implements LocationSelector.OnLocationUpdatedListener,
+    private class LocationSelectorController implements LocationSelector.OnLocationUpdatedListener,
             LocationSelector.OnMenuItemClickListener {
 
         @Override
-        public void onLocationUpdated(NKLocation location) {
+        public void onLocationUpdated(LocationSelector selector, NKLocation location) {
 
         }
 
         @Override
-        public void onCurrentLocationClicked() {
+        public void onCurrentLocationClicked(LocationSelector selector) {
+            switch (selector.getId()) {
+                case R.id.startingPoint: {
+                    mStartingPoint.useCurrentLocation();
+                    break;
+                }
+                case R.id.destination: {
+                    mDestination.useCurrentLocation();
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public void onHistoryClicked(LocationSelector selector) {
 
         }
 
         @Override
-        public void onHistoryClicked() {
-
-        }
-
-        @Override
-        public void onSelectLocationOnMapClicked() {
+        public void onSelectLocationOnMapClicked(LocationSelector selector) {
             Intent startActivity = new Intent(HomeFragment.this.getContext(), SelectLocationOnMapActivity.class);
-            startActivity.putExtra(UiContract.DATA_TITLE, getString(R.string.select_starting_point));
-            startActivityForResult(startActivity, RequestCode.STARTING_POINT_LOCATION);
-        }
-    }
-
-    private class DestinationPointHandler implements LocationSelector.OnLocationUpdatedListener,
-            LocationSelector.OnMenuItemClickListener {
-
-        @Override
-        public void onLocationUpdated(NKLocation location) {
-
-        }
-
-        @Override
-        public void onCurrentLocationClicked() {
-
-        }
-
-        @Override
-        public void onHistoryClicked() {
-
-        }
-
-        @Override
-        public void onSelectLocationOnMapClicked() {
-            Intent startActivity = new Intent(HomeFragment.this.getContext(), SelectLocationOnMapActivity.class);
-            startActivity.putExtra(UiContract.DATA_TITLE, getString(R.string.select_destination));
-            startActivityForResult(startActivity, RequestCode.DESTINATION_LOCATION);
+            switch (selector.getId()) {
+                case R.id.startingPoint: {
+                    startActivity.putExtra(UiContract.DataKey.TITLE, getString(R.string.select_destination));
+                    startActivityForResult(startActivity, UiContract.RequestCode.STARTING_POINT_LOCATION);
+                    break;
+                }
+                case R.id.destination: {
+                    startActivity.putExtra(UiContract.DataKey.TITLE, getString(R.string.select_destination));
+                    startActivityForResult(startActivity, UiContract.RequestCode.DESTINATION_LOCATION);
+                    break;
+                }
+            }
         }
     }
 

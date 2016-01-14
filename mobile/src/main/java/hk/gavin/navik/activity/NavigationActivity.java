@@ -54,7 +54,7 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     public void cancelNavigation() {
-        setResult(UiContract.RESULT_CANCEL);
+        setResult(UiContract.ResultCode.CANCEL);
         finish();
     }
 

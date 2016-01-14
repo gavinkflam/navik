@@ -4,6 +4,8 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import hk.gavin.navik.application.NKApplication;
+import hk.gavin.navik.core.geocode.NKReverseGeocoder;
+import hk.gavin.navik.core.geocode.NKSkobblerReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
 import hk.gavin.navik.preference.MainPreferences;
@@ -16,6 +18,7 @@ public class ApplicationModule {
     private final NKApplication mApplication;
     private MainPreferences mMainPreferences;
     private NKLocationProvider mNKLocationProvider;
+    private NKReverseGeocoder mNKReverseGeocoder;
 
     public ApplicationModule(NKApplication nkApplication) {
         mApplication = nkApplication;
@@ -38,11 +41,19 @@ public class ApplicationModule {
     }
 
     @Provides @Singleton
-    NKLocationProvider navikLocationProvider() {
+    NKLocationProvider locationProvider() {
         if (mNKLocationProvider == null) {
             mNKLocationProvider = new NKSkobblerLocationProvider(mApplication);
         }
         return mNKLocationProvider;
+    }
+
+    @Provides @Singleton
+    NKReverseGeocoder reverseGeocoder() {
+        if (mNKReverseGeocoder == null) {
+            mNKReverseGeocoder = new NKSkobblerReverseGeocoder();
+        }
+        return mNKReverseGeocoder;
     }
 
 }

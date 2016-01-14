@@ -2,7 +2,9 @@ package hk.gavin.navik.core.location;
 
 import com.skobbler.ngx.SKCoordinate;
 
-public class NKLocation {
+import java.io.Serializable;
+
+public class NKLocation implements Serializable {
 
     final double latitude;
     final double longitude;

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.SelectLocationOnMapActivity;
+import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 
@@ -36,5 +37,12 @@ public class SelectLocationOnMapFragment extends Fragment {
         mMap = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.locationSelectionMap);
         mMap.showMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
+    }
+
+    public NKLocation getLocation() {
+        if (mMap != null) {
+            return mMap.getMapCenter();
+        }
+        return null;
     }
 }
