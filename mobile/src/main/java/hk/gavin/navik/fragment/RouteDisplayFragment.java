@@ -10,11 +10,15 @@ import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.*;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
-import hk.gavin.navik.map.NKMapFragment;
+import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.core.map.NKMapFragment;
+
+import javax.inject.Inject;
 
 public class RouteDisplayFragment extends Fragment implements NKMapFragment.MapEventsListener {
 
-    NKMapFragment mNKMapFragment;
+    @Inject NKLocationProvider mLocationProvider;
+    NKMapFragment mMap;
 
     private SKRouteManager mRouteManager = SKRouteManager.getInstance();
     private RouteHandler mRouteHandler = new RouteHandler();
@@ -36,10 +40,10 @@ public class RouteDisplayFragment extends Fragment implements NKMapFragment.MapE
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mNKMapFragment = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.routeDisplayMap);
-        mNKMapFragment.hideMoveToCurrentLocationButton();
-        mNKMapFragment.moveToCurrentLocationOnceAvailable();
-        mNKMapFragment.setMapEventsListener(this);
+        mMap = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.routeDisplayMap);
+        mMap.hideMoveToCurrentLocationButton();
+        mMap.moveToCurrentLocationOnceAvailable();
+        mMap.setMapEventsListener(this);
     }
 
     @Override

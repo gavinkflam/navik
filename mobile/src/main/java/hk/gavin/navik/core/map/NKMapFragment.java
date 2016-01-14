@@ -1,4 +1,4 @@
-package hk.gavin.navik.map;
+package hk.gavin.navik.core.map;
 
 
 import android.graphics.Bitmap;

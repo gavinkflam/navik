@@ -15,7 +15,8 @@ import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.NavigationActivity;
-import hk.gavin.navik.map.NKMapFragment;
+import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.preference.MainPreferences;
 
 import javax.inject.Inject;
@@ -23,8 +24,9 @@ import javax.inject.Inject;
 public class NavigationFragment extends Fragment implements NKMapFragment.MapEventsListener {
 
     @Inject MainPreferences mMainPreferences;
+    @Inject NKLocationProvider mLocationProvider;
 
-    NKMapFragment mNKMapFragment;
+    NKMapFragment mMap;
 
     private NavigationListener mNavigationListener = new NavigationListener();
     private SKToolsNavigationManager mNavigationManager;
@@ -45,9 +47,9 @@ public class NavigationFragment extends Fragment implements NKMapFragment.MapEve
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mNKMapFragment = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.navigationMap);
-        mNKMapFragment.hideMoveToCurrentLocationButton();
-        mNKMapFragment.setMapEventsListener(this);
+        mMap = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.navigationMap);
+        mMap.hideMoveToCurrentLocationButton();
+        mMap.setMapEventsListener(this);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class NavigationFragment extends Fragment implements NKMapFragment.MapEve
         configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
 
         mNavigationManager.setNavigationListener(mNavigationListener);
-        mNavigationManager.startNavigation(configuration, mNKMapFragment.getMapHolder());
+        mNavigationManager.startNavigation(configuration, mMap.getMapHolder());
     }
 
     private class NavigationListener implements SKToolsNavigationListener {
