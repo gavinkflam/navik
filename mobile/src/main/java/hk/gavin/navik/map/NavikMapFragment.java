@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.AbstractNavikActivity;
+import hk.gavin.navik.location.NavikLocation;
 import hk.gavin.navik.location.NavikLocationProvider;
 import lombok.Getter;
 import lombok.Setter;
@@ -108,8 +108,7 @@ public class NavikMapFragment extends Fragment
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
         if (mMap != null && mLocationProvider != null && mLocationProvider.isLastLocationAvailable()) {
-            Pair<Double, Double> location = mLocationProvider.getLastLocation();
-            SKCoordinate coordinate = new SKCoordinate(location.second, location.first);
+            SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
 
             mMap.setPositionAsCurrent(coordinate, (float) mLocationProvider.getLastLocationAccuracy(), false);
             mMap.centerMapOnPositionSmooth(coordinate, 200);
@@ -117,10 +116,10 @@ public class NavikMapFragment extends Fragment
     }
 
     @Override
-    public void onLocationUpdated(double latitude, double longitude, double accuracy) {
+    public void onLocationUpdated(NavikLocation location, double accuracy) {
         if (mMap != null) {
             mMap.setPositionAsCurrent(
-                    new SKCoordinate(longitude, latitude), (float) accuracy, mPendingMoveToCurrentLocation
+                    location.toSKCoordinate(), (float) accuracy, mPendingMoveToCurrentLocation
             );
             mPendingMoveToCurrentLocation = false;
         }
@@ -150,8 +149,7 @@ public class NavikMapFragment extends Fragment
 
         // Trigger location update immediately if applicable
         if (mLocationProvider.isLastLocationAvailable()) {
-            Pair<Double, Double> location = mLocationProvider.getLastLocation();
-            onLocationUpdated(location.first, location.second, mLocationProvider.getLastLocationAccuracy());
+            onLocationUpdated(mLocationProvider.getLastLocation(), mLocationProvider.getLastLocationAccuracy());
         }
 
         if (mMapEventsListener != null) {

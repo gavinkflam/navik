@@ -105,7 +105,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
             mPrefix.setVisibility(VISIBLE);
             mLocationText.setVisibility(VISIBLE);
             mPlaceholder.setVisibility(GONE);
-            mLocationText.setText(mLocation.getName());
+            // mLocationText.setText(mLocation.getName());
         }
     }
 

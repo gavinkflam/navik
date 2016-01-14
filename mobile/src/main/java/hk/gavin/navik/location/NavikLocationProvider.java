@@ -1,7 +1,6 @@
 package hk.gavin.navik.location;
 
 import android.content.Context;
-import android.util.Pair;
 import com.skobbler.ngx.positioner.SKCurrentPositionListener;
 import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
 import com.skobbler.ngx.positioner.SKPosition;
@@ -15,7 +14,7 @@ public class NavikLocationProvider implements SKCurrentPositionListener {
 
     private SKCurrentPositionProvider mProvider;
 
-    @Getter private Pair<Double, Double> mLastLocation;
+    @Getter private NavikLocation mLastLocation;
     @Getter private double mLastLocationAccuracy;
 
     private ArrayList<OnLocationUpdateListener> mListeners = new ArrayList<>();
@@ -27,15 +26,11 @@ public class NavikLocationProvider implements SKCurrentPositionListener {
 
     @Override
     public void onCurrentPositionUpdate(SKPosition skPosition) {
-        mLastLocation = new Pair<>(
-                skPosition.getCoordinate().getLatitude(), skPosition.getCoordinate().getLongitude()
-        );
+        mLastLocation = NavikLocation.fromSKCoordinate(skPosition.getCoordinate());
         mLastLocationAccuracy = skPosition.getHorizontalAccuracy();
 
         for (OnLocationUpdateListener listener: mListeners) {
-            listener.onLocationUpdated(
-                    mLastLocation.first, mLastLocation.second, mLastLocationAccuracy
-            );
+            listener.onLocationUpdated(mLastLocation, mLastLocationAccuracy);
         }
     }
 
@@ -60,7 +55,7 @@ public class NavikLocationProvider implements SKCurrentPositionListener {
     }
 
     public interface OnLocationUpdateListener {
-        void onLocationUpdated(double latitude, double longitude, double accuracy);
+        void onLocationUpdated(NavikLocation location, double accuracy);
     }
 
 }

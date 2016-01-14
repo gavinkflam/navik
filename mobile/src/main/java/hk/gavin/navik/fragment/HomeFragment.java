@@ -42,10 +42,10 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         mStartingPoint.setLocation(
-                new NavikLocation(getString(R.string.current_location), 0, 0)
+                new NavikLocation(0, 0)
         );
         mDestination.setLocation(
-                new NavikLocation("Sam Mun Tsai", 0, 0)
+                new NavikLocation(0, 0)
         );
 
         mStartingPoint.setOnLocationUpdatedListener(mStartingPointHandler);
