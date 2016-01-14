@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import hk.gavin.navik.R;
-import hk.gavin.navik.application.NavikApplication;
+import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.fragment.NavigationFragment;
 import hk.gavin.navik.injection.ActivityModule;
@@ -61,7 +61,7 @@ public class NavigationActivity extends AppCompatActivity
     public NavigationComponent component() {
         if (mComponent == null) {
             mComponent = DaggerNavigationComponent.builder()
-                    .applicationComponent(NavikApplication.getInstance().component())
+                    .applicationComponent(NKApplication.getInstance().component())
                     .activityModule(new ActivityModule(this))
                     .build();
             mComponent.inject(this);

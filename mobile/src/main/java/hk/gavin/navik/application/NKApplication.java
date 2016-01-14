@@ -10,9 +10,9 @@ import hk.gavin.navik.util.StorageUtility;
 
 import javax.inject.Inject;
 
-public class NavikApplication extends Application {
+public class NKApplication extends Application {
 
-    private static NavikApplication mInstance;
+    private static NKApplication mInstance;
     private ApplicationComponent mApplicationComponent;
 
     @Inject MainPreferences mMainPreferences;
@@ -30,7 +30,7 @@ public class NavikApplication extends Application {
         SkobblerUtility.prepareAndInitializeLibrary();
     }
 
-    public static NavikApplication getInstance() {
+    public static NKApplication getInstance() {
         return mInstance;
     }
 

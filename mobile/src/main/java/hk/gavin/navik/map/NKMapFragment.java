@@ -15,8 +15,8 @@ import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.AbstractNavikActivity;
-import hk.gavin.navik.location.NavikLocation;
-import hk.gavin.navik.location.NavikLocationProvider;
+import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.core.location.NKLocation;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,10 +24,11 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class NavikMapFragment extends Fragment
-        implements SKMapSurfaceListener, NavikLocationProvider.OnLocationUpdateListener {
+public class NKMapFragment extends Fragment
+        implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener {
 
-    @Inject NavikLocationProvider mLocationProvider;
+    @Inject
+    NKLocationProvider mLocationProvider;
 
     @Bind(R.id.mapHolder) @Getter SKMapViewHolder mMapHolder;
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
@@ -116,7 +117,7 @@ public class NavikMapFragment extends Fragment
     }
 
     @Override
-    public void onLocationUpdated(NavikLocation location, double accuracy) {
+    public void onLocationUpdated(NKLocation location, double accuracy) {
         if (mMap != null) {
             mMap.setPositionAsCurrent(
                     location.toSKCoordinate(), (float) accuracy, mPendingMoveToCurrentLocation

@@ -8,7 +8,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
-import hk.gavin.navik.application.NavikApplication;
+import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.injection.ActivityModule;
 import hk.gavin.navik.injection.DaggerSelectLocationOnMapComponent;
@@ -64,7 +64,7 @@ public class SelectLocationOnMapActivity extends AppCompatActivity
     public SelectLocationOnMapComponent component() {
         if (mComponent == null) {
             mComponent = DaggerSelectLocationOnMapComponent.builder()
-                    .applicationComponent(NavikApplication.getInstance().component())
+                    .applicationComponent(NKApplication.getInstance().component())
                     .activityModule(new ActivityModule(this))
                     .build();
             mComponent.inject(this);

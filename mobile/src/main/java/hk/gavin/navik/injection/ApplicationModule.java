@@ -3,8 +3,8 @@ package hk.gavin.navik.injection;
 import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
-import hk.gavin.navik.application.NavikApplication;
-import hk.gavin.navik.location.NavikLocationProvider;
+import hk.gavin.navik.application.NKApplication;
+import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.preference.MainPreferences;
 
 import javax.inject.Singleton;
@@ -12,16 +12,16 @@ import javax.inject.Singleton;
 @Module
 public class ApplicationModule {
 
-    private final NavikApplication mApplication;
+    private final NKApplication mApplication;
     private MainPreferences mMainPreferences;
-    private NavikLocationProvider mNavikLocationProvider;
+    private NKLocationProvider mNKLocationProvider;
 
-    public ApplicationModule(NavikApplication navikApplication) {
-        mApplication = navikApplication;
+    public ApplicationModule(NKApplication nkApplication) {
+        mApplication = nkApplication;
     }
 
     @Provides @Singleton
-    NavikApplication application() {
+    NKApplication application() {
         return mApplication;
     }
 
@@ -36,11 +36,12 @@ public class ApplicationModule {
         return mMainPreferences;
     }
 
-    @Provides @Singleton NavikLocationProvider navikLocationProvider() {
-        if (mNavikLocationProvider == null) {
-            mNavikLocationProvider = new NavikLocationProvider(mApplication);
+    @Provides @Singleton
+    NKLocationProvider navikLocationProvider() {
+        if (mNKLocationProvider == null) {
+            mNKLocationProvider = new NKLocationProvider(mApplication);
         }
-        return mNavikLocationProvider;
+        return mNKLocationProvider;
     }
 
 }

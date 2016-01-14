@@ -5,7 +5,7 @@ import com.skobbler.ngx.*;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
 import com.skobbler.ngx.util.SKLogging;
-import hk.gavin.navik.application.NavikApplication;
+import hk.gavin.navik.application.NKApplication;
 
 import java.io.File;
 
@@ -13,7 +13,7 @@ public class SkobblerUtility {
 
     public static boolean prepareAndInitializeLibrary() {
         SKLogging.enableLogs(true);
-        final NavikApplication app = NavikApplication.getInstance();
+        final NKApplication app = NKApplication.getInstance();
 
         if (!new File(app.getMapResourcesPath()).exists()) {
             new SKPrepareMapTextureThread(
@@ -37,7 +37,7 @@ public class SkobblerUtility {
     }
 
     public static boolean initializeLibrary() {
-        final NavikApplication app = NavikApplication.getInstance();
+        final NKApplication app = NKApplication.getInstance();
         final String mapResourcesPath = app.getMapResourcesPath();
         SKMapsInitSettings mapsInitSettings = new SKMapsInitSettings();
 

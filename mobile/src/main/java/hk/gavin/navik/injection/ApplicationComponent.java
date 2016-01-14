@@ -2,8 +2,8 @@ package hk.gavin.navik.injection;
 
 import android.content.Context;
 import dagger.Component;
-import hk.gavin.navik.application.NavikApplication;
-import hk.gavin.navik.location.NavikLocationProvider;
+import hk.gavin.navik.application.NKApplication;
+import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.preference.MainPreferences;
 
 import javax.inject.Singleton;
@@ -12,10 +12,10 @@ import javax.inject.Singleton;
 @Component(modules = ApplicationModule.class)
 public interface ApplicationComponent {
 
-    void inject(NavikApplication application);
+    void inject(NKApplication application);
 
-    NavikApplication application();
+    NKApplication application();
     @ForApplication Context applicationContext();
     MainPreferences mainPreferences();
-    NavikLocationProvider navikLocationProvider();
+    NKLocationProvider navikLocationProvider();
 }

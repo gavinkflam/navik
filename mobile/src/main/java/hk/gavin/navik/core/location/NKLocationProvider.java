@@ -1,4 +1,4 @@
-package hk.gavin.navik.location;
+package hk.gavin.navik.core.location;
 
 import android.content.Context;
 import com.skobbler.ngx.positioner.SKCurrentPositionListener;
@@ -10,23 +10,23 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 
 @Accessors(prefix = "m")
-public class NavikLocationProvider implements SKCurrentPositionListener {
+public class NKLocationProvider implements SKCurrentPositionListener {
 
     private SKCurrentPositionProvider mProvider;
 
-    @Getter private NavikLocation mLastLocation;
+    @Getter private NKLocation mLastLocation;
     @Getter private double mLastLocationAccuracy;
 
     private ArrayList<OnLocationUpdateListener> mListeners = new ArrayList<>();
 
-    public NavikLocationProvider(Context context) {
+    public NKLocationProvider(Context context) {
         mProvider = new SKCurrentPositionProvider(context);
         mProvider.setCurrentPositionListener(this);
     }
 
     @Override
     public void onCurrentPositionUpdate(SKPosition skPosition) {
-        mLastLocation = NavikLocation.fromSKCoordinate(skPosition.getCoordinate());
+        mLastLocation = NKLocation.fromSKCoordinate(skPosition.getCoordinate());
         mLastLocationAccuracy = skPosition.getHorizontalAccuracy();
 
         for (OnLocationUpdateListener listener: mListeners) {
@@ -55,7 +55,7 @@ public class NavikLocationProvider implements SKCurrentPositionListener {
     }
 
     public interface OnLocationUpdateListener {
-        void onLocationUpdated(NavikLocation location, double accuracy);
+        void onLocationUpdated(NKLocation location, double accuracy);
     }
 
 }

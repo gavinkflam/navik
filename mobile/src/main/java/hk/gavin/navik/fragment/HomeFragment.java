@@ -12,7 +12,7 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.activity.SelectLocationOnMapActivity;
 import hk.gavin.navik.contract.UiContract;
-import hk.gavin.navik.location.NavikLocation;
+import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.widget.LocationSelector;
 
 /**
@@ -42,10 +42,10 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         mStartingPoint.setLocation(
-                new NavikLocation(0, 0)
+                new NKLocation(0, 0)
         );
         mDestination.setLocation(
-                new NavikLocation(0, 0)
+                new NKLocation(0, 0)
         );
 
         mStartingPoint.setOnLocationUpdatedListener(mStartingPointHandler);
@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
             LocationSelector.OnMenuItemClickListener {
 
         @Override
-        public void onLocationUpdated(NavikLocation location) {
+        public void onLocationUpdated(NKLocation location) {
 
         }
 
@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment {
             LocationSelector.OnMenuItemClickListener {
 
         @Override
-        public void onLocationUpdated(NavikLocation location) {
+        public void onLocationUpdated(NKLocation location) {
 
         }
 

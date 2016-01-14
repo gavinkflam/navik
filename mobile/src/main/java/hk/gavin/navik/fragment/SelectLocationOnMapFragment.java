@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.SelectLocationOnMapActivity;
-import hk.gavin.navik.map.NavikMapFragment;
+import hk.gavin.navik.map.NKMapFragment;
 
 public class SelectLocationOnMapFragment extends Fragment {
 
-    NavikMapFragment mNavikMapFragment;
+    NKMapFragment mNKMapFragment;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -29,8 +29,8 @@ public class SelectLocationOnMapFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mNavikMapFragment = (NavikMapFragment) getChildFragmentManager().findFragmentById(R.id.locationSelectionMap);
-        mNavikMapFragment.showMoveToCurrentLocationButton();
-        mNavikMapFragment.moveToCurrentLocationOnceAvailable();
+        mNKMapFragment = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.locationSelectionMap);
+        mNKMapFragment.showMoveToCurrentLocationButton();
+        mNKMapFragment.moveToCurrentLocationOnceAvailable();
     }
 }

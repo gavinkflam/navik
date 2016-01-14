@@ -11,7 +11,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
-import hk.gavin.navik.application.NavikApplication;
+import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.injection.ActivityModule;
 import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity
     public HomeComponent component() {
         if (mComponent == null) {
             mComponent = DaggerHomeComponent.builder()
-                    .applicationComponent(NavikApplication.getInstance().component())
+                    .applicationComponent(NKApplication.getInstance().component())
                     .activityModule(new ActivityModule(this))
                     .build();
             mComponent.inject(this);
