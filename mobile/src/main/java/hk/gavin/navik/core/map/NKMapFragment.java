@@ -38,11 +38,6 @@ public class NKMapFragment extends Fragment
     private boolean mPendingMoveToCurrentLocation = false;
     private boolean mDisplayMoveToCurrentLocationButton = false;
 
-    static {
-        // In order to support multiple maps
-        SKMapSurfaceView.preserveGLContext = false;
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

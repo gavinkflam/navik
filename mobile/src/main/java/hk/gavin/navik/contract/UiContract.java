@@ -10,6 +10,7 @@ public class UiContract {
     }
 
     public static final class ResultCode {
+        public static final int NULL = -1;
         public static final int CANCEL = 0;
         public static final int OK = 1;
 
@@ -20,4 +21,11 @@ public class UiContract {
         public static final String LOCATION = "location";
     }
 
+    public static final class FragmentTag {
+        public static final String HOME = "home";
+        public static final String SELECT_STARTING_POINT = "select_starting_point";
+        public static final String SELECT_DESTINATION = "select_destination";
+        public static final String HOME_MAP = "home_map";
+        public static final String ROUTE_DISPLAY = "route_display";
+    }
 }

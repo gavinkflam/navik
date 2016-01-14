@@ -3,15 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".fragment.SelectLocationOnMapFragment"
-             tools:showIn="@layout/activity_select_location_on_map">
-
-    <fragment
-        android:id="@+id/locationSelectionMap"
-        android:name="hk.gavin.navik.core.map.NKMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_navik_map" />
+             tools:context=".fragment.SelectLocationOnMapFragment">
 
     <android.support.v7.widget.AppCompatImageView
         android:layout_width="wrap_content"
@@ -20,4 +12,12 @@
         android:backgroundTint="@color/colorPrimaryTint1"
         android:layout_marginBottom="18dp"
         android:layout_gravity="center"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/confirmLocationSelection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_check_white_24dp"/>
 </FrameLayout>

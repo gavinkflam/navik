@@ -1,28 +1,34 @@
 package hk.gavin.navik.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.SelectLocationOnMapActivity;
-import hk.gavin.navik.core.location.NKLocation;
+import hk.gavin.navik.activity.HomeActivity;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.ui.HomeController;
 
 import javax.inject.Inject;
 
-public class SelectLocationOnMapFragment extends Fragment {
+public class SelectLocationOnMapFragment extends AbstractUiFragment {
 
     @Inject NKLocationProvider mLocationProvider;
+    @Inject HomeController mController;
+
     NKMapFragment mMap;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((SelectLocationOnMapActivity) getActivity()).component().inject(this);
+        ((HomeActivity) getActivity()).component().inject(this);
+        initializeFragments();
     }
 
     @Override
@@ -34,15 +40,45 @@ public class SelectLocationOnMapFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mMap = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.locationSelectionMap);
+        initializeFragments();
+    }
+
+    @Override
+    public void onViewVisible() {
         mMap.showMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
     }
 
-    public NKLocation getLocation() {
-        if (mMap != null) {
-            return mMap.getMapCenter();
+    private void initializeFragments() {
+        if (mController == null) {
+            return;
         }
-        return null;
+
+        mMap = mController.getMap();
+        onViewVisible();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                dismissLocationSelection();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void dismissLocationSelection() {
+        mController.goBack();
+    }
+
+    @OnClick(R.id.confirmLocationSelection)
+    void confirmLocationSelection() {
+        Intent result = new Intent();
+        result.putExtra(UiContract.DataKey.LOCATION, mMap.getMapCenter());
+
+        mController.setResultData(UiContract.ResultCode.OK, result);
+        mController.goBack();
     }
 }

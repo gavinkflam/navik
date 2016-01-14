@@ -1,7 +1,6 @@
 package hk.gavin.navik.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,14 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.ui.HomeController;
 
 import javax.inject.Inject;
 
-public class RouteDisplayFragment extends Fragment implements NKMapFragment.MapEventsListener {
+public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFragment.MapEventsListener {
 
     @Inject NKLocationProvider mLocationProvider;
+    @Inject HomeController mController;
     NKMapFragment mMap;
 
     private SKRouteManager mRouteManager = SKRouteManager.getInstance();
@@ -29,6 +30,7 @@ public class RouteDisplayFragment extends Fragment implements NKMapFragment.MapE
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((HomeActivity) getActivity()).component().inject(this);
+        initializeFragments();
     }
 
     @Override
@@ -40,10 +42,33 @@ public class RouteDisplayFragment extends Fragment implements NKMapFragment.MapE
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mMap = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.routeDisplayMap);
+        initializeFragments();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onViewVisible();
+    }
+
+    @Override
+    public void onViewVisible() {
+        if (mMap == null) {
+            return;
+        }
+
         mMap.hideMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
         mMap.setMapEventsListener(this);
+    }
+
+    private void initializeFragments() {
+        if (mController == null) {
+            return;
+        }
+
+        mMap = mController.getMap();
+        onViewVisible();
     }
 
     @Override

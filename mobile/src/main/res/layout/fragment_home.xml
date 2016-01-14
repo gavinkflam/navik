@@ -1,38 +1,59 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:showIn="@layout/activity_home"
-              tools:context=".fragment.HomeFragment">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.HomeFragment">
 
-    <LinearLayout
-        style="@style/AppTheme.ElevatedSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
 
-        <hk.gavin.navik.widget.LocationSelector
-            android:id="@+id/startingPoint"
-            app:prefix="@string/location_prefix_from"
-            app:placeholder="@string/select_starting_point"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <LinearLayout
+            style="@style/AppTheme.ElevatedSheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <hk.gavin.navik.widget.LocationSelector
-            android:id="@+id/destination"
-            app:prefix="@string/location_prefix_to"
-            app:placeholder="@string/select_destination"
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <hk.gavin.navik.widget.LocationSelector
+                android:id="@+id/startingPoint"
+                app:prefix="@string/location_prefix_from"
+                app:placeholder="@string/select_starting_point"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
+            <hk.gavin.navik.widget.LocationSelector
+                android:id="@+id/destination"
+                app:prefix="@string/location_prefix_to"
+                app:placeholder="@string/select_destination"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/homeContentFrame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/routeDisplayFragment"
-        android:name="hk.gavin.navik.fragment.RouteDisplayFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/startBikeNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_directions_bike_white_24dp"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/loadTrack"
+        app:fabSize="mini"
+        app:backgroundTint="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:tint="@android:color/darker_gray"
+        android:src="@drawable/ic_track_black_24dp"/>
+</FrameLayout>

@@ -2,7 +2,7 @@ package hk.gavin.navik.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +10,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
-import hk.gavin.navik.activity.SelectLocationOnMapActivity;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.ui.HomeController;
 import hk.gavin.navik.widget.LocationSelector;
 
 import javax.inject.Inject;
@@ -22,13 +22,17 @@ import javax.inject.Inject;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends AbstractUiFragment {
 
+    @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
 
+    @Bind(R.id.startBikeNavigation) FloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
+
+    private RouteDisplayFragment mRouteDisplay;
 
     LocationSelectorController mLocationSelectorController= new LocationSelectorController();
 
@@ -36,6 +40,8 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((HomeActivity) getActivity()).component().inject(this);
+
+        initializeFragments();
         initializeViews();
     }
 
@@ -48,7 +54,45 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
+        initializeFragments();
         initializeViews();
+    }
+
+    @Override
+    public void onViewVisible() {
+        if (mRouteDisplay != null) {
+            mRouteDisplay.onViewVisible();
+        }
+    }
+
+    @Override
+    public void onResultAvailable(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case UiContract.RequestCode.STARTING_POINT_LOCATION: {
+                if (resultCode == UiContract.ResultCode.OK) {
+                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
+                    mStartingPoint.setLocation(location);
+                }
+                break;
+            }
+            case UiContract.RequestCode.DESTINATION_LOCATION: {
+                if (resultCode == UiContract.ResultCode.OK) {
+                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
+                    mDestination.setLocation(location);
+                }
+                break;
+            }
+        }
+    }
+
+    private void initializeFragments() {
+        if (mController == null) {
+            return;
+        }
+
+        mRouteDisplay = mController.replaceFragment(
+                R.id.homeContentFrame, RouteDisplayFragment.class, UiContract.FragmentTag.ROUTE_DISPLAY
+        );
     }
 
     private void initializeViews() {
@@ -66,26 +110,6 @@ public class HomeFragment extends Fragment {
 
         mDestination.setOnLocationUpdatedListener(mLocationSelectorController);
         mDestination.setOnMenuItemClickListener(mLocationSelectorController);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case UiContract.RequestCode.STARTING_POINT_LOCATION: {
-                if (resultCode == UiContract.ResultCode.OK) {
-                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
-                    mStartingPoint.setLocation(location);
-                }
-                break;
-            }
-            case UiContract.RequestCode.DESTINATION_LOCATION: {
-                if (resultCode == UiContract.ResultCode.OK) {
-                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
-                    mDestination.setLocation(location);
-                }
-                break;
-            }
-        }
     }
 
     private class LocationSelectorController implements LocationSelector.OnLocationUpdatedListener,
@@ -117,16 +141,13 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onSelectLocationOnMapClicked(LocationSelector selector) {
-            Intent startActivity = new Intent(HomeFragment.this.getContext(), SelectLocationOnMapActivity.class);
             switch (selector.getId()) {
                 case R.id.startingPoint: {
-                    startActivity.putExtra(UiContract.DataKey.TITLE, getString(R.string.select_destination));
-                    startActivityForResult(startActivity, UiContract.RequestCode.STARTING_POINT_LOCATION);
+                    mController.selectStartingPoint();
                     break;
                 }
                 case R.id.destination: {
-                    startActivity.putExtra(UiContract.DataKey.TITLE, getString(R.string.select_destination));
-                    startActivityForResult(startActivity, UiContract.RequestCode.DESTINATION_LOCATION);
+                    mController.selectDestination();
                     break;
                 }
             }
