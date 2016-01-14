@@ -3,6 +3,7 @@ package hk.gavin.navik.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,13 @@ public class HomeFragment extends AbstractUiFragment {
     public void onViewVisible() {
         if (mRouteDisplay != null) {
             mRouteDisplay.onViewVisible();
+        }
+
+        ActionBar actionBar = mController.getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.app_name);
+            actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
         }
     }
 

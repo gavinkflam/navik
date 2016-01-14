@@ -2,6 +2,7 @@ package hk.gavin.navik.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,22 @@ public class SelectLocationOnMapFragment extends AbstractUiFragment {
     public void onViewVisible() {
         mMap.showMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
+
+        ActionBar actionBar = mController.getActionBar();
+        if (actionBar != null) {
+            switch (mController.getRequestCode()) {
+                case UiContract.RequestCode.STARTING_POINT_LOCATION: {
+                    actionBar.setTitle(R.string.select_starting_point);
+                    break;
+                }
+                case UiContract.RequestCode.DESTINATION_LOCATION: {
+                    actionBar.setTitle(R.string.select_destination);
+                    break;
+                }
+            }
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void initializeFragments() {
@@ -62,15 +79,11 @@ public class SelectLocationOnMapFragment extends AbstractUiFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
-                dismissLocationSelection();
+                mController.goBack();
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void dismissLocationSelection() {
-        mController.goBack();
     }
 
     @OnClick(R.id.confirmLocationSelection)

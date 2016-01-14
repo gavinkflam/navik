@@ -1,7 +1,9 @@
 package hk.gavin.navik.fragment;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
@@ -55,15 +57,50 @@ public class NavigationFragment extends AbstractUiFragment implements NKMapFragm
 
     @Override
     public void onViewVisible() {
-        if (mMap == null) {
-            return;
-        }
-
         mMap.hideMoveToCurrentLocationButton();
         mMap.setMapEventsListener(this);
+
+        ActionBar actionBar = mController.getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.navigation);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         startNavigationSimulation();
     }
 
+    @Override
+    public void onStop() {
+        stopNavigation();
+        super.onStop();
+    }
+
+    @Override
+    public void onMapLoadComplete() {
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                stopNavigation();
+                mController.goBack();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        stopNavigation();
+    }
+
+    public void stopNavigation() {
+        mNavigationManager.stopNavigation();
+    }
 
     private void initializeFragments() {
         if (mController == null) {
@@ -72,17 +109,6 @@ public class NavigationFragment extends AbstractUiFragment implements NKMapFragm
 
         mMap = mController.getMap();
         onViewVisible();
-    }
-
-    @Override
-    public void onStop() {
-        mNavigationManager.stopNavigation();
-        super.onStop();
-    }
-
-    @Override
-    public void onMapLoadComplete() {
-
     }
 
     private void startNavigationSimulation() {

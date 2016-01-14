@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.contract.UiContract;
@@ -69,6 +70,10 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
 
     public void goBack() {
         mActivity.onBackPressed();
+    }
+
+    public ActionBar getActionBar() {
+        return mActivity.getSupportActionBar();
     }
 
     public <T extends Fragment> T replaceFragment(

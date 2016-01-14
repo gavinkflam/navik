@@ -12,4 +12,8 @@ public abstract class AbstractUiFragment extends Fragment {
     public void onResultAvailable(int requestCode, int resultCode, Intent data) {
 
     }
+
+    public void onBackPressed() {
+
+    }
 }

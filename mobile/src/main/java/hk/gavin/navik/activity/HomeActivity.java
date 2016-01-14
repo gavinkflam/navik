@@ -51,6 +51,7 @@ public class HomeActivity extends AppCompatActivity
             finish();
         }
         else {
+            mController.getCurrentFragment().onBackPressed();
             super.onBackPressed();
         }
     }
@@ -63,6 +64,9 @@ public class HomeActivity extends AppCompatActivity
             }
             case R.id.action_settings: {
                 return true;
+            }
+            case android.R.id.home: {
+                return mController.getCurrentFragment().onOptionsItemSelected(item);
             }
         }
 
