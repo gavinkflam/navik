@@ -5,6 +5,7 @@ import dagger.Module;
 import dagger.Provides;
 import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
 import hk.gavin.navik.preference.MainPreferences;
 
 import javax.inject.Singleton;
@@ -39,7 +40,7 @@ public class ApplicationModule {
     @Provides @Singleton
     NKLocationProvider navikLocationProvider() {
         if (mNKLocationProvider == null) {
-            mNKLocationProvider = new NKLocationProvider(mApplication);
+            mNKLocationProvider = new NKSkobblerLocationProvider(mApplication);
         }
         return mNKLocationProvider;
     }
