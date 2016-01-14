@@ -1,7 +1,6 @@
 package hk.gavin.navik.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,21 +8,23 @@ import butterknife.ButterKnife;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
-import com.skobbler.ngx.routing.*;
+import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.NavigationActivity;
+import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.preference.MainPreferences;
+import hk.gavin.navik.ui.HomeController;
 
 import javax.inject.Inject;
 
-public class NavigationFragment extends Fragment implements NKMapFragment.MapEventsListener {
+public class NavigationFragment extends AbstractUiFragment implements NKMapFragment.MapEventsListener {
 
     @Inject MainPreferences mMainPreferences;
+    @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
 
     NKMapFragment mMap;
@@ -34,8 +35,10 @@ public class NavigationFragment extends Fragment implements NKMapFragment.MapEve
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((NavigationActivity) getActivity()).component().inject(this);
-        mNavigationManager =  new SKToolsNavigationManager(getActivity(), R.id.navigationRoot);
+        ((HomeActivity) getActivity()).component().inject(this);
+
+        mNavigationManager = new SKToolsNavigationManager(getActivity(), R.id.homeMapContainer);
+        initializeFragments();
     }
 
     @Override
@@ -47,9 +50,28 @@ public class NavigationFragment extends Fragment implements NKMapFragment.MapEve
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        mMap = (NKMapFragment) getChildFragmentManager().findFragmentById(R.id.navigationMap);
+        initializeFragments();
+    }
+
+    @Override
+    public void onViewVisible() {
+        if (mMap == null) {
+            return;
+        }
+
         mMap.hideMoveToCurrentLocationButton();
         mMap.setMapEventsListener(this);
+        startNavigationSimulation();
+    }
+
+
+    private void initializeFragments() {
+        if (mController == null) {
+            return;
+        }
+
+        mMap = mController.getMap();
+        onViewVisible();
     }
 
     @Override
@@ -60,7 +82,7 @@ public class NavigationFragment extends Fragment implements NKMapFragment.MapEve
 
     @Override
     public void onMapLoadComplete() {
-        startNavigationSimulation();
+
     }
 
     private void startNavigationSimulation() {

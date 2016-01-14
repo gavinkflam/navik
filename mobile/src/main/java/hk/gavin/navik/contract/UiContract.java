@@ -27,5 +27,6 @@ public class UiContract {
         public static final String SELECT_DESTINATION = "select_destination";
         public static final String HOME_MAP = "home_map";
         public static final String ROUTE_DISPLAY = "route_display";
+        public static final String NAVIGATION = "navigation";
     }
 }

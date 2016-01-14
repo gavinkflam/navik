@@ -10,6 +10,7 @@ import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.fragment.AbstractUiFragment;
 import hk.gavin.navik.fragment.HomeFragment;
+import hk.gavin.navik.fragment.NavigationFragment;
 import hk.gavin.navik.fragment.SelectLocationOnMapFragment;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -50,6 +51,13 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         mRequestCode = UiContract.RequestCode.DESTINATION_LOCATION;
         replaceFragment(
                 R.id.contentFrame, SelectLocationOnMapFragment.class, UiContract.FragmentTag.SELECT_DESTINATION,
+                true, true
+        );
+    }
+
+    public void startBikeNavigation() {
+        replaceFragment(
+                R.id.contentFrame, NavigationFragment.class, UiContract.FragmentTag.NAVIGATION,
                 true, true
         );
     }

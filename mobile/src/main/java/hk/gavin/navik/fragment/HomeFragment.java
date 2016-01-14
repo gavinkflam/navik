@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.contract.UiContract;
@@ -83,6 +84,11 @@ public class HomeFragment extends AbstractUiFragment {
                 break;
             }
         }
+    }
+
+    @OnClick(R.id.startBikeNavigation)
+    void startBikeNavigation() {
+        mController.startBikeNavigation();
     }
 
     private void initializeFragments() {

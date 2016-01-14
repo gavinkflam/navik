@@ -3,13 +3,4 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".fragment.NavigationFragment"
-             tools:showIn="@layout/activity_navigation">
-
-    <fragment
-        android:id="@+id/navigationMap"
-        android:name="hk.gavin.navik.core.map.NKMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_navik_map" />
-</FrameLayout>
+             tools:context=".fragment.NavigationFragment"/>

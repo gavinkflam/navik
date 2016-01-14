@@ -3,6 +3,7 @@ package hk.gavin.navik.injection;
 import dagger.Component;
 import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.fragment.HomeFragment;
+import hk.gavin.navik.fragment.NavigationFragment;
 import hk.gavin.navik.fragment.RouteDisplayFragment;
 import hk.gavin.navik.fragment.SelectLocationOnMapFragment;
 
@@ -14,5 +15,6 @@ public interface HomeComponent extends AbstractActivityComponent {
     void inject(HomeFragment homeFragment);
     void inject(SelectLocationOnMapFragment selectLocationOnMapFragment);
     void inject(RouteDisplayFragment routeDisplayFragment);
+    void inject(NavigationFragment navigationFragment);
 
 }
