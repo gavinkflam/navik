@@ -1,4 +1,4 @@
-package hk.gavin.navik.fragment;
+package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +9,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.HomeActivity;
-import hk.gavin.navik.contract.UiContract;
+import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.ui.HomeController;
-import hk.gavin.navik.widget.LocationSelector;
+import hk.gavin.navik.ui.controller.HomeController;
+import hk.gavin.navik.ui.widget.LocationSelector;
 
 import javax.inject.Inject;
 

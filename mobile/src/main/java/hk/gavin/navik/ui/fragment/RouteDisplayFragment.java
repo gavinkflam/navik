@@ -1,4 +1,4 @@
-package hk.gavin.navik.fragment;
+package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,10 +8,10 @@ import butterknife.ButterKnife;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.*;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.HomeActivity;
+import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
-import hk.gavin.navik.ui.HomeController;
+import hk.gavin.navik.ui.controller.HomeController;
 
 import javax.inject.Inject;
 

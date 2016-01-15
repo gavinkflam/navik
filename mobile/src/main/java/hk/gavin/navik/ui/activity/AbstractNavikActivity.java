@@ -1,4 +1,4 @@
-package hk.gavin.navik.activity;
+package hk.gavin.navik.ui.activity;
 
 import hk.gavin.navik.injection.AbstractActivityComponent;
 

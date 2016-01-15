@@ -1,4 +1,4 @@
-package hk.gavin.navik.activity;
+package hk.gavin.navik.ui.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +11,7 @@ import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
 import hk.gavin.navik.injection.HomeModule;
-import hk.gavin.navik.ui.HomeController;
+import hk.gavin.navik.ui.controller.HomeController;
 
 import javax.inject.Inject;
 

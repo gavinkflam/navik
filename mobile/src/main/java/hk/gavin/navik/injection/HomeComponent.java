@@ -1,11 +1,11 @@
 package hk.gavin.navik.injection;
 
 import dagger.Component;
-import hk.gavin.navik.activity.HomeActivity;
-import hk.gavin.navik.fragment.RoutePlannerFragment;
-import hk.gavin.navik.fragment.NavigationFragment;
-import hk.gavin.navik.fragment.RouteDisplayFragment;
-import hk.gavin.navik.fragment.LocationSelectionFragment;
+import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.fragment.RoutePlannerFragment;
+import hk.gavin.navik.ui.fragment.NavigationFragment;
+import hk.gavin.navik.ui.fragment.RouteDisplayFragment;
+import hk.gavin.navik.ui.fragment.LocationSelectionFragment;
 
 @PerActivity
 @Component(dependencies = ApplicationComponent.class, modules = HomeModule.class)

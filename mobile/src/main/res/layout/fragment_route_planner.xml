@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.RoutePlannerFragment">
+    tools:context=".ui.fragment.RoutePlannerFragment">
 
     <LinearLayout android:orientation="vertical"
                   android:layout_width="match_parent"
@@ -16,14 +16,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <hk.gavin.navik.widget.LocationSelector
+            <hk.gavin.navik.ui.widget.LocationSelector
                 android:id="@+id/startingPoint"
                 app:prefix="@string/location_prefix_from"
                 app:placeholder="@string/select_starting_point"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <hk.gavin.navik.widget.LocationSelector
+            <hk.gavin.navik.ui.widget.LocationSelector
                 android:id="@+id/destination"
                 app:prefix="@string/location_prefix_to"
                 app:placeholder="@string/select_destination"

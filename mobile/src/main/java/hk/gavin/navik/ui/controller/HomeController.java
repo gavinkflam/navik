@@ -1,4 +1,4 @@
-package hk.gavin.navik.ui;
+package hk.gavin.navik.ui.controller;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -6,13 +6,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.HomeActivity;
-import hk.gavin.navik.contract.UiContract;
+import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.core.map.NKMapFragment;
-import hk.gavin.navik.fragment.AbstractUiFragment;
-import hk.gavin.navik.fragment.RoutePlannerFragment;
-import hk.gavin.navik.fragment.LocationSelectionFragment;
-import hk.gavin.navik.fragment.NavigationFragment;
+import hk.gavin.navik.ui.fragment.AbstractUiFragment;
+import hk.gavin.navik.ui.fragment.RoutePlannerFragment;
+import hk.gavin.navik.ui.fragment.LocationSelectionFragment;
+import hk.gavin.navik.ui.fragment.NavigationFragment;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

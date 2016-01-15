@@ -14,7 +14,7 @@ import butterknife.OnClick;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.AbstractNavikActivity;
+import hk.gavin.navik.ui.activity.AbstractNavikActivity;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKLocation;
 import lombok.Getter;

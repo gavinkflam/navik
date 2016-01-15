@@ -3,8 +3,8 @@ package hk.gavin.navik.injection;
 import android.app.Activity;
 import dagger.Module;
 import dagger.Provides;
-import hk.gavin.navik.activity.HomeActivity;
-import hk.gavin.navik.ui.HomeController;
+import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.controller.HomeController;
 
 @Module
 public class HomeModule extends ActivityModule {

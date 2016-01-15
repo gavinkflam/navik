@@ -1,4 +1,4 @@
-package hk.gavin.navik.contract;
+package hk.gavin.navik.ui.contract;
 
 public class UiContract {
 

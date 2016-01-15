@@ -1,4 +1,4 @@
-package hk.gavin.navik.fragment;
+package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -15,11 +15,11 @@ import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import hk.gavin.navik.R;
-import hk.gavin.navik.activity.HomeActivity;
+import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.preference.MainPreferences;
-import hk.gavin.navik.ui.HomeController;
+import hk.gavin.navik.ui.controller.HomeController;
 
 import javax.inject.Inject;
 

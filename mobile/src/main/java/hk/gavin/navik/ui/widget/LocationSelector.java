@@ -1,4 +1,4 @@
-package hk.gavin.navik.widget;
+package hk.gavin.navik.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
