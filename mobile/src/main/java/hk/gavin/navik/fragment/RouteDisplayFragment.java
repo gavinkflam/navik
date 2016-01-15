@@ -58,7 +58,6 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFra
         }
 
         mMap.hideMoveToCurrentLocationButton();
-        mMap.moveToCurrentLocationOnceAvailable();
         mMap.setMapEventsListener(this);
     }
 
@@ -68,6 +67,7 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFra
         }
 
         mMap = mController.getMap();
+        mMap.moveToCurrentLocationOnceAvailable();
         onViewVisible();
     }
 

@@ -47,7 +47,6 @@ public class SelectLocationOnMapFragment extends AbstractUiFragment {
     @Override
     public void onViewVisible() {
         mMap.showMoveToCurrentLocationButton();
-        mMap.moveToCurrentLocationOnceAvailable();
 
         ActionBar actionBar = mController.getActionBar();
         if (actionBar != null) {
