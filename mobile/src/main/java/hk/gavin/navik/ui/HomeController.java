@@ -10,7 +10,7 @@ import hk.gavin.navik.activity.HomeActivity;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.fragment.AbstractUiFragment;
-import hk.gavin.navik.fragment.HomeFragment;
+import hk.gavin.navik.fragment.RoutePlannerFragment;
 import hk.gavin.navik.fragment.LocationSelectionFragment;
 import hk.gavin.navik.fragment.NavigationFragment;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
     public void initialize() {
         mManager.addOnBackStackChangedListener(this);
 
-        replaceFragment(R.id.contentFrame, HomeFragment.class, UiContract.FragmentTag.HOME);
+        replaceFragment(R.id.contentFrame, RoutePlannerFragment.class, UiContract.FragmentTag.HOME);
         mMap = replaceFragment(R.id.homeMap, NKMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false);
     }
 

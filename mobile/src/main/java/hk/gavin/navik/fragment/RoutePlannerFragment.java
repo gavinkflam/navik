@@ -22,7 +22,7 @@ import javax.inject.Inject;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class HomeFragment extends AbstractUiFragment {
+public class RoutePlannerFragment extends AbstractUiFragment {
 
     @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
@@ -36,7 +36,7 @@ public class HomeFragment extends AbstractUiFragment {
 
     LocationSelectorController mLocationSelectorController= new LocationSelectorController();
 
-    public HomeFragment() {
+    public RoutePlannerFragment() {
         setHasOptionsMenu(true);
     }
 
@@ -57,7 +57,7 @@ public class HomeFragment extends AbstractUiFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_route_planner, container, false);
     }
 
     @Override
