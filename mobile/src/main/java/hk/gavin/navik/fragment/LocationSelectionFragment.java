@@ -18,7 +18,7 @@ import hk.gavin.navik.ui.HomeController;
 
 import javax.inject.Inject;
 
-public class SelectLocationOnMapFragment extends AbstractUiFragment {
+public class LocationSelectionFragment extends AbstractUiFragment {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject HomeController mController;
@@ -35,7 +35,7 @@ public class SelectLocationOnMapFragment extends AbstractUiFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_select_location_on_map, container, false);
+        return inflater.inflate(R.layout.fragment_location_selection, container, false);
     }
 
     @Override

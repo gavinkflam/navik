@@ -11,8 +11,8 @@ import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.fragment.AbstractUiFragment;
 import hk.gavin.navik.fragment.HomeFragment;
+import hk.gavin.navik.fragment.LocationSelectionFragment;
 import hk.gavin.navik.fragment.NavigationFragment;
-import hk.gavin.navik.fragment.SelectLocationOnMapFragment;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -43,7 +43,7 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
     public void selectStartingPoint() {
         mRequestCode = UiContract.RequestCode.STARTING_POINT_LOCATION;
         replaceFragment(
-                R.id.contentFrame, SelectLocationOnMapFragment.class, UiContract.FragmentTag.SELECT_STARTING_POINT,
+                R.id.contentFrame, LocationSelectionFragment.class, UiContract.FragmentTag.SELECT_STARTING_POINT,
                 true, true
         );
     }
@@ -51,7 +51,7 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
     public void selectDestination() {
         mRequestCode = UiContract.RequestCode.DESTINATION_LOCATION;
         replaceFragment(
-                R.id.contentFrame, SelectLocationOnMapFragment.class, UiContract.FragmentTag.SELECT_DESTINATION,
+                R.id.contentFrame, LocationSelectionFragment.class, UiContract.FragmentTag.SELECT_DESTINATION,
                 true, true
         );
     }
