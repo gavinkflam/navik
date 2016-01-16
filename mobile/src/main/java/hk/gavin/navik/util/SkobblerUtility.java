@@ -12,7 +12,7 @@ import java.io.File;
 public class SkobblerUtility {
 
     public static boolean prepareAndInitializeLibrary() {
-        SKLogging.enableLogs(true);
+        SKLogging.enableLogs(false);
         final NKApplication app = NKApplication.getInstance();
 
         if (!new File(app.getMapResourcesPath()).exists()) {
@@ -62,6 +62,4 @@ public class SkobblerUtility {
             return false;
         }
     }
-
-
 }
