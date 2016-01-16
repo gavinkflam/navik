@@ -13,10 +13,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
+import com.skobbler.ngx.routing.SKRouteManager;
 import hk.gavin.navik.R;
-import hk.gavin.navik.ui.activity.AbstractNavikActivity;
-import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.core.directions.NKDirections;
+import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.location.NKLocation;
+import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.ui.activity.AbstractNavikActivity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -27,8 +30,8 @@ import javax.inject.Inject;
 public class NKMapFragment extends Fragment
         implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener {
 
-    @Inject
-    NKLocationProvider mLocationProvider;
+    @Inject NKLocationProvider mLocationProvider;
+    SKRouteManager mRouteManager = SKRouteManager.getInstance();
 
     @Bind(R.id.mapHolder) @Getter SKMapViewHolder mMapHolder;
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
@@ -104,6 +107,25 @@ public class NKMapFragment extends Fragment
     public void hideMoveToCurrentLocationButton() {
         mDisplayMoveToCurrentLocationButton = false;
         updateMoveToCurrentLocationButtonDisplay();
+    }
+
+    public void showRoute(NKDirections directions, boolean zoom) {
+        if (directions instanceof NKSkobblerDirections) {
+            int cacheId = ((NKSkobblerDirections) directions).cacheId;
+            mRouteManager.loadRouteFromCache(cacheId);
+
+            if (zoom) {
+                zoomToCurrentRoute();
+            }
+        }
+    }
+
+    public void clearCurrentRoute() {
+        mRouteManager.clearCurrentRoute();
+    }
+
+    public void zoomToCurrentRoute() {
+        mRouteManager.zoomMapToCurrentRoute();
     }
 
     @OnClick(R.id.moveToCurrentLocation)

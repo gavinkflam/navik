@@ -9,11 +9,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
-import hk.gavin.navik.ui.activity.HomeActivity;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.ui.controller.HomeController;
 import hk.gavin.navik.ui.widget.LocationSelector;
 
@@ -28,6 +29,7 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
     @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
+    @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
     @Bind(R.id.startBikeNavigation) FloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
@@ -136,6 +138,11 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
 
         mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
         mDestination.initialize(mLocationProvider, mReverseGeocoder);
+
+        mDirectionsProvider.removeStartingPoint();
+        mDirectionsProvider.removeDestination();
+        mDirectionsProvider.removeViaPoints();
+        
         mStartingPoint.useCurrentLocation();
         mDestination.setLocation(null);
 
@@ -147,7 +154,22 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
 
     @Override
     public void onLocationUpdated(LocationSelector selector, NKLocation location) {
-
+        switch (selector.getId()) {
+            case R.id.startingPoint: {
+                if (mStartingPoint.isLocationAvailable()) {
+                    mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation());
+                    mDirectionsProvider.getCyclingDirections();
+                }
+                break;
+            }
+            case R.id.destination: {
+                if (mDestination.isLocationAvailable()) {
+                    mDirectionsProvider.setDestination(mDestination.getLocation());
+                    mDirectionsProvider.getCyclingDirections();
+                }
+                break;
+            }
+        }
     }
 
     @Override

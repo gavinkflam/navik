@@ -6,13 +6,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import hk.gavin.navik.R;
+import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.contract.UiContract;
-import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.ui.fragment.AbstractUiFragment;
-import hk.gavin.navik.ui.fragment.RoutePlannerFragment;
 import hk.gavin.navik.ui.fragment.LocationSelectionFragment;
 import hk.gavin.navik.ui.fragment.NavigationFragment;
+import hk.gavin.navik.ui.fragment.RoutePlannerFragment;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -36,7 +36,7 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
     public void initialize() {
         mManager.addOnBackStackChangedListener(this);
 
-        replaceFragment(R.id.contentFrame, RoutePlannerFragment.class, UiContract.FragmentTag.HOME);
+        replaceFragment(R.id.contentFrame, RoutePlannerFragment.class, UiContract.FragmentTag.HOME, false, false);
         mMap = replaceFragment(R.id.homeMap, NKMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false);
     }
 

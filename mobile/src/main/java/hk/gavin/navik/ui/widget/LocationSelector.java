@@ -102,9 +102,9 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     public void setLocation(NKLocation location) {
+        mLocationProvider.removePositionUpdateListener(this);
         mLocation = location;
         mUseCurrentLocation = false;
-        mLocationProvider.removePositionUpdateListener(this);
         updateLocationDisplay();
         invokeOnLocationUpdatedListener();
     }
@@ -116,13 +116,13 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     public void useCurrentLocation() {
         mLocation = null;
         mUseCurrentLocation = true;
-        mLocationProvider.addPositionUpdateListener(this);
         updateLocationDisplay();
 
         if (mLocationProvider.isLastLocationAvailable()) {
             mLocation = mLocationProvider.getLastLocation();
             invokeOnLocationUpdatedListener();
         }
+        mLocationProvider.addPositionUpdateListener(this);
     }
 
     private void invokeOnLocationUpdatedListener() {

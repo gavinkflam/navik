@@ -5,32 +5,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
-import com.skobbler.ngx.SKCoordinate;
-import com.skobbler.ngx.routing.*;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
-import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.core.directions.NKDirections;
+import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.controller.HomeController;
 
 import javax.inject.Inject;
 
-public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFragment.MapEventsListener {
+public class RouteDisplayFragment extends AbstractUiFragment implements NKInteractiveDirectionsProvider.DirectionsResultsListener {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject HomeController mController;
-    NKMapFragment mMap;
+    @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
-    private SKRouteManager mRouteManager = SKRouteManager.getInstance();
-    private RouteHandler mRouteHandler = new RouteHandler();
-
-    private SKRouteSettings mRoute;
+    private NKMapFragment mMap;
+    private Optional<NKDirections> mDirections = Optional.absent();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((HomeActivity) getActivity()).component().inject(this);
+
         initializeFragments();
+        initializeViews();
     }
 
     @Override
@@ -43,6 +46,7 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFra
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         initializeFragments();
+        initializeViews();
     }
 
     @Override
@@ -52,13 +56,22 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFra
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mDirectionsProvider.removeDirectionsResultsListener(this);
+    }
+
+    @Override
     public void onViewVisible() {
         if (mMap == null) {
             return;
         }
 
+        mDirectionsProvider.addDirectionsResultsListener(this);
         mMap.hideMoveToCurrentLocationButton();
-        mMap.setMapEventsListener(this);
+        if (mMap.isMapLoaded() && mDirections.isPresent()) {
+            mMap.showRoute(mDirections.get(), true);
+        }
     }
 
     private void initializeFragments() {
@@ -71,62 +84,24 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKMapFra
         onViewVisible();
     }
 
-    @Override
-    public void onMapLoadComplete() {
-        mRoute = new SKRouteSettings();
-        mRoute.setStartCoordinate(new SKCoordinate(114.162574, 22.434520));
-        mRoute.setDestinationCoordinate(new SKCoordinate(114.213902, 22.455445));
+    private void initializeViews() {
+        if (mMap == null) {
+            return;
+        }
 
-        /*
-        mRoute.setDestinationCoordinate(new SKCoordinate(114.1957007, 22.3955298));
-
-        ArrayList<SKViaPoint> viaPoints = new ArrayList<>();
-        viaPoints.add(new SKViaPoint(0, new SKCoordinate(114.1783895, 22.4452662)));
-        viaPoints.add(new SKViaPoint(1, new SKCoordinate(114.2132063, 22.414166)));
-        mRoute.setViaPoints(viaPoints);
-        */
-
-        mRoute.setNoOfRoutes(1);
-        mRoute.setRouteMode(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
-
-        mRoute.setAvoidFerries(true);
-        mRoute.setBicycleCarryAvoided(true);
-        mRoute.setBicycleWalkAvoided(true);
-        mRoute.setHighWaysAvoided(true);
-        mRoute.setTollRoadsAvoided(true);
-        mRoute.setUseRoadSlopes(true);
-        mRoute.setFilterAlternatives(true);
-        mRoute.setRouteExposed(true);
-
-        mRouteManager.setRouteListener(mRouteHandler);
-        mRouteManager.calculateRoute(mRoute);
+        mMap.clearCurrentRoute();
     }
 
-    private class RouteHandler implements SKRouteListener {
-
-        @Override
-        public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo) {
-
+    @Override
+    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList) {
+        mDirections = Optional.of(directionsList.get(0));
+        if (mMap.isMapLoaded()) {
+            mMap.showRoute(mDirections.get(), true);
         }
+    }
 
-        @Override
-        public void onRouteCalculationFailed(SKRoutingErrorCode skRoutingErrorCode) {
+    @Override
+    public void onDirectionsError(NKDirectionsException exception) {
 
-        }
-
-        @Override
-        public void onAllRoutesCompleted() {
-            mRouteManager.zoomMapToCurrentRoute();
-        }
-
-        @Override
-        public void onServerLikeRouteCalculationCompleted(SKRouteJsonAnswer skRouteJsonAnswer) {
-
-        }
-
-        @Override
-        public void onOnlineRouteComputationHanging(int i) {
-
-        }
     }
 }

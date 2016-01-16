@@ -4,6 +4,9 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import hk.gavin.navik.application.NKApplication;
+import hk.gavin.navik.core.directions.NKDirectionsProvider;
+import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.NKSkobblerDirectionsProvider;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.geocode.NKSkobblerReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocationProvider;
@@ -19,6 +22,8 @@ public class ApplicationModule {
     private MainPreferences mMainPreferences;
     private NKLocationProvider mNKLocationProvider;
     private NKReverseGeocoder mNKReverseGeocoder;
+    private NKDirectionsProvider mNKDirectionsProvider;
+    private NKInteractiveDirectionsProvider mNKSkobblerInteractiveDirectionsProvider;
 
     public ApplicationModule(NKApplication nkApplication) {
         mApplication = nkApplication;
@@ -56,4 +61,19 @@ public class ApplicationModule {
         return mNKReverseGeocoder;
     }
 
+    @Provides @Singleton
+    NKDirectionsProvider directionsProvider() {
+        if (mNKDirectionsProvider == null) {
+            mNKDirectionsProvider = new NKSkobblerDirectionsProvider();
+        }
+        return mNKDirectionsProvider;
+    }
+
+    @Provides @Singleton
+    NKInteractiveDirectionsProvider interactiveDirectionsProvider() {
+        if (mNKSkobblerInteractiveDirectionsProvider == null) {
+            mNKSkobblerInteractiveDirectionsProvider = new NKInteractiveDirectionsProvider(directionsProvider());
+        }
+        return mNKSkobblerInteractiveDirectionsProvider;
+    }
 }
