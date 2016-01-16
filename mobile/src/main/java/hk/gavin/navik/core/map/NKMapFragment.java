@@ -33,6 +33,7 @@ public class NKMapFragment extends Fragment
     @Bind(R.id.mapHolder) @Getter SKMapViewHolder mMapHolder;
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
     @Getter private SKMapSurfaceView mMap;
+    @Getter private boolean mMapLoaded = false;
     @Setter private MapEventsListener mMapEventsListener;
 
     private boolean mPendingMoveToCurrentLocation = false;
@@ -142,6 +143,7 @@ public class NKMapFragment extends Fragment
         }
 
         mMap = mMapHolder.getMapSurfaceView();
+        mMapLoaded = true;
         mMap.getMapSettings().setShowBicycleLanes(true);
         mMap.getMapSettings().setCurrentPositionShown(true);
         mMap.getMapSettings().setCompassPosition(new SKScreenPoint(-50, -50));
