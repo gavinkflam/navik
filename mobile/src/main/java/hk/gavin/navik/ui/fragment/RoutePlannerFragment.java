@@ -22,7 +22,8 @@ import javax.inject.Inject;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RoutePlannerFragment extends AbstractUiFragment {
+public class RoutePlannerFragment extends AbstractUiFragment implements
+        LocationSelector.OnLocationUpdatedListener, LocationSelector.OnMenuItemClickListener {
 
     @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
@@ -33,8 +34,6 @@ public class RoutePlannerFragment extends AbstractUiFragment {
     @Bind(R.id.destination) LocationSelector mDestination;
 
     private RouteDisplayFragment mRouteDisplay;
-
-    LocationSelectorController mLocationSelectorController= new LocationSelectorController();
 
     public RoutePlannerFragment() {
         setHasOptionsMenu(true);
@@ -140,53 +139,47 @@ public class RoutePlannerFragment extends AbstractUiFragment {
         mStartingPoint.useCurrentLocation();
         mDestination.setLocation(null);
 
-        mStartingPoint.setOnLocationUpdatedListener(mLocationSelectorController);
-        mStartingPoint.setOnMenuItemClickListener(mLocationSelectorController);
-
-        mDestination.setOnLocationUpdatedListener(mLocationSelectorController);
-        mDestination.setOnMenuItemClickListener(mLocationSelectorController);
+        mStartingPoint.setOnLocationUpdatedListener(this);
+        mStartingPoint.setOnMenuItemClickListener(this);
+        mDestination.setOnLocationUpdatedListener(this);
+        mDestination.setOnMenuItemClickListener(this);
     }
 
-    private class LocationSelectorController implements LocationSelector.OnLocationUpdatedListener,
-            LocationSelector.OnMenuItemClickListener {
+    @Override
+    public void onLocationUpdated(LocationSelector selector, NKLocation location) {
 
-        @Override
-        public void onLocationUpdated(LocationSelector selector, NKLocation location) {
+    }
 
-        }
-
-        @Override
-        public void onCurrentLocationClicked(LocationSelector selector) {
-            switch (selector.getId()) {
-                case R.id.startingPoint: {
-                    mStartingPoint.useCurrentLocation();
-                    break;
-                }
-                case R.id.destination: {
-                    mDestination.useCurrentLocation();
-                    break;
-                }
+    @Override
+    public void onCurrentLocationClicked(LocationSelector selector) {
+        switch (selector.getId()) {
+            case R.id.startingPoint: {
+                mStartingPoint.useCurrentLocation();
+                break;
             }
-        }
-
-        @Override
-        public void onHistoryClicked(LocationSelector selector) {
-
-        }
-
-        @Override
-        public void onSelectLocationOnMapClicked(LocationSelector selector) {
-            switch (selector.getId()) {
-                case R.id.startingPoint: {
-                    mController.selectStartingPoint();
-                    break;
-                }
-                case R.id.destination: {
-                    mController.selectDestination();
-                    break;
-                }
+            case R.id.destination: {
+                mDestination.useCurrentLocation();
+                break;
             }
         }
     }
 
+    @Override
+    public void onHistoryClicked(LocationSelector selector) {
+
+    }
+
+    @Override
+    public void onSelectLocationOnMapClicked(LocationSelector selector) {
+        switch (selector.getId()) {
+            case R.id.startingPoint: {
+                mController.selectStartingPoint();
+                break;
+            }
+            case R.id.destination: {
+                mController.selectDestination();
+                break;
+            }
+        }
+    }
 }
