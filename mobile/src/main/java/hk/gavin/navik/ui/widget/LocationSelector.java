@@ -109,6 +109,10 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         invokeOnLocationUpdatedListener();
     }
 
+    public boolean isLocationAvailable() {
+        return (mLocation != null);
+    }
+
     public void useCurrentLocation() {
         mLocation = null;
         mUseCurrentLocation = true;
