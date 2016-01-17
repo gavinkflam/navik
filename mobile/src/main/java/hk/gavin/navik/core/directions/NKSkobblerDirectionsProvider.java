@@ -22,7 +22,9 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
         NKDirectionsDeferredObject deferred = new NKDirectionsDeferredObject();
         SKRouteManager routeManager = SKRouteManager.getInstance();
         SKRouteSettings routeSettings = new SKRouteSettings();
-        SKRouteListener routeListener = new NKSkobblerRouteListener(routeManager, deferred);
+        SKRouteListener routeListener = new NKSkobblerRouteListener(
+                routeManager, deferred, startingPoint, destination, viaPoints
+        );
 
         routeSettings.setStartCoordinate(startingPoint.toSKCoordinate());
         routeSettings.setDestinationCoordinate(destination.toSKCoordinate());
@@ -48,21 +50,33 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
 
     private class NKSkobblerRouteListener implements SKRouteListener {
 
-        private SKRouteManager mRouteManager;
-        private NKDirectionsDeferredObject mDeferred;
+        private final SKRouteManager mRouteManager;
+        private final NKDirectionsDeferredObject mDeferred;
+        private final NKLocation mStartingPoint;
+        private final NKLocation mDestination;
+        private final Optional<ImmutableList<NKLocation>> mViaPoints;
+
         private List<NKDirections> mDirectionsList = new ArrayList<>();
         private Optional<SKRoutingErrorCode> mErrorCode = Optional.absent();
 
-        public NKSkobblerRouteListener(SKRouteManager routeManager, NKDirectionsDeferredObject deferred) {
+        public NKSkobblerRouteListener(SKRouteManager routeManager, NKDirectionsDeferredObject deferred,
+                                       NKLocation startingPoint, NKLocation destination,
+                                       Optional<ImmutableList<NKLocation>> viaPoints) {
             mRouteManager = routeManager;
             mDeferred = deferred;
+            mStartingPoint = startingPoint;
+            mDestination = destination;
+            mViaPoints = viaPoints;
         }
 
         @Override
         public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo) {
             int routeId = skRouteInfo.getRouteID();
+
             mRouteManager.saveRouteToCache(routeId);
-            mDirectionsList.add(new NKSkobblerDirections(routeId));
+            mDirectionsList.add(
+                    new NKSkobblerDirections(routeId, mStartingPoint, mDestination, mViaPoints)
+            );
         }
 
         @Override
