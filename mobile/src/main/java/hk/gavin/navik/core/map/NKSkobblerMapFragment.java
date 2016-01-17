@@ -7,6 +7,7 @@ import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
+import com.orhanobut.logger.Logger;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
@@ -47,7 +48,12 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
-        if (isMapLoaded() && isActivityCreated()  && mLocationProvider.isLastLocationAvailable()) {
+        Logger.d(
+                "mapLoaded: %b, activityCreated: %b, locationAvailable: %b",
+                isMapLoaded(), isActivityCreated(), mLocationProvider.isLastLocationAvailable()
+        );
+
+        if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
             SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
 
             mMap.setPositionAsCurrent(coordinate, (float) mLocationProvider.getLastLocationAccuracy(), false);
@@ -57,6 +63,11 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void moveToCurrentLocationOnceAvailable() {
+        Logger.d(
+                "activityCreated: %b, locationAvailable: %b",
+                isActivityCreated(), mLocationProvider.isLastLocationAvailable()
+        );
+
         if (isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
             moveToCurrentLocation();
         }
@@ -81,8 +92,9 @@ public class NKSkobblerMapFragment extends NKMapFragment
     public void showRoute(NKDirections directions, boolean zoom) {
         if (directions instanceof NKSkobblerDirections) {
             int cacheId = ((NKSkobblerDirections) directions).cacheId;
-            mRouteManager.loadRouteFromCache(cacheId);
+            Logger.d("directions id: %d", cacheId);
 
+            mRouteManager.loadRouteFromCache(cacheId);
             if (zoom) {
                 zoomToCurrentRoute();
             }

@@ -1,7 +1,6 @@
 package hk.gavin.navik.core.geocode;
 
 import com.skobbler.ngx.reversegeocode.SKReverseGeocoderManager;
-import com.skobbler.ngx.search.SKSearchResult;
 import hk.gavin.navik.core.location.NKLocation;
 
 public class NKSkobblerReverseGeocoder implements NKReverseGeocoder {
@@ -14,7 +13,6 @@ public class NKSkobblerReverseGeocoder implements NKReverseGeocoder {
 
     @Override
     public String getNameFromLocation(NKLocation location) {
-        SKSearchResult result = mManager.reverseGeocodePosition(location.toSKCoordinate());
-        return result.getName();
+        return mManager.reverseGeocodePosition(location.toSKCoordinate()).getName();
     }
 }

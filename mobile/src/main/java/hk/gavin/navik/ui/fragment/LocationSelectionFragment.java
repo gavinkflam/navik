@@ -2,6 +2,7 @@ package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
 import butterknife.OnClick;
+import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
@@ -30,6 +31,7 @@ public class LocationSelectionFragment extends AbstractHomeUiFragment {
 
     @Override
     public void onInitialize() {
+        Logger.i("activityCreated: %b, initialized: %b", isActivityCreated(), isInitialized());
         if (isActivityCreated() && !isInitialized()) {
             mMap = getController().getMap();
             super.onInitialize();
@@ -40,6 +42,7 @@ public class LocationSelectionFragment extends AbstractHomeUiFragment {
 
     @Override
     public void onViewVisible() {
+        Logger.i("initialized: %b", isInitialized());
         if (isInitialized()) {
             getController().setActionBarTitle(
                     getController().getRequestCode() == UiContract.RequestCode.STARTING_POINT_LOCATION ?

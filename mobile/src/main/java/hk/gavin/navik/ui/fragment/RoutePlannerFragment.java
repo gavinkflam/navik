@@ -9,6 +9,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
@@ -53,6 +54,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onInitialize() {
+        Logger.i("activityCreated: %b, initialized: %b", isActivityCreated(), isInitialized());
         if (isActivityCreated() && !isInitialized()) {
             mRouteDisplay = getController().initializeRouteDisplayFragment();
             super.onInitialize();
@@ -61,6 +63,10 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onInitializeViews() {
+        Logger.i(
+                "activityCreated: %b, viewInjected: %b, viewInitialized: %b",
+                isActivityCreated(), isViewsInjected(), isViewsInitialized()
+        );
         if (isActivityCreated() && isViewsInjected() && !isViewsInitialized()) {
             mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
             mDestination.initialize(mLocationProvider, mReverseGeocoder);
@@ -84,6 +90,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onViewVisible() {
+        Logger.i("activityCreated: %b", isActivityCreated());
         if (isActivityCreated()) {
             getController().setActionBarTitle(R.string.app_name);
             getController().setDisplayHomeAsUp(false);

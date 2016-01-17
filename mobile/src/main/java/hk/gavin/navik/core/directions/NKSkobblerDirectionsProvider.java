@@ -2,6 +2,7 @@ package hk.gavin.navik.core.directions;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.orhanobut.logger.Logger;
 import com.skobbler.ngx.routing.*;
 import hk.gavin.navik.core.directions.exception.NKNoRoutesAvailableException;
 import hk.gavin.navik.core.directions.exception.NKUnknownDirectionsException;
@@ -19,6 +20,11 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
     public NKDirectionsPromise getCyclingDirections(
             int noOfDirections, NKLocation startingPoint, NKLocation destination,
             Optional<ImmutableList<NKLocation>> viaPoints) {
+        Logger.d(
+                "noOfDirections: %d, startingPoint: (%s), destination: (%s), viapoints size: %d",
+                noOfDirections, startingPoint, destination, viaPoints.isPresent() ? viaPoints.get().size() : 0
+        );
+
         NKDirectionsDeferredObject deferred = new NKDirectionsDeferredObject();
         SKRouteManager routeManager = SKRouteManager.getInstance();
         SKRouteSettings routeSettings = new SKRouteSettings();
@@ -72,6 +78,7 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
         @Override
         public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo) {
             int routeId = skRouteInfo.getRouteID();
+            Logger.d("routeId: %d, distance: %d", routeId, skRouteInfo.getDistance());
 
             mRouteManager.saveRouteToCache(routeId);
             mDirectionsList.add(
@@ -81,6 +88,7 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
 
         @Override
         public void onRouteCalculationFailed(SKRoutingErrorCode skRoutingErrorCode) {
+            Logger.d("error: %s", skRoutingErrorCode);
             mErrorCode = Optional.of(skRoutingErrorCode);
         }
 
@@ -90,6 +98,7 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
                 return;
             }
 
+            Logger.d("list size: %d", mDirectionsList.size());
             if (mDirectionsList.size() == 0) {
                 mDeferred.reject(
                         mErrorCode.isPresent() ?
@@ -104,12 +113,12 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
 
         @Override
         public void onServerLikeRouteCalculationCompleted(SKRouteJsonAnswer skRouteJsonAnswer) {
-
+            // Do nothing
         }
 
         @Override
         public void onOnlineRouteComputationHanging(int i) {
-
+            // Do nothing
         }
     }
 }

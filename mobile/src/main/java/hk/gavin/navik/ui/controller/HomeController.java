@@ -107,20 +107,6 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         return fragment;
     }
 
-    public <T extends Fragment> T replaceFragment(int id, Class<T> fClass, String tag) {
-        return replaceFragment(id, fClass, tag, false, true);
-    }
-
-    public <T extends Fragment> void removeFragment(Class<T> fClass, String tag) {
-        Optional<T> fragment = Optional.fromNullable(
-                (T) mManager.findFragmentByTag(tag)
-        );
-
-        if (fragment.isPresent()) {
-            mManager.beginTransaction().remove(fragment.get()).commit();
-        }
-    }
-
     public <T extends Fragment> T getFragment(Class<T> fClass, String tag) {
         Optional<T> fragment = Optional.fromNullable(
                 (T) mManager.findFragmentByTag(tag)

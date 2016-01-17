@@ -5,6 +5,7 @@ import hk.gavin.navik.injection.ApplicationComponent;
 import hk.gavin.navik.injection.ApplicationModule;
 import hk.gavin.navik.injection.DaggerApplicationComponent;
 import hk.gavin.navik.preference.MainPreferences;
+import hk.gavin.navik.util.LoggerUtility;
 import hk.gavin.navik.util.SkobblerUtility;
 import hk.gavin.navik.util.StorageUtility;
 
@@ -52,5 +53,6 @@ public class NKApplication extends Application {
         mApplicationComponent.inject(this);
 
         SkobblerUtility.prepareAndInitializeLibrary(this);
+        LoggerUtility.initializeLogger(this);
     }
 }
