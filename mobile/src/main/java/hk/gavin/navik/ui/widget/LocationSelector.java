@@ -170,6 +170,11 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     @Override
+    public void onAccuracyUpdated(double accuracy) {
+        // Do nothing
+    }
+
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.current_location: {

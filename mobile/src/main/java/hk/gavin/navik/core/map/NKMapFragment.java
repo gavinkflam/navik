@@ -149,6 +149,13 @@ public class NKMapFragment extends Fragment
     }
 
     @Override
+    public void onAccuracyUpdated(double accuracy) {
+        if (mLocationProvider.isLastLocationAvailable()) {
+            onLocationUpdated(mLocationProvider.getLastLocation(), accuracy);
+        }
+    }
+
+    @Override
     public void onActionPan() {
 
     }
