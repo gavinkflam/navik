@@ -1,9 +1,7 @@
 package hk.gavin.navik.core.map;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
@@ -39,6 +37,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     private SKMapSurfaceView mMap;
 
     @Getter(AccessLevel.PROTECTED) private boolean mActivityCreated = false;
+    @Getter private final int mLayoutResId = R.layout.fragment_navik_map;
 
     @Override
     public NKLocation getMapCenter() {
@@ -48,11 +47,6 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
-        Logger.d(
-                "mapLoaded: %b, activityCreated: %b, locationAvailable: %b",
-                isMapLoaded(), isActivityCreated(), mLocationProvider.isLastLocationAvailable()
-        );
-
         if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
             SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
 
@@ -63,12 +57,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void moveToCurrentLocationOnceAvailable() {
-        Logger.d(
-                "activityCreated: %b, locationAvailable: %b",
-                isActivityCreated(), mLocationProvider.isLastLocationAvailable()
-        );
-
-        if (isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
+        if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
             moveToCurrentLocation();
         }
         else {
@@ -133,36 +122,35 @@ public class NKSkobblerMapFragment extends NKMapFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mActivityCreated = true;
+    public void onInitialize() {
+        super.onInitialize();
         mLocationProvider = new NKSkobblerLocationProvider(getContext());
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onInitializeViews() {
+        super.onInitializeViews();
         mMapHolder.setMapSurfaceListener(this);
         updateMoveToCurrentLocationButtonDisplay();
     }
 
     @Override
     public void onPause() {
+        if (isInitialized()) {
+            mLocationProvider.removePositionUpdateListener(this);
+        }
         mMapHolder.onPause();
-        mLocationProvider.removePositionUpdateListener(this);
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mLocationProvider.addPositionUpdateListener(this);
         mMapHolder.onResume();
-    }
 
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.fragment_navik_map;
+        if (isInitialized()) {
+            mLocationProvider.addPositionUpdateListener(this);
+        }
     }
 
     @Override
@@ -351,7 +339,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     }
 
     private void updateMoveToCurrentLocationButtonDisplay() {
-        if (isViewInjected()) {
+        if (isViewsInjected()) {
             if (isDisplayMoveToCurrentLocationButton()) {
                 mMoveToCurrentLocationButton.show();
             }

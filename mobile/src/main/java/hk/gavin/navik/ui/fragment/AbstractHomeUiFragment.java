@@ -15,7 +15,7 @@ public abstract class AbstractHomeUiFragment extends AbstractUiFragment {
     @Getter(AccessLevel.PROTECTED) @Inject HomeController mController;
 
     @Override
-    void onInjectComponent() {
+    protected void onInjectComponent() {
         HomeComponent component = ((HomeActivity) getActivity()).component();
 
         if (this instanceof LocationSelectionFragment) {

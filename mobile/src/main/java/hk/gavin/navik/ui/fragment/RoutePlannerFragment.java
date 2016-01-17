@@ -9,7 +9,6 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
@@ -26,8 +25,7 @@ import javax.inject.Inject;
 
 @Accessors(prefix = "m")
 public class RoutePlannerFragment extends AbstractHomeUiFragment implements
-        LocationSelector.OnLocationUpdatedListener, LocationSelector.OnMenuItemClickListener,
-        NKInteractiveDirectionsProvider.DirectionsResultsListener {
+        LocationSelector.LocationSelectorEventsListener, NKInteractiveDirectionsProvider.DirectionsResultsListener {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
@@ -54,46 +52,31 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onInitialize() {
-        Logger.i("activityCreated: %b, initialized: %b", isActivityCreated(), isInitialized());
-        if (isActivityCreated() && !isInitialized()) {
-            mRouteDisplay = getController().initializeRouteDisplayFragment();
-            super.onInitialize();
-        }
+        super.onInitialize();
+        mRouteDisplay = getController().initializeRouteDisplayFragment();
     }
 
     @Override
     public void onInitializeViews() {
-        Logger.i(
-                "activityCreated: %b, viewInjected: %b, viewInitialized: %b",
-                isActivityCreated(), isViewsInjected(), isViewsInitialized()
-        );
-        if (isActivityCreated() && isViewsInjected() && !isViewsInitialized()) {
-            mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
-            mDestination.initialize(mLocationProvider, mReverseGeocoder);
+        super.onInitializeViews();
 
-            mDirectionsProvider.removeStartingPoint();
-            mDirectionsProvider.removeDestination();
-            mDirectionsProvider.removeViaPoints();
+        mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
+        mDestination.initialize(mLocationProvider, mReverseGeocoder);
 
-            mStartingPoint.useCurrentLocation();
-            mDestination.removeLocation();
-            mRouteDisplay.clearRouteDisplay();
+        mStartingPoint.useCurrentLocation();
+        mDestination.removeLocation();
 
-            mStartingPoint.setOnLocationUpdatedListener(this);
-            mStartingPoint.setOnMenuItemClickListener(this);
-            mDestination.setOnLocationUpdatedListener(this);
-            mDestination.setOnMenuItemClickListener(this);
-
-            super.onInitializeViews();
-        }
+        onViewVisible();
     }
 
     @Override
     public void onViewVisible() {
-        Logger.i("activityCreated: %b", isActivityCreated());
-        if (isActivityCreated()) {
+        if (isViewsInitialized()) {
             getController().setActionBarTitle(R.string.app_name);
             getController().setDisplayHomeAsUp(false);
+
+            mStartingPoint.setLocationSelectorEventsListener(this);
+            mDestination.setLocationSelectorEventsListener(this);
 
             mRouteDisplay.onViewVisible();
         }
@@ -117,6 +100,14 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                 break;
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        mStartingPoint.removeLocationSelectorEventsListener();
+        mDestination.removeLocationSelectorEventsListener();
+
+        super.onPause();
     }
 
     @Override
@@ -155,20 +146,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.setDestination(mDestination.getLocation());
                     mDirectionsProvider.getCyclingDirections();
                 }
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void onCurrentLocationClicked(LocationSelector selector) {
-        switch (selector.getId()) {
-            case R.id.startingPoint: {
-                mStartingPoint.useCurrentLocation();
-                break;
-            }
-            case R.id.destination: {
-                mDestination.useCurrentLocation();
                 break;
             }
         }

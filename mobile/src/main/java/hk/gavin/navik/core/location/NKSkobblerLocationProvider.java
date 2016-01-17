@@ -21,7 +21,7 @@ public class NKSkobblerLocationProvider extends NKLocationProvider implements SK
     public void onCurrentPositionUpdate(SKPosition skPosition) {
         NKLocation newLocation = NKLocation.fromSKCoordinate(skPosition.getCoordinate());
         double newAccuracy = skPosition.getHorizontalAccuracy();
-        Logger.d("location: (%s), accuracy: %f", newLocation, newAccuracy);
+        Logger.v("location: (%s), accuracy: %f", newLocation, newAccuracy);
 
         if (isLastLocationAvailable() && newLocation.equals(getLastLocation())) {
             if (newAccuracy != getLastLocationAccuracy()) {

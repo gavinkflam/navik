@@ -1,6 +1,5 @@
 package hk.gavin.navik.ui.fragment;
 
-import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
@@ -20,27 +19,15 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKMapF
     @Getter private final int mLayoutResId = R.layout.fragment_navigation;
 
     @Override
-    public void onInitialize() {
-        Logger.i("activityCreated: %b, initialized: %b", isActivityCreated(), isInitialized());
-        if (isActivityCreated() && !isInitialized()) {
-            mMap = getController().getMap();
-            super.onInitialize();
-        }
-    }
-
-    @Override
     public void onInitializeViews() {
-        Logger.i("activityCreated: %b, viewInitialized: %b", isActivityCreated(), isViewsInitialized());
-        if (isInitialized() && !isViewsInitialized()) {
-            mMap.startNavigation();
-            super.onInitializeViews();
-        }
+        super.onInitializeViews();
+        mMap = getController().getMap();
+        mMap.startNavigation();
     }
 
     @Override
     public void onViewVisible() {
-        Logger.i("initialized: %b", isInitialized());
-        if (isInitialized()) {
+        if (isViewsInitialized()) {
             getController().setActionBarTitle(R.string.navigation);
             getController().setDisplayHomeAsUp(true);
 

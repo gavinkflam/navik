@@ -2,7 +2,6 @@ package hk.gavin.navik.ui.fragment;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
@@ -27,28 +26,23 @@ public class RouteDisplayFragment extends AbstractHomeUiFragment implements
     @Getter private final int mLayoutResId = R.layout.fragment_route_display;
 
     public void clearRouteDisplay() {
-        Logger.i("activityCreated: %b", isActivityCreated());
         if (isActivityCreated()) {
             mMap.clearCurrentRoute();
         }
     }
 
     @Override
-    public void onInitialize() {
-        Logger.i("activityCreated: %b, initialized: %b", isActivityCreated(), isInitialized());
-        if (isActivityCreated() && !isInitialized()) {
-            mMap = getController().getMap();
-            mMap.moveToCurrentLocationOnceAvailable();
-            super.onInitialize();
+    public void onInitializeViews() {
+        super.onInitializeViews();
+        mMap = getController().getMap();
+        mMap.moveToCurrentLocationOnceAvailable();
 
-            onViewVisible();
-        }
+        onViewVisible();
     }
 
     @Override
     public void onViewVisible() {
-        Logger.i("activityCreated: %b, initialized: %b", isActivityCreated(), isInitialized());
-        if (isActivityCreated() && isInitialized()) {
+        if (isViewsInitialized()) {
             mMap.hideMoveToCurrentLocationButton();
 
             if (mMap.isMapLoaded() && mDirections.isPresent()) {
@@ -60,7 +54,6 @@ public class RouteDisplayFragment extends AbstractHomeUiFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        Logger.i("activityCreated: %b", isActivityCreated());
         if (isActivityCreated()) {
             mDirectionsProvider.addDirectionsResultsListener(this);
         }
@@ -68,7 +61,6 @@ public class RouteDisplayFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onPause() {
-        Logger.i("activityCreated: %b", isActivityCreated());
         if (isActivityCreated()) {
             mDirectionsProvider.removeDirectionsResultsListener(this);
         }

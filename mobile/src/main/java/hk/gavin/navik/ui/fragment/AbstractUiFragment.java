@@ -21,8 +21,8 @@ public abstract class AbstractUiFragment extends Fragment {
     @Getter(AccessLevel.PROTECTED) private boolean mInitialized = false;
     @Getter(AccessLevel.PROTECTED) private boolean mViewsInitialized = false;
 
-    abstract int getLayoutResId();
-    abstract void onInjectComponent();
+    abstract protected int getLayoutResId();
+    abstract protected void onInjectComponent();
 
     public void onInitialize() {
         mInitialized = true;
@@ -49,9 +49,7 @@ public abstract class AbstractUiFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         onInjectComponent();
         mActivityCreated = true;
-
-        onInitialize();
-        onInitializeViews();
+        invokeInitializersIfReady();
     }
 
     @Nullable
@@ -65,9 +63,7 @@ public abstract class AbstractUiFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         mViewsInjected = true;
-
-        onInitialize();
-        onInitializeViews();
+        invokeInitializersIfReady();
     }
 
     @Override
@@ -79,5 +75,16 @@ public abstract class AbstractUiFragment extends Fragment {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void invokeInitializersIfReady() {
+        if (isActivityCreated() && isViewsInjected()) {
+            if (!isInitialized()) {
+                onInitialize();
+            }
+            if (!isViewsInitialized()) {
+                onInitializeViews();
+            }
+        }
     }
 }

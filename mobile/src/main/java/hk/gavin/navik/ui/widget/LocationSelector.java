@@ -34,8 +34,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
 
     @Getter boolean mUseCurrentLocation = false;
     Optional<NKLocation> mLocation = Optional.absent();
-    Optional<OnLocationUpdatedListener> mOnLocationUpdatedListener = Optional.absent();
-    Optional<OnMenuItemClickListener> mOnMenuItemClickListener = Optional.absent();
+    Optional<LocationSelectorEventsListener> mLocationSelectorEventsListener = Optional.absent();
 
     private NKLocationProvider mLocationProvider;
     private NKReverseGeocoder mReverseGeocoder;
@@ -109,12 +108,12 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mLocationProvider.addPositionUpdateListener(this);
     }
 
-    public void setOnLocationUpdatedListener(OnLocationUpdatedListener listener) {
-        mOnLocationUpdatedListener = Optional.of(listener);
+    public void setLocationSelectorEventsListener(LocationSelectorEventsListener listener) {
+        mLocationSelectorEventsListener = Optional.of(listener);
     }
 
-    public void setOnMenuItemClickListener(OnMenuItemClickListener listener) {
-        mOnMenuItemClickListener = Optional.of(listener);
+    public void removeLocationSelectorEventsListener() {
+        mLocationSelectorEventsListener = Optional.absent();
     }
 
     private void initView(Context context) {
@@ -152,9 +151,12 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     private void invokeOnLocationUpdatedListener(boolean isManualUpdate) {
-        if (mOnLocationUpdatedListener.isPresent() && mLocation.isPresent()) {
+        if (mLocation.isPresent()) {
             Logger.d("location: (%s), name: %s, manual: %b", mLocation.get(), mLocationText.getText(), isManualUpdate);
-            mOnLocationUpdatedListener.get().onLocationUpdated(this, mLocation.get(), isManualUpdate);
+
+            if (mLocationSelectorEventsListener.isPresent()) {
+                mLocationSelectorEventsListener.get().onLocationUpdated(this, mLocation.get(), isManualUpdate);
+            }
         }
     }
 
@@ -199,20 +201,18 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.current_location: {
-                if (mOnMenuItemClickListener.isPresent()) {
-                    mOnMenuItemClickListener.get().onCurrentLocationClicked(this);
-                }
+                useCurrentLocation();
                 return true;
             }
 //            case R.id.history: {
-//                if (mOnMenuItemClickListener.isPresent()) {
-//                    mOnMenuItemClickListener.get().onHistoryClicked();
+//                if (mLocationSelectorEventsListener.isPresent()) {
+//                    mLocationSelectorEventsListener.get().onHistoryClicked(this);
 //                }
 //                return true;
 //            }
             case R.id.select_on_map: {
-                if (mOnMenuItemClickListener.isPresent()) {
-                    mOnMenuItemClickListener.get().onSelectLocationOnMapClicked(this);
+                if (mLocationSelectorEventsListener.isPresent()) {
+                    mLocationSelectorEventsListener.get().onSelectLocationOnMapClicked(this);
                 }
                 return true;
             }
@@ -220,12 +220,8 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         return false;
     }
 
-    public interface OnLocationUpdatedListener {
+    public interface LocationSelectorEventsListener {
         void onLocationUpdated(LocationSelector selector, NKLocation location, boolean isManualUpdate);
-    }
-
-    public interface OnMenuItemClickListener {
-        void onCurrentLocationClicked(LocationSelector selector);
         void onHistoryClicked(LocationSelector selector);
         void onSelectLocationOnMapClicked(LocationSelector selector);
     }
