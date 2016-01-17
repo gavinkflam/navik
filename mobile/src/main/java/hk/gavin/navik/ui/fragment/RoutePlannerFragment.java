@@ -88,14 +88,14 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
             case UiContract.RequestCode.STARTING_POINT_LOCATION: {
                 if (resultCode == UiContract.ResultCode.OK) {
                     NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
-                    mStartingPoint.setLocation(location);
+                    mStartingPoint.setLocation(location, true);
                 }
                 break;
             }
             case UiContract.RequestCode.DESTINATION_LOCATION: {
                 if (resultCode == UiContract.ResultCode.OK) {
                     NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
-                    mDestination.setLocation(location);
+                    mDestination.setLocation(location, true);
                 }
                 break;
             }
@@ -144,7 +144,7 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
         mDirectionsProvider.removeViaPoints();
         
         mStartingPoint.useCurrentLocation();
-        mDestination.setLocation(null);
+        mDestination.setLocation(null, true);
 
         mStartingPoint.setOnLocationUpdatedListener(this);
         mStartingPoint.setOnMenuItemClickListener(this);
@@ -153,10 +153,11 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
     }
 
     @Override
-    public void onLocationUpdated(LocationSelector selector, NKLocation location) {
+    public void onLocationUpdated(LocationSelector selector, NKLocation location, boolean isManualUpdate) {
         switch (selector.getId()) {
             case R.id.startingPoint: {
                 if (mStartingPoint.isLocationAvailable()) {
+                    mDirectionsProvider.setManualUpdate(isManualUpdate);
                     mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation());
                     mDirectionsProvider.getCyclingDirections();
                 }
@@ -164,6 +165,7 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
             }
             case R.id.destination: {
                 if (mDestination.isLocationAvailable()) {
+                    mDirectionsProvider.setManualUpdate(isManualUpdate);
                     mDirectionsProvider.setDestination(mDestination.getLocation());
                     mDirectionsProvider.getCyclingDirections();
                 }

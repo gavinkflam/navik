@@ -20,6 +20,7 @@ public class NKInteractiveDirectionsProvider {
     protected Optional<NKLocation> mDestination = Optional.absent();
     protected Optional<ImmutableList<NKLocation>> mViaPoints = Optional.absent();
     @Setter protected int mNoOfDirections = 1;
+    @Setter protected boolean mIsManualUpdate = false;
 
     private ArrayList<DirectionsResultsListener> mListeners = new ArrayList<>();
     private DirectionsResultsCallback mDirectionsResultsCallback = new DirectionsResultsCallback();
@@ -75,21 +76,21 @@ public class NKInteractiveDirectionsProvider {
         @Override
         public void onDone(ImmutableList<NKDirections> result) {
             for (DirectionsResultsListener listener : mListeners) {
-                listener.onDirectionsAvailable(result);
+                listener.onDirectionsAvailable(result, mIsManualUpdate);
             }
         }
 
         @Override
         public void onFail(NKDirectionsException result) {
             for (DirectionsResultsListener listener : mListeners) {
-                listener.onDirectionsError(result);
+                listener.onDirectionsError(result, mIsManualUpdate);
             }
         }
     }
 
     public interface DirectionsResultsListener {
 
-        void onDirectionsAvailable(ImmutableList<NKDirections> directionsList);
-        void onDirectionsError(NKDirectionsException exception);
+        void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate);
+        void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate);
     }
 }

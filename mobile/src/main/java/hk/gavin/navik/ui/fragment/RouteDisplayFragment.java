@@ -93,15 +93,15 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKIntera
     }
 
     @Override
-    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList) {
+    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate) {
         mDirections = Optional.of(directionsList.get(0));
         if (mMap.isMapLoaded()) {
-            mMap.showRoute(mDirections.get(), true);
+            mMap.showRoute(mDirections.get(), isManualUpdate);
         }
     }
 
     @Override
-    public void onDirectionsError(NKDirectionsException exception) {
+    public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
 
     }
 }

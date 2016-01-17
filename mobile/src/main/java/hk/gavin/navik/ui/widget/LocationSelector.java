@@ -101,12 +101,12 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mReverseGeocoder = reverseGeocoder;
     }
 
-    public void setLocation(NKLocation location) {
+    public void setLocation(NKLocation location, boolean isManualUpdate) {
         mLocationProvider.removePositionUpdateListener(this);
         mLocation = location;
         mUseCurrentLocation = false;
         updateLocationDisplay();
-        invokeOnLocationUpdatedListener();
+        invokeOnLocationUpdatedListener(isManualUpdate);
     }
 
     public boolean isLocationAvailable() {
@@ -120,14 +120,14 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
 
         if (mLocationProvider.isLastLocationAvailable()) {
             mLocation = mLocationProvider.getLastLocation();
-            invokeOnLocationUpdatedListener();
+            invokeOnLocationUpdatedListener(false);
         }
         mLocationProvider.addPositionUpdateListener(this);
     }
 
-    private void invokeOnLocationUpdatedListener() {
+    private void invokeOnLocationUpdatedListener(boolean isManualUpdate) {
         if (mOnLocationUpdatedListener != null) {
-            mOnLocationUpdatedListener.onLocationUpdated(this, mLocation);
+            mOnLocationUpdatedListener.onLocationUpdated(this, mLocation, isManualUpdate);
         }
     }
 
@@ -165,7 +165,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     public void onLocationUpdated(NKLocation location, double accuracy) {
         if (mUseCurrentLocation) {
             mLocation = location;
-            invokeOnLocationUpdatedListener();
+            invokeOnLocationUpdatedListener(false);
         }
     }
 
@@ -200,7 +200,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     public interface OnLocationUpdatedListener {
-        void onLocationUpdated(LocationSelector selector, NKLocation location);
+        void onLocationUpdated(LocationSelector selector, NKLocation location, boolean isManualUpdate);
     }
 
     public interface OnMenuItemClickListener {
