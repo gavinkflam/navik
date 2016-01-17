@@ -3,6 +3,7 @@ package hk.gavin.navik.core.location;
 import com.skobbler.ngx.SKCoordinate;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 public class NKLocation implements Serializable {
 
@@ -20,5 +21,20 @@ public class NKLocation implements Serializable {
 
     public SKCoordinate toSKCoordinate() {
         return new SKCoordinate(longitude, latitude);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        NKLocation l2 = (NKLocation) o;
+        return (this.latitude == l2.latitude) && (this.longitude == l2.longitude);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.US, "lat: %f, lng: %f", this.latitude, this.longitude);
     }
 }
