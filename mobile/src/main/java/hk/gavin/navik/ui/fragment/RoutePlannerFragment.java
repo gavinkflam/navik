@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.view.*;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
@@ -63,7 +62,7 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+        super.onViewCreated(view, savedInstanceState);
         initializeFragments();
         initializeViews();
     }

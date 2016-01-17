@@ -7,13 +7,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
-import hk.gavin.navik.ui.activity.HomeActivity;
-import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.ui.controller.HomeController;
 
 import javax.inject.Inject;
@@ -40,7 +39,7 @@ public class LocationSelectionFragment extends AbstractUiFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+        super.onViewCreated(view, savedInstanceState);
         initializeFragments();
     }
 

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.ButterKnife;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
@@ -44,7 +43,7 @@ public class RouteDisplayFragment extends AbstractUiFragment implements NKIntera
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+        super.onViewCreated(view, savedInstanceState);
         initializeFragments();
         initializeViews();
     }

@@ -16,5 +16,4 @@ public interface HomeComponent extends AbstractActivityComponent {
     void inject(LocationSelectionFragment locationSelectionFragment);
     void inject(RouteDisplayFragment routeDisplayFragment);
     void inject(NavigationFragment navigationFragment);
-
 }

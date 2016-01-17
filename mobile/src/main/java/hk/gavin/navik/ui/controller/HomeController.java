@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.ui.fragment.AbstractUiFragment;
@@ -37,7 +38,7 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         mManager.addOnBackStackChangedListener(this);
 
         replaceFragment(R.id.contentFrame, RoutePlannerFragment.class, UiContract.FragmentTag.HOME, false, false);
-        mMap = replaceFragment(R.id.homeMap, NKMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false);
+        mMap = replaceFragment(R.id.homeMap, NKSkobblerMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false);
     }
 
     public void selectStartingPoint() {
