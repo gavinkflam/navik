@@ -18,9 +18,20 @@ public class NKSkobblerLocationProvider extends NKLocationProvider implements SK
 
     @Override
     public void onCurrentPositionUpdate(SKPosition skPosition) {
-        setLastLocation(NKLocation.fromSKCoordinate(skPosition.getCoordinate()));
-        setLastLocationAccuracy(skPosition.getHorizontalAccuracy());
-        notifyLocationUpdate();
+        NKLocation newLocation = NKLocation.fromSKCoordinate(skPosition.getCoordinate());
+        double newAccuracy = skPosition.getHorizontalAccuracy();
+
+        if (newLocation.equals(getLastLocation())) {
+            if (newAccuracy != getLastLocationAccuracy()) {
+                setLastLocationAccuracy(newAccuracy);
+                notifyAccuracyUpdate();
+            }
+        }
+        else {
+            setLastLocation(NKLocation.fromSKCoordinate(skPosition.getCoordinate()));
+            setLastLocationAccuracy(newAccuracy);
+            notifyLocationUpdate();
+        }
     }
 
     @Override

@@ -32,6 +32,12 @@ public abstract class NKLocationProvider {
         }
     }
 
+    protected void notifyAccuracyUpdate() {
+        for (OnLocationUpdateListener listener: mOnLocationUpdateListeners) {
+            listener.onAccuracyUpdated(mLastLocationAccuracy);
+        }
+    }
+
     public boolean addPositionUpdateListener(OnLocationUpdateListener listener) {
         return mOnLocationUpdateListeners.add(listener);
     }
@@ -42,5 +48,6 @@ public abstract class NKLocationProvider {
 
     public interface OnLocationUpdateListener {
         void onLocationUpdated(NKLocation location, double accuracy);
+        void onAccuracyUpdated(double accuracy);
     }
 }
