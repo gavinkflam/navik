@@ -1,6 +1,6 @@
 package hk.gavin.navik.injection;
 
-import android.content.Context;
+import com.google.common.base.Optional;
 import dagger.Module;
 import dagger.Provides;
 import hk.gavin.navik.application.NKApplication;
@@ -19,11 +19,12 @@ import javax.inject.Singleton;
 public class ApplicationModule {
 
     private final NKApplication mApplication;
-    private MainPreferences mMainPreferences;
-    private NKLocationProvider mNKLocationProvider;
-    private NKReverseGeocoder mNKReverseGeocoder;
-    private NKDirectionsProvider mNKDirectionsProvider;
-    private NKInteractiveDirectionsProvider mNKSkobblerInteractiveDirectionsProvider;
+    private Optional<MainPreferences> mMainPreferences = Optional.absent();
+    private Optional<? extends NKLocationProvider> mNKLocationProvider = Optional.absent();
+    private Optional<? extends NKReverseGeocoder> mNKReverseGeocoder = Optional.absent();
+    private Optional<? extends NKDirectionsProvider> mNKDirectionsProvider = Optional.absent();
+    private Optional<? extends NKInteractiveDirectionsProvider> mNKSkobblerInteractiveDirectionsProvider =
+            Optional.absent();
 
     public ApplicationModule(NKApplication nkApplication) {
         mApplication = nkApplication;
@@ -34,46 +35,45 @@ public class ApplicationModule {
         return mApplication;
     }
 
-    @Provides @Singleton @ForApplication Context applicationContext() {
-        return mApplication;
-    }
-
-    @Provides @Singleton MainPreferences mainPreferences() {
-        if (mMainPreferences == null) {
-            mMainPreferences = new MainPreferences(mApplication);
+    @Provides @Singleton
+    MainPreferences mainPreferences() {
+        if (!mMainPreferences.isPresent()) {
+            mMainPreferences = Optional.of(new MainPreferences(mApplication));
         }
-        return mMainPreferences;
+        return mMainPreferences.get();
     }
 
     @Provides @Singleton
     NKLocationProvider locationProvider() {
-        if (mNKLocationProvider == null) {
-            mNKLocationProvider = new NKSkobblerLocationProvider(mApplication);
+        if (!mNKLocationProvider.isPresent()) {
+            mNKLocationProvider = Optional.of(new NKSkobblerLocationProvider(mApplication));
         }
-        return mNKLocationProvider;
+        return mNKLocationProvider.get();
     }
 
     @Provides @Singleton
     NKReverseGeocoder reverseGeocoder() {
-        if (mNKReverseGeocoder == null) {
-            mNKReverseGeocoder = new NKSkobblerReverseGeocoder();
+        if (!mNKReverseGeocoder.isPresent()) {
+            mNKReverseGeocoder = Optional.of(new NKSkobblerReverseGeocoder());
         }
-        return mNKReverseGeocoder;
+        return mNKReverseGeocoder.get();
     }
 
     @Provides @Singleton
     NKDirectionsProvider directionsProvider() {
-        if (mNKDirectionsProvider == null) {
-            mNKDirectionsProvider = new NKSkobblerDirectionsProvider();
+        if (!mNKDirectionsProvider.isPresent()) {
+            mNKDirectionsProvider = Optional.of(new NKSkobblerDirectionsProvider());
         }
-        return mNKDirectionsProvider;
+        return mNKDirectionsProvider.get();
     }
 
     @Provides @Singleton
     NKInteractiveDirectionsProvider interactiveDirectionsProvider() {
-        if (mNKSkobblerInteractiveDirectionsProvider == null) {
-            mNKSkobblerInteractiveDirectionsProvider = new NKInteractiveDirectionsProvider(directionsProvider());
+        if (!mNKSkobblerInteractiveDirectionsProvider.isPresent()) {
+            mNKSkobblerInteractiveDirectionsProvider = Optional.of(
+                    new NKInteractiveDirectionsProvider(directionsProvider())
+            );
         }
-        return mNKSkobblerInteractiveDirectionsProvider;
+        return mNKSkobblerInteractiveDirectionsProvider.get();
     }
 }

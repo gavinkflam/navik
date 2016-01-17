@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 
 public abstract class AbstractPreferences {
 
-    protected SharedPreferences mPreferences;
-    protected SharedPreferences.Editor mEditor;
+    protected final SharedPreferences mPreferences;
+    protected final SharedPreferences.Editor mEditor;
 
     protected AbstractPreferences(Context context, String preferenceName) {
         mPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
@@ -39,5 +39,4 @@ public abstract class AbstractPreferences {
         mEditor.putBoolean(key, value);
         mEditor.commit();
     }
-
 }

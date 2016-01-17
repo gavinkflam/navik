@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.google.common.base.Optional;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.injection.DaggerHomeComponent;
@@ -21,7 +22,7 @@ public class HomeActivity extends AppCompatActivity
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
     @Inject HomeController mController;
-    private HomeComponent mComponent;
+    private Optional<HomeComponent> mComponent = Optional.absent();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +62,16 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public HomeComponent component() {
-        if (mComponent == null) {
-            mComponent = DaggerHomeComponent.builder()
-                    .applicationComponent(NKApplication.getInstance().component())
-                    .homeModule(new HomeModule(this))
-                    .build();
-            mComponent.inject(this);
+        if (!mComponent.isPresent()) {
+            mComponent = Optional.of(
+                    DaggerHomeComponent.builder()
+                            .applicationComponent(NKApplication.getInstance().component())
+                            .homeModule(new HomeModule(this))
+                            .build()
+            );
+            mComponent.get().inject(this);
         }
-        return mComponent;
+
+        return mComponent.get();
     }
 }

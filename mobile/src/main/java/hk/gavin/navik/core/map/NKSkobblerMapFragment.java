@@ -21,17 +21,23 @@ import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
+@Accessors(prefix = "m")
 public class NKSkobblerMapFragment extends NKMapFragment
         implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener, SKToolsNavigationListener {
 
     private NKLocationProvider mLocationProvider;
-    private SKRouteManager mRouteManager = SKRouteManager.getInstance();
+    private final SKRouteManager mRouteManager = SKRouteManager.getInstance();
     private Optional<SKToolsNavigationManager> mNavigationManager = Optional.absent();
 
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
     @Bind(R.id.skMapHolder) SKMapViewHolder mMapHolder;
     private SKMapSurfaceView mMap;
+
+    @Getter(AccessLevel.PROTECTED) private boolean mActivityCreated = false;
 
     @Override
     public NKLocation getMapCenter() {
@@ -41,7 +47,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
-        if (isMapLoaded() && mLocationProvider != null && mLocationProvider.isLastLocationAvailable()) {
+        if (isMapLoaded() && isActivityCreated()  && mLocationProvider.isLastLocationAvailable()) {
             SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
 
             mMap.setPositionAsCurrent(coordinate, (float) mLocationProvider.getLastLocationAccuracy(), false);
@@ -51,7 +57,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void moveToCurrentLocationOnceAvailable() {
-        if (mLocationProvider != null && mLocationProvider.isLastLocationAvailable()) {
+        if (isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
             moveToCurrentLocation();
         }
         else {
@@ -117,6 +123,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mActivityCreated = true;
         mLocationProvider = new NKSkobblerLocationProvider(getContext());
     }
 

@@ -1,7 +1,6 @@
 package hk.gavin.navik.injection;
 
 import android.app.Activity;
-import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 
@@ -14,12 +13,8 @@ public class ActivityModule {
         mActivity = activity;
     }
 
-    @Provides @PerActivity Activity activity() {
+    @Provides
+    Activity activity() {
         return mActivity;
     }
-
-    @Provides @PerActivity Context activityContext() {
-        return mActivity;
-    }
-
 }

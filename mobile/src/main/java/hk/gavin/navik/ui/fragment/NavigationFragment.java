@@ -1,54 +1,53 @@
 package hk.gavin.navik.ui.fragment;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.preference.MainPreferences;
-import hk.gavin.navik.ui.activity.HomeActivity;
-import hk.gavin.navik.ui.controller.HomeController;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import javax.inject.Inject;
 
-public class NavigationFragment extends AbstractUiFragment implements NKMapFragment.MapEventsListener {
+@Accessors(prefix = "m")
+public class NavigationFragment extends AbstractHomeUiFragment implements NKMapFragment.MapEventsListener {
 
     @Inject MainPreferences mMainPreferences;
-    @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
-
     NKMapFragment mMap;
 
+    @Getter private final int mLayoutResId = R.layout.fragment_navigation;
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ((HomeActivity) getActivity()).component().inject(this);
-        initializeFragments();
+    public void onInitialize() {
+        if (isActivityCreated() && !isInitialized()) {
+            mMap = getController().getMap();
+            super.onInitialize();
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_navigation, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initializeFragments();
+    public void onInitializeViews() {
+        if (isInitialized() && !isViewsInitialized()) {
+            mMap.startNavigation();
+            super.onInitializeViews();
+        }
     }
 
     @Override
     public void onViewVisible() {
-        mController.setActionBarTitle(R.string.navigation);
-        mController.setDisplayHomeAsUp(true);
+        if (isInitialized()) {
+            getController().setActionBarTitle(R.string.navigation);
+            getController().setDisplayHomeAsUp(true);
 
-        mMap.hideMoveToCurrentLocationButton();
-        mMap.setMapEventsListener(this);
-        mMap.startNavigation();
+            mMap.hideMoveToCurrentLocationButton();
+            mMap.setMapEventsListener(this);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        mMap.stopNavigation();
     }
 
     @Override
@@ -60,29 +59,5 @@ public class NavigationFragment extends AbstractUiFragment implements NKMapFragm
     @Override
     public void onMapLoadComplete() {
         // Do nothing
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home: {
-                mMap.stopNavigation();
-                mController.goBack();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        mMap.stopNavigation();
-    }
-
-    private void initializeFragments() {
-        if (isActivityCreated()) {
-            mMap = mController.getMap();
-            onViewVisible();
-        }
     }
 }

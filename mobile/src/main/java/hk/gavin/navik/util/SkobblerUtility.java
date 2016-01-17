@@ -1,6 +1,5 @@
 package hk.gavin.navik.util;
 
-import android.widget.Toast;
 import com.skobbler.ngx.*;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
@@ -11,34 +10,32 @@ import java.io.File;
 
 public class SkobblerUtility {
 
-    public static boolean prepareAndInitializeLibrary() {
+    public static boolean prepareAndInitializeLibrary(final NKApplication application) {
         SKLogging.enableLogs(false);
-        final NKApplication app = NKApplication.getInstance();
 
-        if (!new File(app.getMapResourcesPath()).exists()) {
+        if (!new File(application.getMapResourcesPath()).exists()) {
             new SKPrepareMapTextureThread(
-                    app, app.getMapResourcesPath(), "SKMaps.zip",
+                    application, application.getMapResourcesPath(), "SKMaps.zip",
                     new SKPrepareMapTextureListener() {
 
                         @Override
                         public void onMapTexturesPrepared(boolean prepared) {
-                            Toast.makeText(app, "Map resources were copied", Toast.LENGTH_SHORT).show();
-                            initializeLibrary();
+                            // Map resources were copied
+                            initializeLibrary(application);
                         }
 
                     }
             ).start();
         }
         else {
-            initializeLibrary();
+            initializeLibrary(application);
         }
 
         return true;
     }
 
-    public static boolean initializeLibrary() {
-        final NKApplication app = NKApplication.getInstance();
-        final String mapResourcesPath = app.getMapResourcesPath();
+    public static boolean initializeLibrary(NKApplication application) {
+        final String mapResourcesPath = application.getMapResourcesPath();
         SKMapsInitSettings mapsInitSettings = new SKMapsInitSettings();
 
         mapsInitSettings.setMapResourcesPaths(
@@ -54,7 +51,7 @@ public class SkobblerUtility {
         mapsInitSettings.setAdvisorSettings(advisorSettings);
 
         try {
-            SKMaps.getInstance().initializeSKMaps(app, mapsInitSettings);
+            SKMaps.getInstance().initializeSKMaps(application, mapsInitSettings);
             return true;
         }
         catch (SKDeveloperKeyException exception) {

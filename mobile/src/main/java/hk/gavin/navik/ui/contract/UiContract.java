@@ -10,7 +10,7 @@ public class UiContract {
     }
 
     public static final class ResultCode {
-        public static final int NULL = -1;
+        public static final int NA = -1;
         public static final int CANCEL = 0;
         public static final int OK = 1;
 

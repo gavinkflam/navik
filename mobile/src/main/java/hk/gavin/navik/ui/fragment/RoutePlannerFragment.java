@@ -1,30 +1,33 @@
 package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.OnClick;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
+import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.contract.UiContract;
-import hk.gavin.navik.ui.controller.HomeController;
 import hk.gavin.navik.ui.widget.LocationSelector;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import javax.inject.Inject;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class RoutePlannerFragment extends AbstractUiFragment implements
-        LocationSelector.OnLocationUpdatedListener, LocationSelector.OnMenuItemClickListener {
+@Accessors(prefix = "m")
+public class RoutePlannerFragment extends AbstractHomeUiFragment implements
+        LocationSelector.OnLocationUpdatedListener, LocationSelector.OnMenuItemClickListener,
+        NKInteractiveDirectionsProvider.DirectionsResultsListener {
 
-    @Inject HomeController mController;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
@@ -34,46 +37,59 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
     @Bind(R.id.destination) LocationSelector mDestination;
 
     private RouteDisplayFragment mRouteDisplay;
+    private Optional<NKDirections> mDirections = Optional.absent();
+    @Getter private final int mLayoutResId = R.layout.fragment_route_planner;
 
     public RoutePlannerFragment() {
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ((HomeActivity) getActivity()).component().inject(this);
-
-        initializeFragments();
-        initializeViews();
+    @OnClick(R.id.startBikeNavigation)
+    void startBikeNavigation() {
+        if (mDirections.isPresent()) {
+            getController().startBikeNavigation();
+        }
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_home, menu);
+    public void onInitialize() {
+        if (isActivityCreated() && !isInitialized()) {
+            mRouteDisplay = getController().initializeRouteDisplayFragment();
+            super.onInitialize();
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_route_planner, container, false);
-    }
+    public void onInitializeViews() {
+        if (isActivityCreated() && isViewsInjected() && !isViewsInitialized()) {
+            mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
+            mDestination.initialize(mLocationProvider, mReverseGeocoder);
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initializeFragments();
-        initializeViews();
+            mDirectionsProvider.removeStartingPoint();
+            mDirectionsProvider.removeDestination();
+            mDirectionsProvider.removeViaPoints();
+
+            mStartingPoint.useCurrentLocation();
+            mDestination.removeLocation();
+            mRouteDisplay.clearRouteDisplay();
+
+            mStartingPoint.setOnLocationUpdatedListener(this);
+            mStartingPoint.setOnMenuItemClickListener(this);
+            mDestination.setOnLocationUpdatedListener(this);
+            mDestination.setOnMenuItemClickListener(this);
+
+            super.onInitializeViews();
+        }
     }
 
     @Override
     public void onViewVisible() {
-        if (mRouteDisplay != null) {
+        if (isActivityCreated()) {
+            getController().setActionBarTitle(R.string.app_name);
+            getController().setDisplayHomeAsUp(false);
+
             mRouteDisplay.onViewVisible();
         }
-
-        mController.setActionBarTitle(R.string.app_name);
-        mController.setDisplayHomeAsUp(false);
     }
 
     @Override
@@ -97,6 +113,11 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_home, menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_offline_data: {
@@ -108,42 +129,6 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @OnClick(R.id.startBikeNavigation)
-    void startBikeNavigation() {
-        mController.startBikeNavigation();
-    }
-
-    private void initializeFragments() {
-        if (mController == null) {
-            return;
-        }
-
-        mRouteDisplay = mController.replaceFragment(
-                R.id.homeContentFrame, RouteDisplayFragment.class, UiContract.FragmentTag.ROUTE_DISPLAY
-        );
-    }
-
-    private void initializeViews() {
-        if (mLocationProvider == null || mStartingPoint == null) {
-            return;
-        }
-
-        mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
-        mDestination.initialize(mLocationProvider, mReverseGeocoder);
-
-        mDirectionsProvider.removeStartingPoint();
-        mDirectionsProvider.removeDestination();
-        mDirectionsProvider.removeViaPoints();
-        
-        mStartingPoint.useCurrentLocation();
-        mDestination.setLocation(null, true);
-
-        mStartingPoint.setOnLocationUpdatedListener(this);
-        mStartingPoint.setOnMenuItemClickListener(this);
-        mDestination.setOnLocationUpdatedListener(this);
-        mDestination.setOnMenuItemClickListener(this);
     }
 
     @Override
@@ -184,20 +169,30 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
 
     @Override
     public void onHistoryClicked(LocationSelector selector) {
-
+        // Do nothing
     }
 
     @Override
     public void onSelectLocationOnMapClicked(LocationSelector selector) {
         switch (selector.getId()) {
             case R.id.startingPoint: {
-                mController.selectStartingPoint();
+                getController().selectStartingPoint();
                 break;
             }
             case R.id.destination: {
-                mController.selectDestination();
+                getController().selectDestination();
                 break;
             }
         }
+    }
+
+    @Override
+    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate) {
+        mDirections = Optional.of(directionsList.get(0));
+    }
+
+    @Override
+    public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
+        // Do nothing
     }
 }

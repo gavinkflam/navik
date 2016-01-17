@@ -6,7 +6,7 @@ import hk.gavin.navik.core.location.NKLocation;
 
 public class NKSkobblerReverseGeocoder implements NKReverseGeocoder {
 
-    private SKReverseGeocoderManager mManager;
+    private final SKReverseGeocoderManager mManager;
 
     public NKSkobblerReverseGeocoder() {
         mManager = SKReverseGeocoderManager.getInstance();

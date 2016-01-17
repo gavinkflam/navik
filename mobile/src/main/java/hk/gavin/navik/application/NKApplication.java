@@ -17,21 +17,13 @@ public class NKApplication extends Application {
 
     @Inject MainPreferences mMainPreferences;
 
-    @Override
-    public void onCreate() {
-        mInstance = this;
-        super.onCreate();
-
-        mApplicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .build();
-        mApplicationComponent.inject(this);
-
-        SkobblerUtility.prepareAndInitializeLibrary();
-    }
-
     public static NKApplication getInstance() {
         return mInstance;
+    }
+
+    public NKApplication() {
+        super();
+        mInstance = this;
     }
 
     public String getMapResourcesPath() {
@@ -48,5 +40,17 @@ public class NKApplication extends Application {
 
     public ApplicationComponent component() {
         return mApplicationComponent;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mApplicationComponent = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
+        mApplicationComponent.inject(this);
+
+        SkobblerUtility.prepareAndInitializeLibrary(this);
     }
 }

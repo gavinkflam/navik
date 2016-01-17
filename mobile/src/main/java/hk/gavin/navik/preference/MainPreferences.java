@@ -19,5 +19,4 @@ public class MainPreferences extends AbstractPreferences {
     public void setMapResourcesPath(String mapResourcesPath) {
         setStringPreference(KEY_MAP_RESOURCES_PATH, mapResourcesPath);
     }
-
 }

@@ -6,15 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import com.google.common.base.Optional;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.contract.UiContract;
-import hk.gavin.navik.ui.fragment.AbstractUiFragment;
-import hk.gavin.navik.ui.fragment.LocationSelectionFragment;
-import hk.gavin.navik.ui.fragment.NavigationFragment;
-import hk.gavin.navik.ui.fragment.RoutePlannerFragment;
+import hk.gavin.navik.ui.fragment.*;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -27,7 +25,7 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
     @Getter private AbstractUiFragment mCurrentFragment;
 
     @Getter private int mRequestCode;
-    private int mResultCode = UiContract.ResultCode.NULL;
+    private int mResultCode = UiContract.ResultCode.NA;
     private Intent mResultData;
 
     public HomeController(HomeActivity activity) {
@@ -39,7 +37,16 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         mManager.addOnBackStackChangedListener(this);
 
         replaceFragment(R.id.contentFrame, RoutePlannerFragment.class, UiContract.FragmentTag.HOME, false, false);
-        mMap = replaceFragment(R.id.homeMap, NKSkobblerMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false);
+        mMap = replaceFragment(
+                R.id.homeMap, NKSkobblerMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false
+        );
+    }
+
+    public RouteDisplayFragment initializeRouteDisplayFragment() {
+        return replaceFragment(
+                R.id.routePlannerContentFrame, RouteDisplayFragment.class, UiContract.FragmentTag.ROUTE_DISPLAY,
+                false, true
+        );
     }
 
     public void selectStartingPoint() {
@@ -105,36 +112,43 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
     }
 
     public <T extends Fragment> void removeFragment(Class<T> fClass, String tag) {
-        T fragment = (T) mManager.findFragmentByTag(tag);
+        Optional<T> fragment = Optional.fromNullable(
+                (T) mManager.findFragmentByTag(tag)
+        );
 
-        if (fragment != null) {
-            mManager.beginTransaction().remove(fragment).commit();
+        if (fragment.isPresent()) {
+            mManager.beginTransaction().remove(fragment.get()).commit();
         }
     }
 
     public <T extends Fragment> T getFragment(Class<T> fClass, String tag) {
-        T fragment = (T) mManager.findFragmentByTag(tag);
-        if (fragment == null) {
+        Optional<T> fragment = Optional.fromNullable(
+                (T) mManager.findFragmentByTag(tag)
+        );
+        if (!fragment.isPresent()) {
             try {
-                fragment = fClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
+                fragment = Optional.of(fClass.newInstance());
+            }
+            catch (Exception e) {
+                // Do nothing
             }
         }
 
-        return fragment;
+        return fragment.get();
     }
 
     @Override
     public void onBackStackChanged() {
-        Fragment fragment = mManager.findFragmentById(R.id.contentFrame);
-        if (fragment != null) {
-            mCurrentFragment = (AbstractUiFragment) fragment;
+        Optional<Fragment> fragment = Optional.fromNullable(
+                mManager.findFragmentById(R.id.contentFrame)
+        );
+        if (fragment.isPresent()) {
+            mCurrentFragment = (AbstractUiFragment) fragment.get();
             mCurrentFragment.onViewVisible();
 
-            if (mResultCode != UiContract.ResultCode.NULL) {
+            if (mResultCode != UiContract.ResultCode.NA) {
                 mCurrentFragment.onResultAvailable(mRequestCode, mResultCode, mResultData);
-                mResultCode = UiContract.ResultCode.NULL;
+                mResultCode = UiContract.ResultCode.NA;
             }
         }
     }

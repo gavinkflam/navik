@@ -1,6 +1,5 @@
 package hk.gavin.navik.injection;
 
-import android.content.Context;
 import dagger.Component;
 import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.core.directions.NKDirectionsProvider;
@@ -18,7 +17,6 @@ public interface ApplicationComponent {
     void inject(NKApplication application);
 
     NKApplication application();
-    @ForApplication Context applicationContext();
     MainPreferences mainPreferences();
     NKLocationProvider locationProvider();
     NKReverseGeocoder reverseGeocoder();

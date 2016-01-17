@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @Accessors(prefix = "m")
 public class NKInteractiveDirectionsProvider {
 
-    protected NKDirectionsProvider mProvider;
+    protected final NKDirectionsProvider mProvider;
 
     protected Optional<NKLocation> mStartingPoint = Optional.absent();
     protected Optional<NKLocation> mDestination = Optional.absent();

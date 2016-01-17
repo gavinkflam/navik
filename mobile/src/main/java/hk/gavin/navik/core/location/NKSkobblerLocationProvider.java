@@ -7,7 +7,7 @@ import com.skobbler.ngx.positioner.SKPosition;
 
 public class NKSkobblerLocationProvider extends NKLocationProvider implements SKCurrentPositionListener {
 
-    private SKCurrentPositionProvider mProvider;
+    private final SKCurrentPositionProvider mProvider;
 
     public NKSkobblerLocationProvider(Context context) {
         super(context);
@@ -21,7 +21,7 @@ public class NKSkobblerLocationProvider extends NKLocationProvider implements SK
         NKLocation newLocation = NKLocation.fromSKCoordinate(skPosition.getCoordinate());
         double newAccuracy = skPosition.getHorizontalAccuracy();
 
-        if (newLocation.equals(getLastLocation())) {
+        if (isLastLocationAvailable() && newLocation.equals(getLastLocation())) {
             if (newAccuracy != getLastLocationAccuracy()) {
                 setLastLocationAccuracy(newAccuracy);
                 notifyAccuracyUpdate();
