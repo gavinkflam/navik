@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "hk.gavin.navik"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId rootProject.ext.applicationId
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
     }
     buildTypes {
         release {
@@ -19,7 +19,7 @@ android {
         }
         debug {
             debuggable true
-            applicationIdSuffix ".dev"
+            applicationIdSuffix '.dev'
         }
     }
     splits {
@@ -34,10 +34,10 @@ android {
 
 repositories {
     maven {
-        url "http://developer.skobbler.com/maven/"
+        url 'http://developer.skobbler.com/maven/'
     }
     maven {
-        url "https://jitpack.io"
+        url 'https://jitpack.io'
     }
 }
 
@@ -50,7 +50,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile project (':sdktools')
-    skobblersdk "com.skobbler.ngx:SKMaps:2.5.1"
+    skobblersdk 'com.skobbler.ngx:SKMaps:2.5.1'
 
     wearApp project(':wear')
     compile 'com.google.android.gms:play-services-wearable:8.4.0'
@@ -59,8 +59,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
 
-    provided "org.projectlombok:lombok:1.16.6"
-    apt "org.projectlombok:lombok:1.16.6"
+    provided 'org.projectlombok:lombok:1.16.6'
+    apt 'org.projectlombok:lombok:1.16.6'
 
     compile 'com.google.guava:guava:19.0'
 
@@ -89,35 +89,35 @@ android.applicationVariants.all { variant ->
     }
 }
 
-def assetsPath = "$projectDir/src/main/assets"
-def libsPath = "$projectDir/libs"
-def jniLibsPath = "$projectDir/src/main/jniLibs"
+def assetsPath = '$projectDir/src/main/assets'
+def libsPath = '$projectDir/libs'
+def jniLibsPath = '$projectDir/src/main/jniLibs'
 
 task installSKMaps << {
     copy {
         from configurations.skobblersdk
-        into "$buildDir/skobblersdk-down"
+        into '$buildDir/skobblersdk-down'
         rename { String fileName -> 'skobblersdkres.zip' }
     }
     copy {
-        from zipTree("$buildDir/skobblersdk-down/skobblersdkres.zip")
-        into "$buildDir/skobblersdk-down"
+        from zipTree('$buildDir/skobblersdk-down/skobblersdkres.zip')
+        into '$buildDir/skobblersdk-down'
     }
-    delete("$jniLibsPath",
-            "$assetsPath/SKMaps.zip",
-            "$libsPath/SKMaps.jar")
+    delete('$jniLibsPath',
+            '$assetsPath/SKMaps.zip',
+            '$libsPath/SKMaps.jar')
     copy {
-        from "${buildDir}/skobblersdk-down/jniLibs"
-        into "$jniLibsPath"
+        from '${buildDir}/skobblersdk-down/jniLibs'
+        into '$jniLibsPath'
     }
     copy {
-        from "${buildDir}/skobblersdk-down/SKMaps.zip"
-        into "$assetsPath"
+        from '${buildDir}/skobblersdk-down/SKMaps.zip'
+        into '$assetsPath'
     }
 //    copy {
-//        from "${buildDir}/skobblersdk-down/SKMaps.jar"
-//        into "$libsPath"
+//        from '${buildDir}/skobblersdk-down/SKMaps.jar'
+//        into '$libsPath'
 //    }
-    delete("$buildDir/skobblersdk-down")
+    delete('$buildDir/skobblersdk-down')
     delete(configurations.skobblersdk)
 }
