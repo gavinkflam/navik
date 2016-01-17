@@ -78,14 +78,16 @@ dependencies {
 // Assign different version code and version name for each output
 import com.android.build.OutputFile
 ext.versionCodes = ['armeabi': 1, 'armeabi-v7a': 3, x86: 6]
+ext.versionNames = ['armeabi': 'arm', 'armeabi-v7a': 'armv7a', x86: 'x86']
 
 android.applicationVariants.all { variant ->
     variant.outputs.each { output ->
         output.versionCodeOverride =
-                project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) * 1000000
-                    + android.defaultConfig.versionCode
+                project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) * 1000000 +
+                        android.defaultConfig.versionCode
         output.versionNameOverride =
-                android.defaultConfig.versionName + '-' + output.getFilter(OutputFile.ABI).toString()
+                android.defaultConfig.versionName + '-' +
+                        project.ext.versionNames.get(output.getFilter(OutputFile.ABI))
     }
 }
 
