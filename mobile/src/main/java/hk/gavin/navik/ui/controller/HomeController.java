@@ -1,6 +1,7 @@
 package hk.gavin.navik.ui.controller;
 
 import android.content.Intent;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -73,8 +74,13 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         mActivity.onBackPressed();
     }
 
-    public ActionBar getActionBar() {
-        return mActivity.getSupportActionBar();
+    public void setActionBarTitle(@StringRes int stringRes) {
+        getActionBar().setTitle(stringRes);
+    }
+
+    public void setDisplayHomeAsUp(boolean displayHomeAsUp) {
+        getActionBar().setDisplayShowHomeEnabled(displayHomeAsUp);
+        getActionBar().setDisplayHomeAsUpEnabled(displayHomeAsUp);
     }
 
     public <T extends Fragment> T replaceFragment(
@@ -131,5 +137,9 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
                 mResultCode = UiContract.ResultCode.NULL;
             }
         }
+    }
+
+    private ActionBar getActionBar() {
+        return mActivity.getSupportActionBar();
     }
 }

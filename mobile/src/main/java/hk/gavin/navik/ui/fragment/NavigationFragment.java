@@ -1,7 +1,6 @@
 package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,14 +43,11 @@ public class NavigationFragment extends AbstractUiFragment implements NKMapFragm
 
     @Override
     public void onViewVisible() {
+        mController.setActionBarTitle(R.string.navigation);
+        mController.setDisplayHomeAsUp(true);
+
         mMap.hideMoveToCurrentLocationButton();
         mMap.setMapEventsListener(this);
-
-        ActionBar actionBar = mController.getActionBar();
-        actionBar.setTitle(R.string.navigation);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         mMap.startNavigation();
     }
 

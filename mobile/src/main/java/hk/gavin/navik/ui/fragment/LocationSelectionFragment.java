@@ -2,7 +2,6 @@ package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,23 +44,13 @@ public class LocationSelectionFragment extends AbstractUiFragment {
 
     @Override
     public void onViewVisible() {
-        mMap.showMoveToCurrentLocationButton();
+        mController.setActionBarTitle(
+                mController.getRequestCode() == UiContract.RequestCode.STARTING_POINT_LOCATION ?
+                        R.string.select_starting_point : R.string.select_destination
+        );
+        mController.setDisplayHomeAsUp(true);
 
-        ActionBar actionBar = mController.getActionBar();
-        if (actionBar != null) {
-            switch (mController.getRequestCode()) {
-                case UiContract.RequestCode.STARTING_POINT_LOCATION: {
-                    actionBar.setTitle(R.string.select_starting_point);
-                    break;
-                }
-                case UiContract.RequestCode.DESTINATION_LOCATION: {
-                    actionBar.setTitle(R.string.select_destination);
-                    break;
-                }
-            }
-            actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        mMap.showMoveToCurrentLocationButton();
     }
 
     private void initializeFragments() {

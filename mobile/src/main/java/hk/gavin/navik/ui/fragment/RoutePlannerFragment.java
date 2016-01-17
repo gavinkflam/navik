@@ -3,7 +3,6 @@ package hk.gavin.navik.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBar;
 import android.view.*;
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -73,12 +72,8 @@ public class RoutePlannerFragment extends AbstractUiFragment implements
             mRouteDisplay.onViewVisible();
         }
 
-        ActionBar actionBar = mController.getActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.app_name);
-            actionBar.setDisplayShowHomeEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(false);
-        }
+        mController.setActionBarTitle(R.string.app_name);
+        mController.setDisplayHomeAsUp(false);
     }
 
     @Override
