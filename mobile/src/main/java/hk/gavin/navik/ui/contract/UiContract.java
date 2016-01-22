@@ -17,8 +17,11 @@ public class UiContract {
     }
 
     public static final class DataKey {
+        public static final String SUPER_STATE = "SuperState";
+
         public static final String TITLE = "title";
         public static final String LOCATION = "location";
+        public static final String USE_CURRENT_LOCATION = "useCurrentLocation";
     }
 
     public static final class FragmentTag {

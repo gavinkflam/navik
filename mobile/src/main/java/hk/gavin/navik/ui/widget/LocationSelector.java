@@ -3,6 +3,8 @@ package hk.gavin.navik.ui.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -19,6 +21,7 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.ui.contract.UiContract;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -218,6 +221,31 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
             }
         }
         return false;
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(UiContract.DataKey.SUPER_STATE, super.onSaveInstanceState());
+        bundle.putBoolean(UiContract.DataKey.USE_CURRENT_LOCATION, mUseCurrentLocation);
+        if (mLocation.isPresent()) {
+            bundle.putSerializable(UiContract.DataKey.LOCATION, mLocation.get());
+        }
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            mUseCurrentLocation = bundle.getBoolean(UiContract.DataKey.USE_CURRENT_LOCATION);
+            mLocation = Optional.fromNullable(
+                    (NKLocation) bundle.getSerializable(UiContract.DataKey.LOCATION)
+            );
+            updateLocationDisplay();
+            state = bundle.getParcelable(UiContract.DataKey.SUPER_STATE);
+        }
+        super.onRestoreInstanceState(state);
     }
 
     public interface LocationSelectorEventsListener {
