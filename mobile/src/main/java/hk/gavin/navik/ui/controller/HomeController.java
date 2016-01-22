@@ -130,8 +130,6 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         );
         if (fragment.isPresent()) {
             mCurrentFragment = (AbstractUiFragment) fragment.get();
-            mCurrentFragment.onViewVisible();
-
             if (mResultCode != UiContract.ResultCode.NA) {
                 mCurrentFragment.onResultAvailable(mRequestCode, mResultCode, mResultData);
                 mResultCode = UiContract.ResultCode.NA;

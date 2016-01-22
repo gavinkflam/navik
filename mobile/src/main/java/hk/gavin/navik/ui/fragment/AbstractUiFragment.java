@@ -9,32 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
 public abstract class AbstractUiFragment extends Fragment {
 
-    @Getter(AccessLevel.PROTECTED) private boolean mActivityCreated = false;
-    @Getter(AccessLevel.PROTECTED) private boolean mViewsInjected = false;
-    @Getter(AccessLevel.PROTECTED) private boolean mInitialized = false;
-    @Getter(AccessLevel.PROTECTED) private boolean mViewsInitialized = false;
-
     abstract protected int getLayoutResId();
-    abstract protected void onInjectComponent();
-
-    public void onInitialize() {
-        mInitialized = true;
-    }
-
-    public void onInitializeViews() {
-        mViewsInitialized = true;
-    }
-
-    public void onViewVisible() {
-        // Do nothing
-    }
 
     public void onResultAvailable(int requestCode, int resultCode, Intent data) {
         // Do nothing
@@ -42,14 +22,6 @@ public abstract class AbstractUiFragment extends Fragment {
 
     public void onBackPressed() {
         // Do nothing
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        onInjectComponent();
-        mActivityCreated = true;
-        invokeInitializersIfReady();
     }
 
     @Nullable
@@ -62,8 +34,6 @@ public abstract class AbstractUiFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        mViewsInjected = true;
-        invokeInitializersIfReady();
     }
 
     @Override
@@ -75,16 +45,5 @@ public abstract class AbstractUiFragment extends Fragment {
             }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void invokeInitializersIfReady() {
-        if (isActivityCreated() && isViewsInjected()) {
-            if (!isInitialized()) {
-                onInitialize();
-            }
-            if (!isViewsInitialized()) {
-                onInitializeViews();
-            }
-        }
     }
 }

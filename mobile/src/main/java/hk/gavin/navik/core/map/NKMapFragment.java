@@ -40,11 +40,6 @@ public abstract class NKMapFragment extends AbstractUiFragment {
     abstract public void startNavigation();
     abstract public void stopNavigation();
 
-    @Override
-    protected void onInjectComponent() {
-        // Do nothing
-    }
-
     public interface MapEventsListener {
         void onMapLoadComplete();
     }

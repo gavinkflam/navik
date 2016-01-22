@@ -1,6 +1,7 @@
 package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +36,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
 
-    private RouteDisplayFragment mRouteDisplay;
+    private boolean mSelectorsInitialized = false;
     private Optional<NKDirections> mDirections = Optional.absent();
     @Getter private final int mLayoutResId = R.layout.fragment_route_planner;
 
@@ -51,35 +52,41 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     }
 
     @Override
-    public void onInitialize() {
-        super.onInitialize();
-        mRouteDisplay = getController().initializeRouteDisplayFragment();
-    }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getController().initializeRouteDisplayFragment();
 
-    @Override
-    public void onInitializeViews() {
-        super.onInitializeViews();
+        // Update title and back button display
+        getController().setActionBarTitle(R.string.app_name);
+        getController().setDisplayHomeAsUp(false);
 
+        // Initialize location selector
         mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
         mDestination.initialize(mLocationProvider, mReverseGeocoder);
 
-        mStartingPoint.useCurrentLocation();
-        mDestination.removeLocation();
-
-        onViewVisible();
+        if (!mSelectorsInitialized) {
+            mStartingPoint.useCurrentLocation();
+            mDestination.removeLocation();
+            mSelectorsInitialized = true;
+        }
     }
 
     @Override
-    public void onViewVisible() {
-        if (isViewsInitialized()) {
-            getController().setActionBarTitle(R.string.app_name);
-            getController().setDisplayHomeAsUp(false);
+    public void onResume() {
+        super.onResume();
 
-            mStartingPoint.setLocationSelectorEventsListener(this);
-            mDestination.setLocationSelectorEventsListener(this);
+        mStartingPoint.setLocationSelectorEventsListener(this);
+        mDestination.setLocationSelectorEventsListener(this);
+        mDirectionsProvider.addDirectionsResultsListener(this);
+    }
 
-            mRouteDisplay.onViewVisible();
-        }
+    @Override
+    public void onPause() {
+        mStartingPoint.removeLocationSelectorEventsListener();
+        mDestination.removeLocationSelectorEventsListener();
+        mDirectionsProvider.removeDirectionsResultsListener(this);
+
+        super.onPause();
     }
 
     @Override
@@ -100,14 +107,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                 break;
             }
         }
-    }
-
-    @Override
-    public void onPause() {
-        mStartingPoint.removeLocationSelectorEventsListener();
-        mDestination.removeLocationSelectorEventsListener();
-
-        super.onPause();
     }
 
     @Override

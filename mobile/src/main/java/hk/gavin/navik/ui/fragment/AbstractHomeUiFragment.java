@@ -1,5 +1,6 @@
 package hk.gavin.navik.ui.fragment;
 
+import android.os.Bundle;
 import hk.gavin.navik.injection.HomeComponent;
 import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.controller.HomeController;
@@ -15,7 +16,8 @@ public abstract class AbstractHomeUiFragment extends AbstractUiFragment {
     @Getter(AccessLevel.PROTECTED) @Inject HomeController mController;
 
     @Override
-    protected void onInjectComponent() {
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         HomeComponent component = ((HomeActivity) getActivity()).component();
 
         if (this instanceof LocationSelectionFragment) {

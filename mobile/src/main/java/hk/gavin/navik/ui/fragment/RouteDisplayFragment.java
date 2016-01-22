@@ -1,5 +1,6 @@
 package hk.gavin.navik.ui.fragment;
 
+import android.os.Bundle;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
@@ -25,45 +26,29 @@ public class RouteDisplayFragment extends AbstractHomeUiFragment implements
 
     @Getter private final int mLayoutResId = R.layout.fragment_route_display;
 
-    public void clearRouteDisplay() {
-        if (isActivityCreated()) {
-            mMap.clearCurrentRoute();
-        }
-    }
-
     @Override
-    public void onInitializeViews() {
-        super.onInitializeViews();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Properly set map display
         mMap = getController().getMap();
+        mMap.hideMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
 
-        onViewVisible();
-    }
-
-    @Override
-    public void onViewVisible() {
-        if (isViewsInitialized()) {
-            mMap.hideMoveToCurrentLocationButton();
-
-            if (mMap.isMapLoaded() && mDirections.isPresent()) {
-                mMap.showRoute(mDirections.get(), true);
-            }
+        if (mMap.isMapLoaded() && mDirections.isPresent()) {
+            mMap.showRoute(mDirections.get(), true);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (isActivityCreated()) {
-            mDirectionsProvider.addDirectionsResultsListener(this);
-        }
+        mDirectionsProvider.addDirectionsResultsListener(this);
     }
 
     @Override
     public void onPause() {
-        if (isActivityCreated()) {
-            mDirectionsProvider.removeDirectionsResultsListener(this);
-        }
+        mDirectionsProvider.removeDirectionsResultsListener(this);
         super.onPause();
     }
 

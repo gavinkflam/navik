@@ -1,7 +1,10 @@
 package hk.gavin.navik.core.map;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
@@ -122,23 +125,21 @@ public class NKSkobblerMapFragment extends NKMapFragment
     }
 
     @Override
-    public void onInitialize() {
-        super.onInitialize();
-        mLocationProvider = new NKSkobblerLocationProvider(getContext());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mLocationProvider = new NKSkobblerLocationProvider(context);
     }
 
     @Override
-    public void onInitializeViews() {
-        super.onInitializeViews();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mMapHolder.setMapSurfaceListener(this);
         updateMoveToCurrentLocationButtonDisplay();
     }
 
     @Override
     public void onPause() {
-        if (isInitialized()) {
-            mLocationProvider.removePositionUpdateListener(this);
-        }
+        mLocationProvider.removePositionUpdateListener(this);
         mMapHolder.onPause();
         super.onPause();
     }
@@ -147,10 +148,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     public void onResume() {
         super.onResume();
         mMapHolder.onResume();
-
-        if (isInitialized()) {
-            mLocationProvider.addPositionUpdateListener(this);
-        }
+        mLocationProvider.addPositionUpdateListener(this);
     }
 
     @Override
@@ -339,13 +337,11 @@ public class NKSkobblerMapFragment extends NKMapFragment
     }
 
     private void updateMoveToCurrentLocationButtonDisplay() {
-        if (isViewsInjected()) {
-            if (isDisplayMoveToCurrentLocationButton()) {
-                mMoveToCurrentLocationButton.show();
-            }
-            else {
-                mMoveToCurrentLocationButton.hide();
-            }
+        if (isDisplayMoveToCurrentLocationButton()) {
+            mMoveToCurrentLocationButton.show();
+        }
+        else {
+            mMoveToCurrentLocationButton.hide();
         }
     }
 }

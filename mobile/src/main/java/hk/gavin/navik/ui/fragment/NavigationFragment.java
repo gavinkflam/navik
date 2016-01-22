@@ -1,5 +1,6 @@
 package hk.gavin.navik.ui.fragment;
 
+import android.os.Bundle;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
@@ -19,21 +20,18 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKMapF
     @Getter private final int mLayoutResId = R.layout.fragment_navigation;
 
     @Override
-    public void onInitializeViews() {
-        super.onInitializeViews();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Properly set map display
         mMap = getController().getMap();
+        mMap.hideMoveToCurrentLocationButton();
+        mMap.setMapEventsListener(this);
         mMap.startNavigation();
-    }
 
-    @Override
-    public void onViewVisible() {
-        if (isViewsInitialized()) {
-            getController().setActionBarTitle(R.string.navigation);
-            getController().setDisplayHomeAsUp(true);
-
-            mMap.hideMoveToCurrentLocationButton();
-            mMap.setMapEventsListener(this);
-        }
+        // Update title and back button display
+        getController().setActionBarTitle(R.string.navigation);
+        getController().setDisplayHomeAsUp(true);
     }
 
     @Override

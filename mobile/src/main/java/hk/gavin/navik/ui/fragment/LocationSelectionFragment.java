@@ -1,6 +1,7 @@
 package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.location.NKLocationProvider;
@@ -29,21 +30,18 @@ public class LocationSelectionFragment extends AbstractHomeUiFragment {
     }
 
     @Override
-    public void onInitializeViews() {
-        super.onInitializeViews();
-        mMap = getController().getMap();
-        onViewVisible();
-    }
-    @Override
-    public void onViewVisible() {
-        if (isViewsInitialized()) {
-            getController().setActionBarTitle(
-                    getController().getRequestCode() == UiContract.RequestCode.STARTING_POINT_LOCATION ?
-                            R.string.select_starting_point : R.string.select_destination
-            );
-            getController().setDisplayHomeAsUp(true);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-            mMap.showMoveToCurrentLocationButton();
-        }
+        // Properly set map display
+        mMap = getController().getMap();
+        mMap.showMoveToCurrentLocationButton();
+
+        // Update title and back button display
+        getController().setActionBarTitle(
+                getController().getRequestCode() == UiContract.RequestCode.STARTING_POINT_LOCATION ?
+                        R.string.select_starting_point : R.string.select_destination
+        );
+        getController().setDisplayHomeAsUp(true);
     }
 }
