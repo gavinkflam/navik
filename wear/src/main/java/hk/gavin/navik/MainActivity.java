@@ -21,19 +21,22 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     private GoogleApiClient mApiClient;
 
     @Bind(R.id.container) BoxInsetLayout mContainer;
-    @Bind(R.id.visualAdvisor) ImageView mVisualAdvisor;
-    @Bind(R.id.metersToTurn) TextView mMetersToTurn;
-    @Bind(R.id.streetName) TextView mStreesName;
-    @Bind(R.id.progress) TextView mProgress;
+    @Bind(R.id.visualAdvice) ImageView mVisualAdvice;
+    @Bind(R.id.distanceToNextAdvice) TextView mDistanceToNextAdvice;
+    @Bind(R.id.nextStreetName) TextView mNextStreetName;
+    @Bind(R.id.distanceToDestination) TextView mDistanceToDestination;
+    @Bind(R.id.currentSpeed) TextView mCurrentSpeed;
 
     @BindColor(R.color.colorSafe) int mColorSafe;
     @BindColor(R.color.colorSoon) int mColorSoon;
     @BindColor(R.color.colorImmediate) int mColorImmediate;
 
     public void displayNavigationState(NKNavigationState navigationState) {
-        mVisualAdvisor.setImageBitmap(navigationState.visualAdviceImage.getBitmap());
-        mMetersToTurn.setText(String.format("%d m", navigationState.distanceToNextAdvice));
-        mStreesName.setText(navigationState.nextStreetName);
+        mVisualAdvice.setImageBitmap(navigationState.visualAdviceImage.getBitmap());
+        mDistanceToNextAdvice.setText(String.format("%d m", navigationState.distanceToNextAdvice));
+        mNextStreetName.setText(navigationState.nextStreetName);
+        mDistanceToDestination.setText(String.format("%.1f km", navigationState.distanceToDestination / 1000f));
+        mCurrentSpeed.setText(String.format("%d km/h", Math.round(navigationState.currentSpeed * 3.6)));
 
         // Determine background color
         if (navigationState.distanceToNextAdvice < 100) {
