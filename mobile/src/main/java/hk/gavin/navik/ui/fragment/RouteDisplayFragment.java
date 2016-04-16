@@ -32,7 +32,7 @@ public class RouteDisplayFragment extends AbstractHomeUiFragment implements
 
         // Properly set map display
         mMap = getController().getMap();
-        mMap.hideMoveToCurrentLocationButton();
+        mMap.showMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
 
         if (mMap.isMapLoaded() && mDirections.isPresent()) {
