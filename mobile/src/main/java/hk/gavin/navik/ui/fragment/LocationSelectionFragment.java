@@ -6,7 +6,7 @@ import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.contract.UiContract;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
