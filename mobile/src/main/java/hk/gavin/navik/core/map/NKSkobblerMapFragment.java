@@ -23,7 +23,6 @@ import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -39,7 +38,6 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Bind(R.id.skMapHolder) SKMapViewHolder mMapHolder;
     private SKMapSurfaceView mMap;
 
-    @Getter(AccessLevel.PROTECTED) private boolean mActivityCreated = false;
     @Getter private final int mLayoutResId = R.layout.fragment_navik_map;
 
     @Override
@@ -50,7 +48,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
-        if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
+        if (isMapLoaded() && mLocationProvider.isLastLocationAvailable()) {
             SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
 
             mMap.setPositionAsCurrent(coordinate, (float) mLocationProvider.getLastLocationAccuracy(), false);
@@ -60,7 +58,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void moveToCurrentLocationOnceAvailable() {
-        if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
+        if (isMapLoaded() && mLocationProvider.isLastLocationAvailable()) {
             moveToCurrentLocation();
         }
         else {
