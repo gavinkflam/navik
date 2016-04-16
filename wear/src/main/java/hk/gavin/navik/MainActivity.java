@@ -19,6 +19,7 @@ import org.apache.commons.lang3.SerializationUtils;
 public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener {
 
     private GoogleApiClient mApiClient;
+    private NKNavigationState mNavigationState;
 
     @Bind(R.id.container) BoxInsetLayout mContainer;
     @Bind(R.id.visualAdvice) ImageView mVisualAdvice;
@@ -31,18 +32,22 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @BindColor(R.color.colorSoon) int mColorSoon;
     @BindColor(R.color.colorImmediate) int mColorImmediate;
 
-    public void displayNavigationState(NKNavigationState navigationState) {
-        mVisualAdvice.setImageBitmap(navigationState.visualAdviceImage.getBitmap());
-        mDistanceToNextAdvice.setText(String.format("%d m", navigationState.distanceToNextAdvice));
-        mNextStreetName.setText(navigationState.nextStreetName);
-        mDistanceToDestination.setText(String.format("%.1f km", navigationState.distanceToDestination / 1000f));
-        mCurrentSpeed.setText(String.format("%d km/h", Math.round(navigationState.currentSpeed * 3.6)));
+    public void refreshDisplay() {
+        if (mNavigationState == null) {
+            return;
+        }
+
+        mVisualAdvice.setImageBitmap(mNavigationState.visualAdviceImage.getBitmap());
+        mDistanceToNextAdvice.setText(String.format("%d m", mNavigationState.distanceToNextAdvice));
+        mNextStreetName.setText(mNavigationState.nextStreetName);
+        mDistanceToDestination.setText(String.format("%.1f km", mNavigationState.distanceToDestination / 1000f));
+        mCurrentSpeed.setText(String.format("%d km/h", Math.round(mNavigationState.currentSpeed * 3.6)));
 
         // Determine background color
-        if (navigationState.distanceToNextAdvice < 100) {
+        if (mNavigationState.distanceToNextAdvice < 100) {
             mContainer.setBackgroundColor(mColorImmediate);
         }
-        else if (navigationState.distanceToNextAdvice < 200) {
+        else if (mNavigationState.distanceToNextAdvice < 200) {
             mContainer.setBackgroundColor(mColorSoon);
         }
         else {
@@ -55,6 +60,7 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        setAmbientEnabled();
 
         // Connect to Google api client
         mApiClient = new GoogleApiClient.Builder(this)
@@ -83,9 +89,8 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if (messageEvent.getPath().equalsIgnoreCase(WearContract.Path.NAVIGATION_STATE)) {
-            displayNavigationState(
-                    (NKNavigationState) SerializationUtils.deserialize(messageEvent.getData())
-            );
+            mNavigationState = SerializationUtils.deserialize(messageEvent.getData());
+            refreshDisplay();
         }
     }
 }
