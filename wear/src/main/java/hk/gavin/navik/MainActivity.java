@@ -14,6 +14,7 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import hk.gavin.navik.contract.WearContract;
 import hk.gavin.navik.core.navigation.NKNavigationState;
+import hk.gavin.navik.utility.FormattingUtility;
 import org.apache.commons.lang3.SerializationUtils;
 
 public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener {
@@ -38,20 +39,30 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
         }
 
         mVisualAdvice.setImageBitmap(mNavigationState.visualAdviceImage.getBitmap());
-        mDistanceToNextAdvice.setText(String.format("%d m", mNavigationState.distanceToNextAdvice));
+        mDistanceToNextAdvice.setText(
+                FormattingUtility.formatDistanceReadable(mNavigationState.distanceToNextAdvice)
+        );
         mNextStreetName.setText(mNavigationState.nextStreetName);
-        mDistanceToDestination.setText(String.format("%.1f km", mNavigationState.distanceToDestination / 1000f));
-        mCurrentSpeed.setText(String.format("%d km/h", Math.round(mNavigationState.currentSpeed * 3.6)));
+
+        mDistanceToDestination.setText(
+                FormattingUtility.formatDistanceReadable(mNavigationState.distanceToDestination)
+        );
+        mCurrentSpeed.setText(
+                FormattingUtility.formatSpeedReadable(mNavigationState.currentSpeed)
+        );
 
         // Determine background color
-        if (mNavigationState.distanceToNextAdvice < 100) {
-            mContainer.setBackgroundColor(mColorImmediate);
+        if (mNavigationState.distanceToNextAdvice > 249) {
+            // Safe for 249m up
+            mContainer.setBackgroundColor(mColorSafe);
         }
-        else if (mNavigationState.distanceToNextAdvice < 200) {
+        else if (mNavigationState.distanceToNextAdvice > 99) {
+            // Soon for 100m - 199m
             mContainer.setBackgroundColor(mColorSoon);
         }
         else {
-            mContainer.setBackgroundColor(mColorSafe);
+            // Immediate for under 99m
+            mContainer.setBackgroundColor(mColorImmediate);
         }
     }
 
