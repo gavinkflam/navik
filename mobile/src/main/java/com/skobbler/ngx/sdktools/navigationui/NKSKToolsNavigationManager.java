@@ -7,6 +7,7 @@ public class NKSKToolsNavigationManager extends SKToolsNavigationManager {
 
     public NKSKToolsNavigationManager(Activity activity, int rootId) {
         super(activity, rootId);
+        NKSKToolsLogicManager.getInstance().setActivity(activity, rootId);
     }
 
     public void launchRouteCalculation(SKToolsNavigationConfiguration configuration, SKMapViewHolder mapHolder) {
