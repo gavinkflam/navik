@@ -20,7 +20,7 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.contract.UiContract;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

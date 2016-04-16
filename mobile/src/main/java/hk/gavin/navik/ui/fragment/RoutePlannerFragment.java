@@ -16,7 +16,7 @@ import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import lombok.Getter;
