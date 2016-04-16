@@ -37,9 +37,6 @@ public abstract class NKMapFragment extends AbstractUiFragment {
     abstract public void zoomToCurrentRoute();
     abstract public void clearCurrentRoute();
 
-    abstract public void startNavigation();
-    abstract public void stopNavigation();
-
     public interface MapEventsListener {
         void onMapLoadComplete();
     }
