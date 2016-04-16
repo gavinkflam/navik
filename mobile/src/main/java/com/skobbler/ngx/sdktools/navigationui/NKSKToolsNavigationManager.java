@@ -6,7 +6,7 @@ import com.skobbler.ngx.map.SKMapViewHolder;
 public class NKSKToolsNavigationManager extends SKToolsNavigationManager {
 
     public NKSKToolsNavigationManager(Activity activity, int rootId) {
-        super(activity, rootId);
+        super();
         NKSKToolsLogicManager.getInstance().setActivity(activity, rootId);
     }
 
