@@ -1,8 +1,13 @@
 package com.skobbler.ngx.sdktools.navigationui;
 
+import android.app.Activity;
 import com.skobbler.ngx.map.SKMapViewHolder;
 
-public class NKSKToolsNavigationManager extends SKToolsLogicManager {
+public class NKSKToolsNavigationManager extends SKToolsNavigationManager {
+
+    public NKSKToolsNavigationManager(Activity activity, int rootId) {
+        super(activity, rootId);
+    }
 
     public void launchRouteCalculation(SKToolsNavigationConfiguration configuration, SKMapViewHolder mapHolder) {
         NKSKToolsLogicManager.getInstance().calculateRoute(configuration, mapHolder);
