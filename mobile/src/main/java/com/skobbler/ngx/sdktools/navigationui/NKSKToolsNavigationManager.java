@@ -32,4 +32,8 @@ public class NKSKToolsNavigationManager extends SKToolsLogicManager {
     public void setNavigationListener(SKToolsNavigationListener navigationListener) {
         NKSKToolsLogicManager.getInstance().setNavigationListener(navigationListener);
     }
+
+    public void setNavigationStateListener(NKSKNavigationStateListener listener) {
+        NKSKToolsLogicManager.getInstance().setNavigationStateListener(listener);
+    }
 }
