@@ -8,7 +8,6 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -27,31 +26,24 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @Bind(R.id.streetName) TextView mStreesName;
     @Bind(R.id.progress) TextView mProgress;
 
-    private int mColorMode = 0;
     @BindColor(R.color.colorSafe) int mColorSafe;
     @BindColor(R.color.colorSoon) int mColorSoon;
     @BindColor(R.color.colorImmediate) int mColorImmediate;
 
-    @OnClick(R.id.visualAdvisor)
-    void changeBackgroundColor() {
-        switch (mColorMode) {
-            case 0: {
-                mContainer.setBackgroundColor(mColorSoon);
-                mMetersToTurn.setText("200 m");
-                mColorMode = 1;
-                break;
-            }
-            case 1: {
-                mContainer.setBackgroundColor(mColorImmediate);
-                mMetersToTurn.setText("90 m");
-                mColorMode = 2;
-                break;
-            }
-            default: {
-                mContainer.setBackgroundColor(mColorSafe);
-                mMetersToTurn.setText("300 m");
-                mColorMode = 0;
-            }
+    public void displayNavigationState(NKNavigationState navigationState) {
+        mVisualAdvisor.setImageBitmap(navigationState.visualAdviceImage.getBitmap());
+        mMetersToTurn.setText(String.format("%d m", navigationState.distanceToNextAdvice));
+        mStreesName.setText(navigationState.nextStreetName);
+
+        // Determine background color
+        if (navigationState.distanceToNextAdvice < 100) {
+            mContainer.setBackgroundColor(mColorImmediate);
+        }
+        else if (navigationState.distanceToNextAdvice < 200) {
+            mContainer.setBackgroundColor(mColorSoon);
+        }
+        else {
+            mContainer.setBackgroundColor(mColorSafe);
         }
     }
 
@@ -82,7 +74,9 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if (messageEvent.getPath().equalsIgnoreCase(WearContract.Path.NAVIGATION_STATE)) {
-            NKNavigationState state = SerializationUtils.deserialize(messageEvent.getData());
+            displayNavigationState(
+                    (NKNavigationState) SerializationUtils.deserialize(messageEvent.getData())
+            );
         }
     }
 }
