@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Class that handles specific operations for the Navigation UI.
  */
-final class SKToolsUtils {
+public final class SKToolsUtils {
 
     /**
      * the number of km/h in 1 m/s

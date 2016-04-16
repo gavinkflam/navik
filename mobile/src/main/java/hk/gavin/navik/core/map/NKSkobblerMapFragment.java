@@ -7,16 +7,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
-import com.google.common.base.Optional;
 import com.orhanobut.logger.Logger;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
-import com.skobbler.ngx.navigation.SKNavigationSettings;
 import com.skobbler.ngx.routing.SKRouteManager;
-import com.skobbler.ngx.routing.SKRouteSettings;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKSkobblerDirections;
@@ -28,14 +22,13 @@ import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
 public class NKSkobblerMapFragment extends NKMapFragment
-        implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener, SKToolsNavigationListener {
+        implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener {
 
     private NKLocationProvider mLocationProvider;
     private final SKRouteManager mRouteManager = SKRouteManager.getInstance();
-    private Optional<SKToolsNavigationManager> mNavigationManager = Optional.absent();
 
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
-    @Bind(R.id.skMapHolder) SKMapViewHolder mMapHolder;
+    @Bind(R.id.skMapHolder) @Getter SKMapViewHolder mMapHolder;
     private SKMapSurfaceView mMap;
 
     @Getter private final int mLayoutResId = R.layout.fragment_navik_map;
@@ -99,27 +92,6 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     public void clearCurrentRoute() {
         mRouteManager.clearCurrentRoute();
-    }
-
-    @Override
-    public void startNavigation() {
-        if (!mNavigationManager.isPresent()) {
-            mNavigationManager = Optional.of(
-                    new SKToolsNavigationManager(getActivity(), R.id.nkSKMapContainer)
-            );
-        }
-
-        SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-        configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
-        configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
-
-        mNavigationManager.get().setNavigationListener(this);
-        mNavigationManager.get().startNavigation(configuration, mMapHolder);
-    }
-
-    @Override
-    public void stopNavigation() {
-        mNavigationManager.get().stopNavigation();
     }
 
     @Override
@@ -306,31 +278,6 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onScreenshotReady(Bitmap bitmap) {
-        // Do nothing
-    }
-
-    @Override
-    public void onNavigationStarted() {
-        // Do nothing
-    }
-
-    @Override
-    public void onNavigationEnded() {
-        // Do nothing
-    }
-
-    @Override
-    public void onRouteCalculationStarted() {
-        // Do nothing
-    }
-
-    @Override
-    public void onRouteCalculationCompleted() {
-        // Do nothing
-    }
-
-    @Override
-    public void onRouteCalculationCanceled() {
         // Do nothing
     }
 
