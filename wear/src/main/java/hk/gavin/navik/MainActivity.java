@@ -3,7 +3,9 @@ package hk.gavin.navik;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindColor;
@@ -22,6 +24,7 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     private GoogleApiClient mApiClient;
     private NKNavigationState mNavigationState;
 
+    @Bind(R.id.splashScreen) LinearLayout mSplashScreen;
     @Bind(R.id.container) BoxInsetLayout mContainer;
     @Bind(R.id.visualAdvice) ImageView mVisualAdvice;
     @Bind(R.id.distanceToNextAdvice) TextView mDistanceToNextAdvice;
@@ -35,8 +38,10 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
 
     public void refreshDisplay() {
         if (mNavigationState == null) {
+            mSplashScreen.setVisibility(View.VISIBLE);
             return;
         }
+        mSplashScreen.setVisibility(View.GONE);
 
         mVisualAdvice.setImageBitmap(mNavigationState.visualAdviceImage.getBitmap());
         mDistanceToNextAdvice.setText(
@@ -71,7 +76,9 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         setAmbientEnabled();
+        refreshDisplay();
 
         // Connect to Google api client
         mApiClient = new GoogleApiClient.Builder(this)
