@@ -1,34 +1,16 @@
 package com.skobbler.ngx.sdktools.navigationui;
 
-import java.util.ArrayList;
-import java.util.List;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
 import com.skobbler.ngx.SKMaps;
-import com.skobbler.ngx.map.SKAnnotation;
-import com.skobbler.ngx.map.SKCoordinateRegion;
-import com.skobbler.ngx.map.SKMapCustomPOI;
-import com.skobbler.ngx.map.SKMapPOI;
-import com.skobbler.ngx.map.SKMapSettings;
-import com.skobbler.ngx.map.SKMapSurfaceListener;
-import com.skobbler.ngx.map.SKMapSurfaceView;
-import com.skobbler.ngx.map.SKMapViewHolder;
-import com.skobbler.ngx.map.SKMapViewStyle;
-import com.skobbler.ngx.map.SKPOICluster;
-import com.skobbler.ngx.map.SKScreenPoint;
+import com.skobbler.ngx.map.*;
 import com.skobbler.ngx.navigation.SKNavigationListener;
 import com.skobbler.ngx.navigation.SKNavigationManager;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
@@ -38,17 +20,14 @@ import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.reversegeocode.SKReverseGeocoderManager;
-import com.skobbler.ngx.routing.SKRouteAdvice;
-import com.skobbler.ngx.routing.SKRouteInfo;
-import com.skobbler.ngx.routing.SKRouteJsonAnswer;
-import com.skobbler.ngx.routing.SKRouteListener;
-import com.skobbler.ngx.routing.SKRouteManager;
-import com.skobbler.ngx.routing.SKRouteSettings;
-import com.skobbler.ngx.routing.SKViaPoint;
+import com.skobbler.ngx.routing.*;
 import com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.trail.SKTrailType;
 import com.skobbler.ngx.util.SKLogging;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class handles the logic related to the navigation and route calculation.
@@ -173,7 +152,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         return instance;
     }
 
-    private SKToolsLogicManager() {
+    protected SKToolsLogicManager() {
         naviManager = SKNavigationManager.getInstance();
     }
 
