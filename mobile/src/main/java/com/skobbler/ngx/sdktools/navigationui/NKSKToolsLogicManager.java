@@ -11,7 +11,7 @@ public class NKSKToolsLogicManager extends SKToolsLogicManager {
 
     public static NKSKToolsLogicManager getInstance() {
         if (instance == null) {
-            synchronized (SKToolsLogicManager.class) {
+            synchronized (NKSKToolsLogicManager.class) {
                 if (instance == null) {
                     instance = new NKSKToolsLogicManager();
                 }
