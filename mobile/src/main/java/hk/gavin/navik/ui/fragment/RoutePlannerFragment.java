@@ -2,7 +2,6 @@ package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +18,7 @@ import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.ui.contract.UiContract;
 import hk.gavin.navik.ui.widget.LocationSelector;
+import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -32,7 +32,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Inject NKReverseGeocoder mReverseGeocoder;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
-    @Bind(R.id.startBikeNavigation) FloatingActionButton mStartBikeNavigation;
+    @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
 
@@ -78,6 +78,13 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         mStartingPoint.setLocationSelectorEventsListener(this);
         mDestination.setLocationSelectorEventsListener(this);
         mDirectionsProvider.addDirectionsResultsListener(this);
+
+        if (mDirections.isPresent()) {
+            mStartBikeNavigation.enable();
+        }
+        else {
+            mStartBikeNavigation.disable();
+        }
     }
 
     @Override
@@ -172,10 +179,11 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Override
     public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate) {
         mDirections = Optional.of(directionsList.get(0));
+        mStartBikeNavigation.enable();
     }
 
     @Override
     public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
-        // Do nothing
+        mStartBikeNavigation.disable();
     }
 }
