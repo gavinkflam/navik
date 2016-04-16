@@ -64,7 +64,7 @@ public class ApplicationModule {
     @Provides @Singleton
     NKWearManager wearManager() {
         if (!mNKWearManager.isPresent()) {
-            mNKWearManager = Optional.of(new NKWearManager());
+            mNKWearManager = Optional.of(new NKWearManager(mApplication));
         }
         return mNKWearManager.get();
     }

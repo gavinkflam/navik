@@ -66,7 +66,7 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onNavigationStart() {
-
+        mWearManager.startWearActivity();
     }
 
     @Override
@@ -76,6 +76,6 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onNavigationStateUpdate(NKNavigationState navigationState) {
-
+        mWearManager.broadcastNavigationState(navigationState);
     }
 }
