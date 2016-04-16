@@ -12,6 +12,10 @@ android {
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
     buildTypes {
         release {
             minifyEnabled true
