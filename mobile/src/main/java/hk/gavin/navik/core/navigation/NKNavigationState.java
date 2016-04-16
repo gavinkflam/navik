@@ -7,7 +7,8 @@ import lombok.Value;
 public class NKNavigationState {
 
     Bitmap visualAdviceImage;
-    String streetName;
+    String currentStreetName;
+    String nextStreetName;
 
     int distanceToNextAdvice;
     int distanceToDestination;

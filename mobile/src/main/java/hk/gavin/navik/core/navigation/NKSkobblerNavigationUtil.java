@@ -8,13 +8,16 @@ public class NKSkobblerNavigationUtil {
 
     public static NKNavigationState createNavigationState(SKNavigationState skState) {
         Bitmap visualAdviceImage = SKToolsUtils.decodeFileToBitmap(skState.getCurrentAdviceVisualAdviceFile());
-        String streetName = skState.getCurrentAdviceCurrentStreetName();
+        String currentStreetName = skState.getCurrentAdviceCurrentStreetName();
+        String nextStreetName = skState.getCurrentAdviceNextStreetName();
+
         int distanceToNextAdvice = skState.getCurrentAdviceDistanceToAdvice();
         int distanceToDestination = (int) Math.round(skState.getDistanceToDestination());
         double currentSpeed = skState.getCurrentSpeed();
 
         return new NKNavigationState(
-                visualAdviceImage, streetName, distanceToNextAdvice, distanceToDestination, currentSpeed
+                visualAdviceImage, currentStreetName, nextStreetName,
+                distanceToNextAdvice, distanceToDestination, currentSpeed
         );
     }
 }
