@@ -62,6 +62,12 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     }
 
     @Override
+    protected void onDestroy() {
+        mApiClient.disconnect();
+        super.onDestroy();
+    }
+
+    @Override
     public void onConnected(Bundle bundle) {
         Wearable.MessageApi.addListener(mApiClient, this);
     }
