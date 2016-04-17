@@ -11,6 +11,7 @@ public interface HomeComponent extends AbstractActivityComponent {
     void inject(HomeActivity homeActivity);
     void inject(LocationSelectionFragment fragment);
     void inject(NavigationFragment fragment);
+    void inject(RouteAnalysisFragment fragment);
     void inject(RouteDisplayFragment fragment);
     void inject(RoutePlannerFragment fragment);
 }

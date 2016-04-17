@@ -13,4 +13,11 @@
     <string name="select_destination">Select Destination</string>
 
     <string name="navigation">Navigation</string>
+    <string name="route_analysis">Route Analysis</string>
+    <string name="elevation">Elevation</string>
+    <string name="distance">Distance</string>
+    <string name="estimated_time">Estimated Time</string>
+
+    <string name="placeholder_distance">11.7 km</string>
+    <string name="placeholder_time">47 min</string>
 </resources>

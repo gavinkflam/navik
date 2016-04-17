@@ -65,6 +65,14 @@ public class HomeController implements FragmentManager.OnBackStackChangedListene
         );
     }
 
+
+    public void showRouteAnalysis() {
+        replaceFragment(
+                R.id.contentFrame, RouteAnalysisFragment.class, UiContract.FragmentTag.ROUTE_ANALYSIS,
+                true, true
+        );
+    }
+
     public void startBikeNavigation() {
         replaceFragment(
                 R.id.contentFrame, NavigationFragment.class, UiContract.FragmentTag.NAVIGATION,

@@ -4,9 +4,9 @@ public class UiContract {
 
     public static final class RequestCode {
         public static final int STARTING_POINT_LOCATION = 1;
-        public static final int STARTING_POINT_HISTORY = 1;
+        public static final int STARTING_POINT_HISTORY = 2;
         public static final int DESTINATION_LOCATION = 3;
-        public static final int DESTINATION_HISTORY = 3;
+        public static final int DESTINATION_HISTORY = 4;
     }
 
     public static final class ResultCode {
@@ -31,5 +31,6 @@ public class UiContract {
         public static final String HOME_MAP = "home_map";
         public static final String ROUTE_DISPLAY = "route_display";
         public static final String NAVIGATION = "navigation";
+        public static final String ROUTE_ANALYSIS = "route_analysis";
     }
 }
