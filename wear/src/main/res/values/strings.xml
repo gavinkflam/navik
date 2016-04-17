@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Navik</string>
-
     <string name="meters_to_next_advice_placeholder">300 m</string>
     <string name="next_street_name_placeholder">Plover Cove Road 寶湖道</string>
     <string name="distance_to_destination_placeholder">6.2 km</string>

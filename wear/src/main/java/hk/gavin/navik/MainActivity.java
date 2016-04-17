@@ -16,7 +16,7 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import hk.gavin.navik.contract.WearContract;
 import hk.gavin.navik.core.navigation.NKNavigationState;
-import hk.gavin.navik.utility.FormattingUtility;
+import hk.gavin.navik.util.FormattingUtility;
 import org.apache.commons.lang3.SerializationUtils;
 
 public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener {
