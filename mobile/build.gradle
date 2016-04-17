@@ -81,6 +81,8 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.2'
 
     compile 'com.jakewharton:butterknife:7.0.1'
+
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }
 
 // Assign different version code and version name for each output
