@@ -205,7 +205,12 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onLongPress(SKScreenPoint skScreenPoint) {
-        // Do nothing
+        if (getMapEventsListener().isPresent()) {
+            NKLocation location = NKLocation.fromSKCoordinate(
+                    mMap.pointToCoordinate(skScreenPoint)
+            );
+            getMapEventsListener().get().onLongPress(location);
+        }
     }
 
     @Override
