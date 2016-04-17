@@ -47,5 +47,6 @@ public abstract class NKMapFragment extends AbstractUiFragment {
     public interface MapEventsListener {
         void onMapLoadComplete();
         void onLongPress(NKLocation location);
+        void onMarkerClicked(int id, NKLocation location);
     }
 }

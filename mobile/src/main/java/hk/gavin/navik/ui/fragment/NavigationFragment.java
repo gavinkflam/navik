@@ -71,6 +71,11 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
     }
 
     @Override
+    public void onMarkerClicked(int id, NKLocation location) {
+        // Do nothing
+    }
+
+    @Override
     public void onNavigationStart() {
         mWearManager.startWearActivity();
     }

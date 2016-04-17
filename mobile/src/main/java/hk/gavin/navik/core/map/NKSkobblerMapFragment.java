@@ -275,7 +275,12 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onAnnotationSelected(SKAnnotation skAnnotation) {
-        // Do nothing
+        if (getMapEventsListener().isPresent()) {
+            getMapEventsListener().get().onMarkerClicked(
+                    skAnnotation.getUniqueID(),
+                    NKLocation.fromSKCoordinate(skAnnotation.getLocation())
+            );
+        }
     }
 
     @Override

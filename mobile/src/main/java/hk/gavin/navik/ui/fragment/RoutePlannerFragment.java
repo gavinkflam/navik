@@ -10,13 +10,13 @@ import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
@@ -211,5 +211,10 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         mDirectionsProvider.addWaypoints(location);
         mMap.addMarker(mDirectionsProvider.getNoOfWaypoints() + 1, location, NKMapFragment.MarkerIcon.Blue);
         mDirectionsProvider.getCyclingDirections();
+    }
+
+    @Override
+    public void onMarkerClicked(int id, NKLocation location) {
+        // Do nothing
     }
 }
