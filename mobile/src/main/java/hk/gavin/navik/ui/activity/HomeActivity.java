@@ -9,6 +9,7 @@ import butterknife.ButterKnife;
 import com.google.common.base.Optional;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKApplication;
+import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
 import hk.gavin.navik.injection.HomeModule;
@@ -22,6 +23,7 @@ public class HomeActivity extends AppCompatActivity
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
     @Inject HomeController mController;
+    @Inject NKWearManager mNKWearManager;
     private Optional<HomeComponent> mComponent = Optional.absent();
 
     @Override
@@ -31,6 +33,12 @@ public class HomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_home);
         onViewCreated();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mNKWearManager.onDestroy();
+        super.onDestroy();
     }
 
     protected void onViewCreated() {

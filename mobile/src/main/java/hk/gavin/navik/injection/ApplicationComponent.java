@@ -6,6 +6,7 @@ import hk.gavin.navik.core.directions.NKDirectionsProvider;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocationProvider;
+import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.preference.MainPreferences;
 
 import javax.inject.Singleton;
@@ -20,6 +21,7 @@ public interface ApplicationComponent {
     MainPreferences mainPreferences();
     NKLocationProvider locationProvider();
     NKReverseGeocoder reverseGeocoder();
+    NKWearManager wearManager();
     NKDirectionsProvider directionsProvider();
     NKInteractiveDirectionsProvider interactiveDirectionsProvider();
 }

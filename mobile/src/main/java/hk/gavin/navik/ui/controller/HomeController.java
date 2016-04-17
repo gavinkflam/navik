@@ -11,7 +11,7 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 import hk.gavin.navik.ui.activity.HomeActivity;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.ui.fragment.*;
 import lombok.Getter;
 import lombok.experimental.Accessors;

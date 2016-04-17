@@ -16,12 +16,11 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
-import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.contract.UiContract;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -155,8 +154,6 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
 
     private void invokeOnLocationUpdatedListener(boolean isManualUpdate) {
         if (mLocation.isPresent()) {
-            Logger.d("location: (%s), name: %s, manual: %b", mLocation.get(), mLocationText.getText(), isManualUpdate);
-
             if (mLocationSelectorEventsListener.isPresent()) {
                 mLocationSelectorEventsListener.get().onLocationUpdated(this, mLocation.get(), isManualUpdate);
             }

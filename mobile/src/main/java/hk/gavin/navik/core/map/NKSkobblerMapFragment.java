@@ -7,39 +7,30 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
-import com.google.common.base.Optional;
 import com.orhanobut.logger.Logger;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
-import com.skobbler.ngx.navigation.SKNavigationSettings;
 import com.skobbler.ngx.routing.SKRouteManager;
-import com.skobbler.ngx.routing.SKRouteSettings;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import hk.gavin.navik.R;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
 public class NKSkobblerMapFragment extends NKMapFragment
-        implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener, SKToolsNavigationListener {
+        implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener {
 
     private NKLocationProvider mLocationProvider;
     private final SKRouteManager mRouteManager = SKRouteManager.getInstance();
-    private Optional<SKToolsNavigationManager> mNavigationManager = Optional.absent();
 
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
-    @Bind(R.id.skMapHolder) SKMapViewHolder mMapHolder;
+    @Bind(R.id.skMapHolder) @Getter SKMapViewHolder mMapHolder;
     private SKMapSurfaceView mMap;
 
-    @Getter(AccessLevel.PROTECTED) private boolean mActivityCreated = false;
     @Getter private final int mLayoutResId = R.layout.fragment_navik_map;
 
     @Override
@@ -50,7 +41,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @Override
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
-        if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
+        if (isMapLoaded() && mLocationProvider.isLastLocationAvailable()) {
             SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
 
             mMap.setPositionAsCurrent(coordinate, (float) mLocationProvider.getLastLocationAccuracy(), false);
@@ -60,7 +51,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void moveToCurrentLocationOnceAvailable() {
-        if (isMapLoaded() && isActivityCreated() && mLocationProvider.isLastLocationAvailable()) {
+        if (isMapLoaded() && mLocationProvider.isLastLocationAvailable()) {
             moveToCurrentLocation();
         }
         else {
@@ -103,25 +94,39 @@ public class NKSkobblerMapFragment extends NKMapFragment
         mRouteManager.clearCurrentRoute();
     }
 
-    @Override
-    public void startNavigation() {
-        if (!mNavigationManager.isPresent()) {
-            mNavigationManager = Optional.of(
-                    new SKToolsNavigationManager(getActivity(), R.id.nkSKMapContainer)
-            );
+    private int annotationTypeOf(MarkerIcon color) {
+        switch (color) {
+            case Red:
+                return SKAnnotation.SK_ANNOTATION_TYPE_RED;
+            case Green:
+                return SKAnnotation.SK_ANNOTATION_TYPE_GREEN;
+            case Blue:
+                return SKAnnotation.SK_ANNOTATION_TYPE_BLUE;
+            case Flag:
+                return SKAnnotation.SK_ANNOTATION_TYPE_DESTINATION_FLAG;
         }
+        return SKAnnotation.SK_ANNOTATION_TYPE_MARKER;
+    }
 
-        SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-        configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
-        configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
-
-        mNavigationManager.get().setNavigationListener(this);
-        mNavigationManager.get().startNavigation(configuration, mMapHolder);
+    private SKAnnotation annotationOf(int id, NKLocation location, MarkerIcon icon) {
+        SKAnnotation annotation = new SKAnnotation(id);
+        annotation.setLocation(location.toSKCoordinate());
+        annotation.setAnnotationType(annotationTypeOf(icon));
+        return annotation;
     }
 
     @Override
-    public void stopNavigation() {
-        mNavigationManager.get().stopNavigation();
+    public void addMarker(int id, NKLocation location, MarkerIcon icon) {
+        if (isMapLoaded()) {
+            mMap.addAnnotation(annotationOf(id, location, icon), SKAnimationSettings.ANIMATION_PIN_DROP);
+        }
+    }
+
+    @Override
+    public void removeMarker(int id) {
+        if (isMapLoaded()) {
+            mMap.deleteAnnotation(id);
+        }
     }
 
     @Override
@@ -235,7 +240,12 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onLongPress(SKScreenPoint skScreenPoint) {
-        // Do nothing
+        if (getMapEventsListener().isPresent()) {
+            NKLocation location = NKLocation.fromSKCoordinate(
+                    mMap.pointToCoordinate(skScreenPoint)
+            );
+            getMapEventsListener().get().onLongPress(location);
+        }
     }
 
     @Override
@@ -265,7 +275,12 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onAnnotationSelected(SKAnnotation skAnnotation) {
-        // Do nothing
+        if (getMapEventsListener().isPresent()) {
+            getMapEventsListener().get().onMarkerClicked(
+                    skAnnotation.getUniqueID(),
+                    NKLocation.fromSKCoordinate(skAnnotation.getLocation())
+            );
+        }
     }
 
     @Override
@@ -308,31 +323,6 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onScreenshotReady(Bitmap bitmap) {
-        // Do nothing
-    }
-
-    @Override
-    public void onNavigationStarted() {
-        // Do nothing
-    }
-
-    @Override
-    public void onNavigationEnded() {
-        // Do nothing
-    }
-
-    @Override
-    public void onRouteCalculationStarted() {
-        // Do nothing
-    }
-
-    @Override
-    public void onRouteCalculationCompleted() {
-        // Do nothing
-    }
-
-    @Override
-    public void onRouteCalculationCanceled() {
         // Do nothing
     }
 

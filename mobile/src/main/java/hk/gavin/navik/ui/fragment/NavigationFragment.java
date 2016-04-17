@@ -2,8 +2,14 @@ package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
 import hk.gavin.navik.R;
+import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.core.navigation.NKNavigationListener;
+import hk.gavin.navik.core.navigation.NKNavigationManager;
+import hk.gavin.navik.core.navigation.NKNavigationState;
+import hk.gavin.navik.core.navigation.NKSkobblerNavigationManager;
+import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.preference.MainPreferences;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -11,11 +17,14 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class NavigationFragment extends AbstractHomeUiFragment implements NKMapFragment.MapEventsListener {
+public class NavigationFragment extends AbstractHomeUiFragment implements
+        NKMapFragment.MapEventsListener, NKNavigationListener {
 
     @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
+    @Inject NKWearManager mWearManager;
     NKMapFragment mMap;
+    NKNavigationManager mNavigationManager;
 
     @Getter private final int mLayoutResId = R.layout.fragment_navigation;
 
@@ -27,7 +36,11 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKMapF
         mMap = getController().getMap();
         mMap.hideMoveToCurrentLocationButton();
         mMap.setMapEventsListener(this);
-        mMap.startNavigation();
+
+        // Create navigation manager and start navigation
+        mNavigationManager = new NKSkobblerNavigationManager(getActivity(), R.id.nkSKMapContainer, mMap);
+        mNavigationManager.addNavigationListener(this);
+        mNavigationManager.startNavigation();
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.navigation);
@@ -36,17 +49,44 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKMapF
 
     @Override
     public void onBackPressed() {
-        mMap.stopNavigation();
+        mNavigationManager.stopNavigation();
+        mNavigationManager.removeNavigationListener(this);
     }
 
     @Override
     public void onStop() {
-        mMap.stopNavigation();
+        mNavigationManager.stopNavigation();
+        mNavigationManager.removeNavigationListener(this);
         super.onStop();
     }
 
     @Override
     public void onMapLoadComplete() {
         // Do nothing
+    }
+
+    @Override
+    public void onLongPress(NKLocation location) {
+        // Do nothing
+    }
+
+    @Override
+    public void onMarkerClicked(int id, NKLocation location) {
+        // Do nothing
+    }
+
+    @Override
+    public void onNavigationStart() {
+        mWearManager.startWearActivity();
+    }
+
+    @Override
+    public void onNavigationStop() {
+
+    }
+
+    @Override
+    public void onNavigationStateUpdate(NKNavigationState navigationState) {
+        mWearManager.broadcastNavigationState(navigationState);
     }
 }

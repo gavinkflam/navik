@@ -2,7 +2,6 @@ package hk.gavin.navik.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,14 +10,16 @@ import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.ui.contract.UiContract;
+import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.ui.widget.LocationSelector;
+import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -26,15 +27,17 @@ import javax.inject.Inject;
 
 @Accessors(prefix = "m")
 public class RoutePlannerFragment extends AbstractHomeUiFragment implements
-        LocationSelector.LocationSelectorEventsListener, NKInteractiveDirectionsProvider.DirectionsResultsListener {
+        LocationSelector.LocationSelectorEventsListener, NKInteractiveDirectionsProvider.DirectionsResultsListener, NKMapFragment.MapEventsListener {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
-    @Bind(R.id.startBikeNavigation) FloatingActionButton mStartBikeNavigation;
+    @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
+
+    private NKMapFragment mMap;
 
     private boolean mSelectorsInitialized = false;
     private Optional<NKDirections> mDirections = Optional.absent();
@@ -55,6 +58,10 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getController().initializeRouteDisplayFragment();
+
+        // Add as map event listener
+        mMap = getController().getMap();
+        mMap.setMapEventsListener(this);
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.app_name);
@@ -78,6 +85,13 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         mStartingPoint.setLocationSelectorEventsListener(this);
         mDestination.setLocationSelectorEventsListener(this);
         mDirectionsProvider.addDirectionsResultsListener(this);
+
+        if (mDirections.isPresent()) {
+            mStartBikeNavigation.enable();
+        }
+        else {
+            mStartBikeNavigation.disable();
+        }
     }
 
     @Override
@@ -136,6 +150,9 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.setManualUpdate(isManualUpdate);
                     mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation());
                     mDirectionsProvider.getCyclingDirections();
+
+                    // Add marker
+                    mMap.addMarker(0, location, NKMapFragment.MarkerIcon.Green);
                 }
                 break;
             }
@@ -144,6 +161,9 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.setManualUpdate(isManualUpdate);
                     mDirectionsProvider.setDestination(mDestination.getLocation());
                     mDirectionsProvider.getCyclingDirections();
+
+                    // Add marker
+                    mMap.addMarker(1, location, NKMapFragment.MarkerIcon.Flag);
                 }
                 break;
             }
@@ -172,10 +192,29 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Override
     public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate) {
         mDirections = Optional.of(directionsList.get(0));
+        mStartBikeNavigation.enable();
     }
 
     @Override
     public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
+        mStartBikeNavigation.disable();
+    }
+
+    @Override
+    public void onMapLoadComplete() {
+        // Do nothing
+    }
+
+    @Override
+    public void onLongPress(NKLocation location) {
+        mDirectionsProvider.setManualUpdate(true);
+        mDirectionsProvider.addWaypoints(location);
+        mMap.addMarker(mDirectionsProvider.getNoOfWaypoints() + 1, location, NKMapFragment.MarkerIcon.Blue);
+        mDirectionsProvider.getCyclingDirections();
+    }
+
+    @Override
+    public void onMarkerClicked(int id, NKLocation location) {
         // Do nothing
     }
 }

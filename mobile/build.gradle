@@ -22,6 +22,10 @@ android {
             applicationIdSuffix '.dev'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
     splits {
         abi {
             enable true
@@ -62,6 +66,7 @@ dependencies {
     provided 'org.projectlombok:lombok:1.16.6'
     apt 'org.projectlombok:lombok:1.16.6'
 
+    compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.google.guava:guava:19.0'
 
     compile 'com.github.orhanobut:logger:1.12'

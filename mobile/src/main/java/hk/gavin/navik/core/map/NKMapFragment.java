@@ -37,10 +37,16 @@ public abstract class NKMapFragment extends AbstractUiFragment {
     abstract public void zoomToCurrentRoute();
     abstract public void clearCurrentRoute();
 
-    abstract public void startNavigation();
-    abstract public void stopNavigation();
+    abstract public void addMarker(int id, NKLocation location, MarkerIcon icon);
+    abstract public void removeMarker(int id);
+
+    public enum MarkerIcon {
+        Red, Green, Blue, Flag
+    }
 
     public interface MapEventsListener {
         void onMapLoadComplete();
+        void onLongPress(NKLocation location);
+        void onMarkerClicked(int id, NKLocation location);
     }
 }

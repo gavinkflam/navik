@@ -11,6 +11,7 @@ import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.geocode.NKSkobblerReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
+import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.preference.MainPreferences;
 
 import javax.inject.Singleton;
@@ -22,6 +23,7 @@ public class ApplicationModule {
     private Optional<MainPreferences> mMainPreferences = Optional.absent();
     private Optional<? extends NKLocationProvider> mNKLocationProvider = Optional.absent();
     private Optional<? extends NKReverseGeocoder> mNKReverseGeocoder = Optional.absent();
+    private Optional<? extends NKWearManager> mNKWearManager = Optional.absent();
     private Optional<? extends NKDirectionsProvider> mNKDirectionsProvider = Optional.absent();
     private Optional<? extends NKInteractiveDirectionsProvider> mNKSkobblerInteractiveDirectionsProvider =
             Optional.absent();
@@ -57,6 +59,14 @@ public class ApplicationModule {
             mNKReverseGeocoder = Optional.of(new NKSkobblerReverseGeocoder());
         }
         return mNKReverseGeocoder.get();
+    }
+
+    @Provides @Singleton
+    NKWearManager wearManager() {
+        if (!mNKWearManager.isPresent()) {
+            mNKWearManager = Optional.of(new NKWearManager(mApplication));
+        }
+        return mNKWearManager.get();
     }
 
     @Provides @Singleton
