@@ -54,6 +54,13 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         }
     }
 
+    @OnClick(R.id.showRouteAnalysis)
+    void showRouteAnalysis() {
+        if (mDirections.isPresent()) {
+            getController().showRouteAnalysis();
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
