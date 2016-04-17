@@ -17,6 +17,7 @@ import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.contract.UiContract;
+import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import lombok.Getter;
@@ -35,6 +36,8 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
+
+    private NKMapFragment mMap;
 
     private boolean mSelectorsInitialized = false;
     private Optional<NKDirections> mDirections = Optional.absent();
@@ -55,6 +58,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getController().initializeRouteDisplayFragment();
+        mMap = getController().getMap();
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.app_name);
@@ -143,6 +147,9 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.setManualUpdate(isManualUpdate);
                     mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation());
                     mDirectionsProvider.getCyclingDirections();
+
+                    // Add marker
+                    mMap.addMarker(-2, location, NKMapFragment.MarkerIcon.Green);
                 }
                 break;
             }
@@ -151,6 +158,9 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.setManualUpdate(isManualUpdate);
                     mDirectionsProvider.setDestination(mDestination.getLocation());
                     mDirectionsProvider.getCyclingDirections();
+
+                    // Add marker
+                    mMap.addMarker(-1, location, NKMapFragment.MarkerIcon.Flag);
                 }
                 break;
             }
