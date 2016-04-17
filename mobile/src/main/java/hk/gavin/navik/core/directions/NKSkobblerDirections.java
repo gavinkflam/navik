@@ -9,12 +9,12 @@ public class NKSkobblerDirections extends NKDirections {
     public final int cacheId;
 
     public NKSkobblerDirections(int cacheId, NKLocation startingPoint, NKLocation destination,
-                                Optional<ImmutableList<NKLocation>> viaPoints) {
-        super(startingPoint, destination, viaPoints);
+                                Optional<ImmutableList<NKLocation>> viaPoints, int distance) {
+        super(startingPoint, destination, viaPoints, distance);
         this.cacheId = cacheId;
     }
 
-    public NKSkobblerDirections(int cacheId, NKLocation startingPoint, NKLocation destination) {
-        this(cacheId, startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent());
+    public NKSkobblerDirections(int cacheId, NKLocation startingPoint, NKLocation destination, int distance) {
+        this(cacheId, startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent(), distance);
     }
 }

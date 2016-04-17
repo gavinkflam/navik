@@ -82,7 +82,9 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
 
             mRouteManager.saveRouteToCache(routeId);
             mDirectionsList.add(
-                    new NKSkobblerDirections(routeId, mStartingPoint, mDestination, mViaPoints)
+                    new NKSkobblerDirections(
+                            routeId, mStartingPoint, mDestination, mViaPoints, skRouteInfo.getDistance()
+                    )
             );
         }
 
