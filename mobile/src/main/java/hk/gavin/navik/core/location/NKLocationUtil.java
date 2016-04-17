@@ -3,6 +3,7 @@ package hk.gavin.navik.core.location;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.maps.model.LatLng;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.SKViaPoint;
 
@@ -29,6 +30,15 @@ public class NKLocationUtil {
             builder.add(NKLocation.fromSKCoordinate(coordinate));
         }
         return builder.build();
+    }
+
+    public static LatLng[] toLatLngArray(List<NKLocation> locationList) {
+        LatLng[] latLngs = new LatLng[locationList.size()];
+        for (int i = 0; i < locationList.size(); i++) {
+            NKLocation location = locationList.get(i);
+            latLngs[i] = new LatLng(location.latitude, location.longitude);
+        }
+        return latLngs;
     }
 
     public final static Function<NKLocation, SKCoordinate> toSKCoordinateFunction =
