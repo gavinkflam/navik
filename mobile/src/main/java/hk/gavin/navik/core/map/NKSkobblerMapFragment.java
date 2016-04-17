@@ -94,6 +94,41 @@ public class NKSkobblerMapFragment extends NKMapFragment
         mRouteManager.clearCurrentRoute();
     }
 
+    private int annotationTypeOf(MarkerIcon color) {
+        switch (color) {
+            case Red:
+                return SKAnnotation.SK_ANNOTATION_TYPE_RED;
+            case Green:
+                return SKAnnotation.SK_ANNOTATION_TYPE_GREEN;
+            case Blue:
+                return SKAnnotation.SK_ANNOTATION_TYPE_BLUE;
+            case Flag:
+                return SKAnnotation.SK_ANNOTATION_TYPE_DESTINATION_FLAG;
+        }
+        return SKAnnotation.SK_ANNOTATION_TYPE_MARKER;
+    }
+
+    private SKAnnotation annotationOf(int id, NKLocation location, MarkerIcon icon) {
+        SKAnnotation annotation = new SKAnnotation(id);
+        annotation.setLocation(location.toSKCoordinate());
+        annotation.setAnnotationType(annotationTypeOf(icon));
+        return annotation;
+    }
+
+    @Override
+    public void addMarker(int id, NKLocation location, MarkerIcon icon) {
+        if (isMapLoaded()) {
+            mMap.addAnnotation(annotationOf(id, location, icon), SKAnimationSettings.ANIMATION_PIN_DROP);
+        }
+    }
+
+    @Override
+    public void removeMarker(int id) {
+        if (isMapLoaded()) {
+            mMap.deleteAnnotation(id);
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
