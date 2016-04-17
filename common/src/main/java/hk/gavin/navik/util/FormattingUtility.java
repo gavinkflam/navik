@@ -1,4 +1,4 @@
-package hk.gavin.navik.utility;
+package hk.gavin.navik.util;
 
 public class FormattingUtility {
 
