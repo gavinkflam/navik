@@ -18,6 +18,6 @@
     <string name="distance">Distance</string>
     <string name="estimated_time">Estimated Time</string>
 
-    <string name="placeholder_distance">10.4 km</string>
-    <string name="placeholder_time">47 min</string>
+    <string name="placeholder_distance">6.6 km</string>
+    <string name="placeholder_time">26 min</string>
 </resources>
