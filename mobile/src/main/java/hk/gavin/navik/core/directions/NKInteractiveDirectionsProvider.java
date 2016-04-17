@@ -11,6 +11,7 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Accessors(prefix = "m")
 public class NKInteractiveDirectionsProvider {
@@ -19,7 +20,7 @@ public class NKInteractiveDirectionsProvider {
 
     protected Optional<NKLocation> mStartingPoint = Optional.absent();
     protected Optional<NKLocation> mDestination = Optional.absent();
-    protected Optional<ImmutableList<NKLocation>> mViaPoints = Optional.absent();
+    protected List<NKLocation> mWaypoints = new ArrayList<>();
     @Setter protected int mNoOfDirections = 1;
     @Setter protected boolean mIsManualUpdate = false;
 
@@ -38,10 +39,6 @@ public class NKInteractiveDirectionsProvider {
         mDestination = Optional.of(destination);
     }
 
-    public void setViaPoints(ImmutableList<NKLocation> viaPoints) {
-        mViaPoints = Optional.of(viaPoints);
-    }
-
     public void removeStartingPoint() {
         mStartingPoint = Optional.absent();
     }
@@ -50,8 +47,20 @@ public class NKInteractiveDirectionsProvider {
         mDestination = Optional.absent();
     }
 
-    public void removeViaPoints() {
-        mViaPoints = Optional.absent();
+    public void addWaypoints(NKLocation viaPoint) {
+        mWaypoints.add(viaPoint);
+    }
+
+    public ImmutableList<NKLocation> getWaypoints() {
+        return ImmutableList.copyOf(mWaypoints);
+    }
+
+    public int getNoOfWaypoints() {
+        return mWaypoints.size();
+    }
+
+    public void clearwaypoints() {
+        mWaypoints = new ArrayList<>();
     }
 
     public boolean addDirectionsResultsListener(DirectionsResultsListener listener) {
@@ -65,7 +74,10 @@ public class NKInteractiveDirectionsProvider {
     public void getCyclingDirections() {
         if (mStartingPoint.isPresent() && mDestination.isPresent()) {
             mProvider
-                    .getCyclingDirections(mNoOfDirections, mStartingPoint.get(), mDestination.get(), mViaPoints)
+                    .getCyclingDirections(
+                            mNoOfDirections, mStartingPoint.get(), mDestination.get(),
+                            Optional.of(ImmutableList.copyOf(mWaypoints))
+                    )
                     .done(mDirectionsResultsCallback)
                     .fail(mDirectionsResultsCallback);
         }

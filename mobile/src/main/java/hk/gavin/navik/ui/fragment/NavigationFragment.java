@@ -2,6 +2,7 @@ package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
 import hk.gavin.navik.R;
+import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.navigation.NKNavigationListener;
@@ -61,6 +62,16 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onMapLoadComplete() {
+        // Do nothing
+    }
+
+    @Override
+    public void onLongPress(NKLocation location) {
+        // Do nothing
+    }
+
+    @Override
+    public void onMarkerClicked(int id, NKLocation location) {
         // Do nothing
     }
 
