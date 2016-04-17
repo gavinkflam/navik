@@ -78,14 +78,19 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
         @Override
         public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo) {
             int routeId = skRouteInfo.getRouteID();
-            Logger.d("routeId: %d, distance: %d", routeId, skRouteInfo.getDistance());
-
             mRouteManager.saveRouteToCache(routeId);
-            mDirectionsList.add(
-                    new NKSkobblerDirections(
-                            routeId, mStartingPoint, mDestination, mViaPoints, skRouteInfo.getDistance()
-                    )
+
+            NKDirections directions = new NKSkobblerDirections(
+                    routeId, mStartingPoint, mDestination, mViaPoints,
+                    NKLocationUtil.toImmutableNKLocationList(mRouteManager.getCoordinatesForRoute(routeId)),
+                    skRouteInfo.getDistance()
             );
+            Logger.d(
+                    "routeId: %d, distance: %d, noOfPoints: %d",
+                    routeId, directions.distance, directions.locations.size()
+            );
+
+            mDirectionsList.add(directions);
         }
 
         @Override

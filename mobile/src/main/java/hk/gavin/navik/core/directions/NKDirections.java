@@ -9,17 +9,21 @@ public abstract class NKDirections {
     public final NKLocation startingPoint;
     public final NKLocation destination;
     public final Optional<ImmutableList<NKLocation>> viaPoints;
+    public final ImmutableList<NKLocation> locations;
     public final int distance;
 
     public NKDirections(NKLocation startingPoint, NKLocation destination,
-                        Optional<ImmutableList<NKLocation>> viaPoints, int distance) {
+                        Optional<ImmutableList<NKLocation>> viaPoints,
+                        ImmutableList<NKLocation> locations, int distance) {
         this.startingPoint = startingPoint;
         this.destination = destination;
         this.viaPoints = viaPoints;
+        this.locations = locations;
         this.distance = distance;
     }
 
-    public NKDirections(NKLocation startingPoint, NKLocation destination, int distance) {
-        this(startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent(), distance);
+    public NKDirections(NKLocation startingPoint, NKLocation destination, ImmutableList<NKLocation> locations,
+                        int distance) {
+        this(startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent(), locations, distance);
     }
 }

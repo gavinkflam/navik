@@ -1,6 +1,7 @@
 package hk.gavin.navik.core.location;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.SKViaPoint;
@@ -20,6 +21,14 @@ public class NKLocationUtil {
             viaPointList.add(new SKViaPoint(i, locationList.get(i).toSKCoordinate()));
         }
         return viaPointList;
+    }
+
+    public static ImmutableList<NKLocation> toImmutableNKLocationList(List<SKCoordinate> skCoordinateList) {
+        ImmutableList.Builder<NKLocation> builder = new ImmutableList.Builder<>();
+        for (SKCoordinate coordinate : skCoordinateList) {
+            builder.add(NKLocation.fromSKCoordinate(coordinate));
+        }
+        return builder.build();
     }
 
     public final static Function<NKLocation, SKCoordinate> toSKCoordinateFunction =
