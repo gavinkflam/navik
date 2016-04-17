@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 @Accessors(prefix = "m")
 public class RoutePlannerFragment extends AbstractHomeUiFragment implements
-        LocationSelector.LocationSelectorEventsListener, NKInteractiveDirectionsProvider.DirectionsResultsListener {
+        LocationSelector.LocationSelectorEventsListener, NKInteractiveDirectionsProvider.DirectionsResultsListener, NKMapFragment.MapEventsListener {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
@@ -58,7 +58,10 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getController().initializeRouteDisplayFragment();
+
+        // Add as map event listener
         mMap = getController().getMap();
+        mMap.setMapEventsListener(this);
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.app_name);
@@ -149,7 +152,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.getCyclingDirections();
 
                     // Add marker
-                    mMap.addMarker(-2, location, NKMapFragment.MarkerIcon.Green);
+                    mMap.addMarker(0, location, NKMapFragment.MarkerIcon.Green);
                 }
                 break;
             }
@@ -160,7 +163,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
                     mDirectionsProvider.getCyclingDirections();
 
                     // Add marker
-                    mMap.addMarker(-1, location, NKMapFragment.MarkerIcon.Flag);
+                    mMap.addMarker(1, location, NKMapFragment.MarkerIcon.Flag);
                 }
                 break;
             }
@@ -195,5 +198,18 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Override
     public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
         mStartBikeNavigation.disable();
+    }
+
+    @Override
+    public void onMapLoadComplete() {
+        // Do nothing
+    }
+
+    @Override
+    public void onLongPress(NKLocation location) {
+        mDirectionsProvider.setManualUpdate(true);
+        mDirectionsProvider.addWaypoints(location);
+        mMap.addMarker(mDirectionsProvider.getNoOfWaypoints() + 1, location, NKMapFragment.MarkerIcon.Blue);
+        mDirectionsProvider.getCyclingDirections();
     }
 }
