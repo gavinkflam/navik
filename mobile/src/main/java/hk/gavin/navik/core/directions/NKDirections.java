@@ -21,9 +21,4 @@ public abstract class NKDirections {
         this.locations = locations;
         this.distance = distance;
     }
-
-    public NKDirections(NKLocation startingPoint, NKLocation destination, ImmutableList<NKLocation> locations,
-                        int distance) {
-        this(startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent(), locations, distance);
-    }
 }

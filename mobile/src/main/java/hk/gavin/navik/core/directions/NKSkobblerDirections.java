@@ -14,9 +14,4 @@ public class NKSkobblerDirections extends NKDirections {
         super(startingPoint, destination, viaPoints, locations, distance);
         this.cacheId = cacheId;
     }
-
-    public NKSkobblerDirections(int cacheId, NKLocation startingPoint, NKLocation destination,
-                                ImmutableList<NKLocation> locations, int distance) {
-        this(cacheId, startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent(), locations, distance);
-    }
 }
