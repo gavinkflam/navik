@@ -12,6 +12,10 @@ public abstract class AbstractPresenter {
         // Do nothing
     }
 
+    public void onActivityCreated() {
+        // Do nothing
+    }
+
     public void onStart() {
         // Do nothing
     }
