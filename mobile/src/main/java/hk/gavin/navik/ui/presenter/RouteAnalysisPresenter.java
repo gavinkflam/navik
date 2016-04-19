@@ -6,13 +6,13 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindColor;
 import hk.gavin.navik.R;
-import hk.gavin.navik.ui.widget.ElevationChart;
+import hk.gavin.navik.ui.widget.NKElevationChart;
 
 public class RouteAnalysisPresenter extends AbstractPresenter {
 
     @Bind(R.id.distance) TextView mDistance;
     @Bind(R.id.estimatedTime) TextView mEstimatedTime;
-    @Bind(R.id.elevationChart) ElevationChart mElevationChart;
+    @Bind(R.id.elevationChart) NKElevationChart mNKElevationChart;
 
     @BindColor(R.color.colorPrimary) int mColorPrimary;
 
@@ -20,8 +20,8 @@ public class RouteAnalysisPresenter extends AbstractPresenter {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mElevationChart.setColor(mColorPrimary);
-        mElevationChart.setData(SAMPLE_ELEVATION_DATA);
+        mNKElevationChart.setColor(mColorPrimary);
+        mNKElevationChart.setData(SAMPLE_ELEVATION_DATA);
     }
 
     private static float[] SAMPLE_ELEVATION_DATA = {

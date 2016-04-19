@@ -34,7 +34,7 @@
                         android:layout_height="match_parent"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:text="@string/elevation"/>
-                    <hk.gavin.navik.ui.widget.ElevationChart
+                    <hk.gavin.navik.ui.widget.NKElevationChart
                         android:id="@+id/elevationChart"
                         android:layout_width="match_parent"
                         android:layout_height="160dp" />

@@ -12,21 +12,21 @@ import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElevationChart extends LineChart {
+public class NKElevationChart extends LineChart {
 
     private Optional<Integer> mColor = Optional.absent();
 
-    public ElevationChart(Context context) {
+    public NKElevationChart(Context context) {
         super(context);
         configureChartStyle();
     }
 
-    public ElevationChart(Context context, AttributeSet attrs) {
+    public NKElevationChart(Context context, AttributeSet attrs) {
         super(context, attrs);
         configureChartStyle();
     }
 
-    public ElevationChart(Context context, AttributeSet attrs, int defStyle) {
+    public NKElevationChart(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         configureChartStyle();
     }
