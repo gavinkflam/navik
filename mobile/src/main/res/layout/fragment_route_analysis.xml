@@ -34,7 +34,7 @@
                         android:layout_height="match_parent"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:text="@string/elevation"/>
-                    <com.github.mikephil.charting.charts.LineChart
+                    <hk.gavin.navik.ui.widget.ElevationChart
                         android:id="@+id/elevationChart"
                         android:layout_width="match_parent"
                         android:layout_height="160dp" />
