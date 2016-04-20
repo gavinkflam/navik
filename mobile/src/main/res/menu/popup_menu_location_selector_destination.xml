@@ -4,6 +4,8 @@
       tools:context=".ui.widget.LocationSelector">
     <item android:id="@+id/current_location"
           android:title="@string/current_location"/>
+    <item android:id="@+id/as_starting_point"
+          android:title="@string/starting_point"/>
     <item android:id="@+id/select_on_map"
           android:title="@string/select_on_map"/>
 </menu>

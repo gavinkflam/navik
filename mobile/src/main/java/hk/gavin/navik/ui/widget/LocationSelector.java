@@ -21,8 +21,10 @@ import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
+import hk.gavin.navik.ui.widget.event.SelectAsStartingPointEvent;
 import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
 import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
@@ -31,9 +33,10 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     @Bind(R.id.prefix) TextView mPrefix;
     @Bind(R.id.location_text) TextView mLocationText;
     @Bind(R.id.placeholder) TextView mPlaceholder;
-    PopupMenu mPopupMenu;
+    private PopupMenu mPopupMenu;
+    private int mMenuRes = R.menu.popup_menu_location_selector;
 
-    Optional<NKLocation> mLocation = Optional.absent();
+    @Getter Optional<NKLocation> mLocation = Optional.absent();
 
     private NKReverseGeocoder mReverseGeocoder;
 
@@ -77,10 +80,6 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mReverseGeocoder = reverseGeocoder;
     }
 
-    public NKLocation getLocation() {
-        return mLocation.get();
-    }
-
     public void removeLocation() {
         setLocation(Optional.<NKLocation>absent());
     }
@@ -95,17 +94,21 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
                 attrs, R.styleable.LocationSelector, 0, 0
         );
 
-        try {
+        if (array.hasValue(R.styleable.LocationSelector_prefix)) {
             mPrefix.setText(
                     array.getString(R.styleable.LocationSelector_prefix)
             );
+        }
+        if (array.hasValue(R.styleable.LocationSelector_placeholder)) {
             mPlaceholder.setText(
                     array.getString(R.styleable.LocationSelector_placeholder)
             );
         }
-        finally {
-            array.recycle();
+        if (array.hasValue(R.styleable.LocationSelector_menu_resource)) {
+            mMenuRes = array.getResourceId(R.styleable.LocationSelector_menu_resource, 0);
         }
+
+        array.recycle();
     }
 
     private void preparePopupMenu(Context context) {
@@ -114,7 +117,8 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         } else {
             mPopupMenu = new PopupMenu(context, this);
         }
-        mPopupMenu.inflate(R.menu.popup_menu_location_selector);
+
+        mPopupMenu.inflate(mMenuRes);
         mPopupMenu.setOnMenuItemClickListener(this);
     }
 
@@ -146,6 +150,10 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         switch (item.getItemId()) {
             case R.id.current_location: {
                 NKBus.get().post(new SelectCurrentLocationEvent(this));
+                return true;
+            }
+            case R.id.as_starting_point: {
+                NKBus.get().post(new SelectAsStartingPointEvent(this));
                 return true;
             }
             case R.id.select_on_map: {

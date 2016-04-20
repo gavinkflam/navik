@@ -20,6 +20,7 @@
                 android:id="@+id/startingPoint"
                 app:prefix="@string/location_prefix_from"
                 app:placeholder="@string/select_starting_point"
+                app:menu_resource="@menu/popup_menu_location_selector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -27,6 +28,7 @@
                 android:id="@+id/destination"
                 app:prefix="@string/location_prefix_to"
                 app:placeholder="@string/select_destination"
+                app:menu_resource="@menu/popup_menu_location_selector_destination"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
