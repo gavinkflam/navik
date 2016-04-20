@@ -3,13 +3,15 @@ package hk.gavin.navik.ui.presenter;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
-import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.event.DestinationChangeEvent;
+import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
+import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
+import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.map.NKMapFragment;
-import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -48,27 +50,18 @@ public class RouteDisplayPresenter extends AbstractPresenter {
     }
 
     @Subscribe
-    public void onLocationSelectionChanged(LocationSelectionChangeEvent event) {
-        switch (event.selector.getId()) {
-            case R.id.startingPoint: {
-                if (event.location.isPresent()) {
-                    mMap.addMarker(0, event.location.get(), NKMapFragment.MarkerIcon.Green);
-                }
-                else {
-                    mMap.removeMarker(0);
-                }
-                break;
-            }
-            case R.id.destination: {
-                if (event.location.isPresent()) {
-                    mMap.addMarker(1, event.location.get(), NKMapFragment.MarkerIcon.Flag);
-                }
-                else {
-                    mMap.removeMarker(1);
-                }
-                break;
-            }
-        }
+    public void onStartingPointChanged(StartingPointChangeEvent event) {
+        updateStartingPointMarker();
+    }
+
+    @Subscribe
+    public void onDestinationChanged(DestinationChangeEvent event) {
+        updateDestinationMarker();
+    }
+
+    @Subscribe
+    public void onWaypointsChanged(WaypointsChangeEvent event) {
+        updateWaypointsMarker();
     }
 
     @Subscribe
@@ -82,5 +75,35 @@ public class RouteDisplayPresenter extends AbstractPresenter {
     @Subscribe
     public void onDirectionsError(NKDirectionsException exception) {
         // Do nothing
+    }
+
+    private void updateStartingPointMarker() {
+        if (mDirectionsProvider.getStartingPoint().isPresent()) {
+            mMap.addMarker(0, mDirectionsProvider.getStartingPoint().get(), NKMapFragment.MarkerIcon.Green);
+        }
+        else {
+            mMap.removeMarker(0);
+        }
+    }
+
+    private void updateDestinationMarker() {
+        if (mDirectionsProvider.getDestination().isPresent()) {
+            mMap.addMarker(1, mDirectionsProvider.getStartingPoint().get(), NKMapFragment.MarkerIcon.Flag);
+        }
+        else {
+            mMap.removeMarker(1);
+        }
+    }
+
+    private void updateWaypointsMarker() {
+        ImmutableList<NKLocation> waypoints = mDirectionsProvider.getWaypoints();
+        mMap.clearMarkers();
+
+        updateStartingPointMarker();
+        updateDestinationMarker();
+
+        for (int i = 0; i < waypoints.size(); i++) {
+            mMap.addMarker(i + 2, waypoints.get(i), NKMapFragment.MarkerIcon.Blue);
+        }
     }
 }
