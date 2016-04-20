@@ -50,14 +50,14 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @OnClick(R.id.startBikeNavigation)
     void startBikeNavigation() {
         if (mDirections.isPresent()) {
-            getController().startBikeNavigation();
+            getController().startBikeNavigation(mDirections.get());
         }
     }
 
     @OnClick(R.id.showRouteAnalysis)
     void showRouteAnalysis() {
         if (mDirections.isPresent()) {
-            getController().showRouteAnalysis();
+            getController().showRouteAnalysis(mDirections.get());
         }
     }
 
@@ -111,21 +111,23 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     }
 
     @Override
-    public void onResultAvailable(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case UiContract.RequestCode.STARTING_POINT_LOCATION: {
-                if (resultCode == UiContract.ResultCode.OK) {
-                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
-                    mStartingPoint.setLocation(location, true);
+    public void onResultAvailable(Optional<Integer> requestCode, int resultCode, Optional<Intent> data) {
+        if (requestCode.isPresent() && data.isPresent()) {
+            NKLocation location = (NKLocation) data.get().getSerializableExtra(UiContract.DataKey.LOCATION);
+
+            switch (requestCode.get()) {
+                case UiContract.RequestCode.STARTING_POINT_LOCATION: {
+                    if (resultCode == UiContract.ResultCode.OK) {
+                        mStartingPoint.setLocation(location, true);
+                    }
+                    break;
                 }
-                break;
-            }
-            case UiContract.RequestCode.DESTINATION_LOCATION: {
-                if (resultCode == UiContract.ResultCode.OK) {
-                    NKLocation location = (NKLocation) data.getSerializableExtra(UiContract.DataKey.LOCATION);
-                    mDestination.setLocation(location, true);
+                case UiContract.RequestCode.DESTINATION_LOCATION: {
+                    if (resultCode == UiContract.ResultCode.OK) {
+                        mDestination.setLocation(location, true);
+                    }
+                    break;
                 }
-                break;
             }
         }
     }

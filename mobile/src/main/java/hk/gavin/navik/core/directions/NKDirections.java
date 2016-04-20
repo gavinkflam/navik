@@ -4,7 +4,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.core.location.NKLocation;
 
-public abstract class NKDirections {
+import java.io.Serializable;
+
+public abstract class NKDirections implements Serializable {
 
     public final NKLocation startingPoint;
     public final NKLocation destination;

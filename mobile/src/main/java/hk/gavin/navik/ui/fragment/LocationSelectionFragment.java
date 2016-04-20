@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import butterknife.OnClick;
 import hk.gavin.navik.R;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
-import hk.gavin.navik.contract.UiContract;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -25,7 +25,7 @@ public class LocationSelectionFragment extends AbstractHomeUiFragment {
         Intent result = new Intent();
         result.putExtra(UiContract.DataKey.LOCATION, mMap.getMapCenter());
 
-        getController().setResultData(UiContract.ResultCode.OK, result);
+        getController().setResult(UiContract.ResultCode.OK, result);
         getController().goBack();
     }
 
@@ -38,10 +38,12 @@ public class LocationSelectionFragment extends AbstractHomeUiFragment {
         mMap.showMoveToCurrentLocationButton();
 
         // Update title and back button display
-        getController().setActionBarTitle(
-                getController().getRequestCode() == UiContract.RequestCode.STARTING_POINT_LOCATION ?
-                        R.string.select_starting_point : R.string.select_destination
-        );
+        if (getRequestCode().isPresent()) {
+            getController().setActionBarTitle(
+                    getRequestCode().get() == UiContract.RequestCode.STARTING_POINT_LOCATION ?
+                            R.string.select_starting_point : R.string.select_destination
+            );
+        }
         getController().setDisplayHomeAsUp(true);
     }
 }

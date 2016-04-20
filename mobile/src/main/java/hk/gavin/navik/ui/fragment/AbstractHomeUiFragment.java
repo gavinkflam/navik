@@ -3,7 +3,7 @@ package hk.gavin.navik.ui.fragment;
 import android.os.Bundle;
 import hk.gavin.navik.injection.HomeComponent;
 import hk.gavin.navik.ui.activity.HomeActivity;
-import hk.gavin.navik.ui.controller.HomeController;
+import hk.gavin.navik.ui.fragmentcontroller.HomeFragmentController;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -13,7 +13,7 @@ import javax.inject.Inject;
 @Accessors(prefix = "m")
 public abstract class AbstractHomeUiFragment extends AbstractUiFragment {
 
-    @Getter(AccessLevel.PROTECTED) @Inject HomeController mController;
+    @Getter(AccessLevel.PROTECTED) @Inject HomeFragmentController mController;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

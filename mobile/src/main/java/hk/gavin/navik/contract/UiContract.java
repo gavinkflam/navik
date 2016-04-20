@@ -3,6 +3,7 @@ package hk.gavin.navik.contract;
 public class UiContract {
 
     public static final class RequestCode {
+        public static final int DEFAULT = 0;
         public static final int STARTING_POINT_LOCATION = 1;
         public static final int STARTING_POINT_HISTORY = 2;
         public static final int DESTINATION_LOCATION = 3;
@@ -10,9 +11,9 @@ public class UiContract {
     }
 
     public static final class ResultCode {
-        public static final int NA = -1;
-        public static final int CANCEL = 0;
-        public static final int OK = 1;
+        public static final int DEFAULT = 0;
+        public static final int CANCEL = 1;
+        public static final int OK = 2;
 
     }
 
@@ -22,6 +23,8 @@ public class UiContract {
         public static final String TITLE = "title";
         public static final String LOCATION = "location";
         public static final String USE_CURRENT_LOCATION = "useCurrentLocation";
+
+        public static final String DIRECTIONS = "directions";
     }
 
     public static final class FragmentTag {
