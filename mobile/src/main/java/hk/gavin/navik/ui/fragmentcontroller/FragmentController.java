@@ -14,9 +14,9 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
-public abstract class FragmentController implements FragmentManager.OnBackStackChangedListener {
+public abstract class FragmentController<T extends AppCompatActivity> implements FragmentManager.OnBackStackChangedListener {
 
-    @Getter private AppCompatActivity mActivity;
+    @Getter private T mActivity;
     @Getter private FragmentManager mManager;
 
     @Getter private AbstractUiFragment mCurrentFragment;
@@ -25,7 +25,7 @@ public abstract class FragmentController implements FragmentManager.OnBackStackC
     @Getter private Optional<Integer> mResultCode = Optional.absent();
     @Getter private Optional<Intent> mResultData = Optional.absent();
 
-    public FragmentController(AppCompatActivity activity) {
+    public FragmentController(T activity) {
         mActivity = activity;
         mManager = mActivity.getSupportFragmentManager();
     }
