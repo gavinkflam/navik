@@ -23,6 +23,7 @@ import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.event.MapLongPressEvent;
 import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
+import hk.gavin.navik.preference.MainPreferences;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
@@ -37,6 +38,7 @@ import javax.inject.Inject;
 @Accessors(prefix = "m")
 public class RoutePlannerFragment extends AbstractHomeUiFragment implements PopupMenu.OnMenuItemClickListener {
 
+    @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
@@ -103,6 +105,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
 
     @Override
     public void onPause() {
+        mMainPreferences.setLastLocation(getController().getMap().getMapCenter());
         NKBus.get().unregister(this);
         super.onPause();
     }
