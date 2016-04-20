@@ -24,6 +24,7 @@ import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
 import hk.gavin.navik.ui.widget.event.SelectAsStartingPointEvent;
 import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
 import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
@@ -35,7 +36,7 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     private PopupMenu mPopupMenu;
     private int mMenuRes = R.menu.popup_menu_location_selector;
 
-    Optional<NKLocation> mLocation = Optional.absent();
+    @Getter Optional<NKLocation> mLocation = Optional.absent();
 
     private NKReverseGeocoder mReverseGeocoder;
 
@@ -77,10 +78,6 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
 
     public void initialize(NKReverseGeocoder reverseGeocoder) {
         mReverseGeocoder = reverseGeocoder;
-    }
-
-    public NKLocation getLocation() {
-        return mLocation.get();
     }
 
     public void removeLocation() {

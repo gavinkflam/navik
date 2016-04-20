@@ -26,6 +26,7 @@ import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
+import hk.gavin.navik.ui.widget.event.SelectAsStartingPointEvent;
 import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
 import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
 import lombok.Getter;
@@ -163,15 +164,15 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     public void onLocationSelectionChanged(LocationSelectionChangeEvent event) {
         switch (event.selector.getId()) {
             case R.id.startingPoint: {
-                if (event.location.isPresent()) {
-                    mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation());
+                if (mStartingPoint.getLocation().isPresent()) {
+                    mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation().get());
                     mDirectionsProvider.getCyclingDirections();
                 }
                 break;
             }
             case R.id.destination: {
-                if (event.location.isPresent()) {
-                    mDirectionsProvider.setDestination(mDestination.getLocation());
+                if (mDestination.getLocation().isPresent()) {
+                    mDirectionsProvider.setDestination(mDestination.getLocation().get());
                     mDirectionsProvider.getCyclingDirections();
                 }
                 break;
@@ -200,6 +201,16 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
                 getController().selectDestination();
                 break;
             }
+        }
+    }
+
+    @Subscribe
+    public void onSelectStartingPointAsDestination(SelectAsStartingPointEvent event) {
+        if (mStartingPoint.getLocation().isPresent()) {
+            mDestination.setLocation(mStartingPoint.getLocation().get());
+        }
+        else {
+            getController().showMessage(R.string.error_select_starting_point_first);
         }
     }
 
