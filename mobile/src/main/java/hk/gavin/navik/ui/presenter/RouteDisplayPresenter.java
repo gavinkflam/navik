@@ -27,16 +27,6 @@ public class RouteDisplayPresenter extends AbstractPresenter {
         mMap = map;
         mMap.showMoveToCurrentLocationButton();
         mMap.moveToCurrentLocationOnceAvailable();
-        invalidate();
-    }
-
-    @Override
-    public void invalidate() {
-        if (mMap == null || !mDirections.isPresent()) {
-            return;
-        }
-
-        mMap.showRoute(mDirections.get(), true);
     }
 
     @Override
