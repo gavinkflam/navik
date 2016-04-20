@@ -9,7 +9,9 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.Subscribe;
 import hk.gavin.navik.R;
+import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
@@ -20,14 +22,16 @@ import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
+import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
+import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
+import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class RoutePlannerFragment extends AbstractHomeUiFragment implements
-        LocationSelector.LocationSelectorEventsListener, NKInteractiveDirectionsProvider.DirectionsResultsListener, NKMapFragment.MapEventsListener {
+public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMapFragment.MapEventsListener {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
@@ -38,9 +42,8 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
     @Bind(R.id.destination) LocationSelector mDestination;
 
     private NKMapFragment mMap;
-
-    private boolean mSelectorsInitialized = false;
     private Optional<NKDirections> mDirections = Optional.absent();
+
     @Getter private final int mLayoutResId = R.layout.fragment_route_planner;
 
     public RoutePlannerFragment() {
@@ -75,24 +78,15 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         getController().setDisplayHomeAsUp(false);
 
         // Initialize location selector
-        mStartingPoint.initialize(mLocationProvider, mReverseGeocoder);
-        mDestination.initialize(mLocationProvider, mReverseGeocoder);
-
-        if (!mSelectorsInitialized) {
-            mStartingPoint.useCurrentLocation();
-            mDestination.removeLocation();
-            mSelectorsInitialized = true;
-        }
+        mStartingPoint.initialize(mReverseGeocoder);
+        mDestination.initialize(mReverseGeocoder);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        mStartingPoint.setLocationSelectorEventsListener(this);
-        mDestination.setLocationSelectorEventsListener(this);
-        mDirectionsProvider.addDirectionsResultsListener(this);
-
+        NKBus.get().register(this);
         if (mDirections.isPresent()) {
             mStartBikeNavigation.enable();
         }
@@ -103,10 +97,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onPause() {
-        mStartingPoint.removeLocationSelectorEventsListener();
-        mDestination.removeLocationSelectorEventsListener();
-        mDirectionsProvider.removeDirectionsResultsListener(this);
-
+        NKBus.get().unregister(this);
         super.onPause();
     }
 
@@ -118,13 +109,13 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
             switch (requestCode.get()) {
                 case UiContract.RequestCode.STARTING_POINT_LOCATION: {
                     if (resultCode == UiContract.ResultCode.OK) {
-                        mStartingPoint.setLocation(location, true);
+                        mStartingPoint.setLocation(location);
                     }
                     break;
                 }
                 case UiContract.RequestCode.DESTINATION_LOCATION: {
                     if (resultCode == UiContract.ResultCode.OK) {
-                        mDestination.setLocation(location, true);
+                        mDestination.setLocation(location);
                     }
                     break;
                 }
@@ -151,42 +142,39 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onLocationUpdated(LocationSelector selector, NKLocation location, boolean isManualUpdate) {
-        switch (selector.getId()) {
+    @Subscribe
+    public void onLocationSelectionChanged(LocationSelectionChangeEvent event) {
+        switch (event.selector.getId()) {
             case R.id.startingPoint: {
-                if (mStartingPoint.isLocationAvailable()) {
-                    mDirectionsProvider.setManualUpdate(isManualUpdate);
+                if (event.location.isPresent()) {
                     mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation());
                     mDirectionsProvider.getCyclingDirections();
-
-                    // Add marker
-                    mMap.addMarker(0, location, NKMapFragment.MarkerIcon.Green);
                 }
                 break;
             }
             case R.id.destination: {
-                if (mDestination.isLocationAvailable()) {
-                    mDirectionsProvider.setManualUpdate(isManualUpdate);
+                if (event.location.isPresent()) {
                     mDirectionsProvider.setDestination(mDestination.getLocation());
                     mDirectionsProvider.getCyclingDirections();
-
-                    // Add marker
-                    mMap.addMarker(1, location, NKMapFragment.MarkerIcon.Flag);
                 }
                 break;
             }
         }
     }
 
-    @Override
-    public void onHistoryClicked(LocationSelector selector) {
-        // Do nothing
+    @Subscribe
+    public void onSelectCurrentLocation(SelectCurrentLocationEvent event) {
+        if (mLocationProvider.isLastLocationAvailable()) {
+            event.selector.setLocation(mLocationProvider.getLastLocation().get());
+        }
+        else {
+            getController().showMessage(R.string.error_location_not_available);
+        }
     }
 
-    @Override
-    public void onSelectLocationOnMapClicked(LocationSelector selector) {
-        switch (selector.getId()) {
+    @Subscribe
+    public void onSelectLocationOnMap(SelectLocationOnMapEvent event) {
+        switch (event.selector.getId()) {
             case R.id.startingPoint: {
                 getController().selectStartingPoint();
                 break;
@@ -198,15 +186,16 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
         }
     }
 
-    @Override
-    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate) {
+    @Subscribe
+    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList) {
         mDirections = Optional.of(directionsList.get(0));
         mStartBikeNavigation.enable();
     }
 
-    @Override
-    public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
+    @Subscribe
+    public void onDirectionsError(NKDirectionsException exception) {
         mStartBikeNavigation.disable();
+        getController().showMessage(R.string.error_route_not_available);
     }
 
     @Override
@@ -216,7 +205,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements
 
     @Override
     public void onLongPress(NKLocation location) {
-        mDirectionsProvider.setManualUpdate(true);
         mDirectionsProvider.addWaypoints(location);
         mMap.addMarker(mDirectionsProvider.getNoOfWaypoints() + 1, location, NKMapFragment.MarkerIcon.Blue);
         mDirectionsProvider.getCyclingDirections();

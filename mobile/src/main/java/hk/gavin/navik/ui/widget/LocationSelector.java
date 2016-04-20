@@ -12,33 +12,29 @@ import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
 import hk.gavin.navik.R;
+import hk.gavin.navik.application.NKBus;
+import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
-import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.contract.UiContract;
-import lombok.Getter;
+import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
+import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
+import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
-public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener, NKLocationProvider.OnLocationUpdateListener {
+public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuItemClickListener {
 
     @Bind(R.id.prefix) TextView mPrefix;
     @Bind(R.id.location_text) TextView mLocationText;
     @Bind(R.id.placeholder) TextView mPlaceholder;
     PopupMenu mPopupMenu;
 
-    @BindString(R.string.current_location) String mCurrentLocationString;
-
-    @Getter boolean mUseCurrentLocation = false;
     Optional<NKLocation> mLocation = Optional.absent();
-    Optional<LocationSelectorEventsListener> mLocationSelectorEventsListener = Optional.absent();
 
-    private NKLocationProvider mLocationProvider;
     private NKReverseGeocoder mReverseGeocoder;
 
     public LocationSelector(Context context) {
@@ -64,21 +60,20 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     public void updateLocationDisplay() {
-        if (!mUseCurrentLocation && !mLocation.isPresent()) {
-            mPrefix.setVisibility(GONE);
-            mLocationText.setVisibility(GONE);
-            mPlaceholder.setVisibility(VISIBLE);
-        }
-        else {
+        if (mLocation.isPresent()) {
             mPrefix.setVisibility(VISIBLE);
             mLocationText.setVisibility(VISIBLE);
             mPlaceholder.setVisibility(GONE);
             updateLocationName();
         }
+        else {
+            mPrefix.setVisibility(GONE);
+            mLocationText.setVisibility(GONE);
+            mPlaceholder.setVisibility(VISIBLE);
+        }
     }
 
-    public void initialize(NKLocationProvider locationProvider, NKReverseGeocoder reverseGeocoder) {
-        mLocationProvider = locationProvider;
+    public void initialize(NKReverseGeocoder reverseGeocoder) {
         mReverseGeocoder = reverseGeocoder;
     }
 
@@ -86,36 +81,8 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         return mLocation.get();
     }
 
-    public void setLocation(NKLocation location, boolean isManualUpdate) {
-        setLocation(Optional.of(location), isManualUpdate);
-    }
-
     public void removeLocation() {
-        setLocation(Optional.<NKLocation>absent(), true);
-    }
-
-    public boolean isLocationAvailable() {
-        return mLocation.isPresent();
-    }
-
-    public void useCurrentLocation() {
-        mLocation = Optional.absent();
-        mUseCurrentLocation = true;
-        updateLocationDisplay();
-
-        if (mLocationProvider.isLastLocationAvailable()) {
-            mLocation = Optional.of(mLocationProvider.getLastLocation());
-            invokeOnLocationUpdatedListener(false);
-        }
-        mLocationProvider.addPositionUpdateListener(this);
-    }
-
-    public void setLocationSelectorEventsListener(LocationSelectorEventsListener listener) {
-        mLocationSelectorEventsListener = Optional.of(listener);
-    }
-
-    public void removeLocationSelectorEventsListener() {
-        mLocationSelectorEventsListener = Optional.absent();
+        setLocation(Optional.<NKLocation>absent());
     }
 
     private void initView(Context context) {
@@ -144,35 +111,25 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     private void preparePopupMenu(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mPopupMenu = new PopupMenu(context, this, Gravity.END);
-        }
-        else {
+        } else {
             mPopupMenu = new PopupMenu(context, this);
         }
         mPopupMenu.inflate(R.menu.popup_menu_location_selector);
         mPopupMenu.setOnMenuItemClickListener(this);
     }
 
-    private void invokeOnLocationUpdatedListener(boolean isManualUpdate) {
-        if (mLocation.isPresent()) {
-            if (mLocationSelectorEventsListener.isPresent()) {
-                mLocationSelectorEventsListener.get().onLocationUpdated(this, mLocation.get(), isManualUpdate);
-            }
-        }
+    public void setLocation(NKLocation location) {
+        setLocation(Optional.of(location));
     }
 
-    private void setLocation(Optional<NKLocation> location, boolean isManualUpdate) {
-        mLocationProvider.removePositionUpdateListener(this);
+    private void setLocation(Optional<NKLocation> location) {
         mLocation = location;
-        mUseCurrentLocation = false;
         updateLocationDisplay();
-        invokeOnLocationUpdatedListener(isManualUpdate);
+        NKBus.get().post(new LocationSelectionChangeEvent(this, mLocation));
     }
 
     private void updateLocationName() {
-        if (mUseCurrentLocation) {
-            mLocationText.setText(mCurrentLocationString);
-        }
-        else if (mLocation.isPresent()) {
+        if (mLocation.isPresent()) {
             mLocationText.setText(
                     mReverseGeocoder.getNameFromLocation(mLocation.get())
             );
@@ -185,35 +142,14 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     }
 
     @Override
-    public void onLocationUpdated(NKLocation location, double accuracy) {
-        if (mUseCurrentLocation) {
-            mLocation = Optional.of(location);
-            invokeOnLocationUpdatedListener(false);
-        }
-    }
-
-    @Override
-    public void onAccuracyUpdated(double accuracy) {
-        // Do nothing
-    }
-
-    @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.current_location: {
-                useCurrentLocation();
+                NKBus.get().post(new SelectCurrentLocationEvent(this));
                 return true;
             }
-//            case R.id.history: {
-//                if (mLocationSelectorEventsListener.isPresent()) {
-//                    mLocationSelectorEventsListener.get().onHistoryClicked(this);
-//                }
-//                return true;
-//            }
             case R.id.select_on_map: {
-                if (mLocationSelectorEventsListener.isPresent()) {
-                    mLocationSelectorEventsListener.get().onSelectLocationOnMapClicked(this);
-                }
+                NKBus.get().post(new SelectLocationOnMapEvent(this));
                 return true;
             }
         }
@@ -224,7 +160,6 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putParcelable(UiContract.DataKey.SUPER_STATE, super.onSaveInstanceState());
-        bundle.putBoolean(UiContract.DataKey.USE_CURRENT_LOCATION, mUseCurrentLocation);
         if (mLocation.isPresent()) {
             bundle.putSerializable(UiContract.DataKey.LOCATION, mLocation.get());
         }
@@ -235,7 +170,6 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            mUseCurrentLocation = bundle.getBoolean(UiContract.DataKey.USE_CURRENT_LOCATION);
             mLocation = Optional.fromNullable(
                     (NKLocation) bundle.getSerializable(UiContract.DataKey.LOCATION)
             );
@@ -243,11 +177,5 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
             state = bundle.getParcelable(UiContract.DataKey.SUPER_STATE);
         }
         super.onRestoreInstanceState(state);
-    }
-
-    public interface LocationSelectorEventsListener {
-        void onLocationUpdated(LocationSelector selector, NKLocation location, boolean isManualUpdate);
-        void onHistoryClicked(LocationSelector selector);
-        void onSelectLocationOnMapClicked(LocationSelector selector);
     }
 }

@@ -2,6 +2,7 @@ package hk.gavin.navik.ui.fragmentcontroller;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 import hk.gavin.navik.R;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
@@ -30,6 +31,14 @@ public class HomeFragmentController extends FragmentController {
         );
     }
 
+    public void showMessage(String notification) {
+        Toast.makeText(getActivity(), notification, Toast.LENGTH_SHORT).show();
+    }
+
+    public void showMessage(int notificationRes) {
+        showMessage(getActivity().getString(notificationRes));
+    }
+
     public RouteDisplayFragment initializeRouteDisplayFragment() {
         setEmptyRequest();
         return replaceFragment(
@@ -53,7 +62,6 @@ public class HomeFragmentController extends FragmentController {
                 true, true
         );
     }
-
 
     public void showRouteAnalysis(NKDirections directions) {
         Intent data = new Intent();

@@ -3,8 +3,13 @@ package hk.gavin.navik.core.directions;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.orhanobut.logger.Logger;
+import hk.gavin.navik.application.NKBus;
+import hk.gavin.navik.core.directions.event.DestinationChangeEvent;
+import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
+import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jdeferred.DoneCallback;
@@ -18,13 +23,11 @@ public class NKInteractiveDirectionsProvider {
 
     protected final NKDirectionsProvider mProvider;
 
-    protected Optional<NKLocation> mStartingPoint = Optional.absent();
-    protected Optional<NKLocation> mDestination = Optional.absent();
-    protected List<NKLocation> mWaypoints = new ArrayList<>();
+    @Getter protected Optional<NKLocation> mStartingPoint = Optional.absent();
+    @Getter protected Optional<NKLocation> mDestination = Optional.absent();
+    @Getter protected List<NKLocation> mWaypoints = new ArrayList<>();
     @Setter protected int mNoOfDirections = 1;
-    @Setter protected boolean mIsManualUpdate = false;
 
-    private ArrayList<DirectionsResultsListener> mListeners = new ArrayList<>();
     private DirectionsResultsCallback mDirectionsResultsCallback = new DirectionsResultsCallback();
 
     public NKInteractiveDirectionsProvider(NKDirectionsProvider provider) {
@@ -33,22 +36,37 @@ public class NKInteractiveDirectionsProvider {
 
     public void setStartingPoint(NKLocation startingPoint) {
         mStartingPoint = Optional.of(startingPoint);
+        notifyStartingPointChange();
     }
 
     public void setDestination(NKLocation destination) {
         mDestination = Optional.of(destination);
+        notifyDestinationChange();
     }
 
     public void removeStartingPoint() {
         mStartingPoint = Optional.absent();
+        notifyStartingPointChange();
     }
 
     public void removeDestination() {
         mDestination = Optional.absent();
+        notifyDestinationChange();
     }
 
     public void addWaypoints(NKLocation viaPoint) {
         mWaypoints.add(viaPoint);
+        notifyWaypointsChange();
+    }
+
+    public void clearWaypoints() {
+        mWaypoints.clear();
+        notifyWaypointsChange();
+    }
+
+    public void removeWaypoints(int index) {
+        mWaypoints.remove(index);
+        notifyWaypointsChange();
     }
 
     public ImmutableList<NKLocation> getWaypoints() {
@@ -57,18 +75,6 @@ public class NKInteractiveDirectionsProvider {
 
     public int getNoOfWaypoints() {
         return mWaypoints.size();
-    }
-
-    public void clearwaypoints() {
-        mWaypoints = new ArrayList<>();
-    }
-
-    public boolean addDirectionsResultsListener(DirectionsResultsListener listener) {
-        return mListeners.add(listener);
-    }
-
-    public boolean removeDirectionsResultsListener(DirectionsResultsListener listener) {
-        return mListeners.remove(listener);
     }
 
     public void getCyclingDirections() {
@@ -83,29 +89,31 @@ public class NKInteractiveDirectionsProvider {
         }
     }
 
+    private void notifyStartingPointChange() {
+        NKBus.get().post(new StartingPointChangeEvent(mStartingPoint));
+    }
+
+    private void notifyDestinationChange() {
+        NKBus.get().post(new DestinationChangeEvent(mStartingPoint));
+    }
+
+    private void notifyWaypointsChange() {
+        NKBus.get().post(new WaypointsChangeEvent(mWaypoints));
+    }
+
     private class DirectionsResultsCallback implements
             DoneCallback<ImmutableList<NKDirections>>, FailCallback<NKDirectionsException> {
 
         @Override
         public void onDone(ImmutableList<NKDirections> result) {
             Logger.d("result size: %d", result.size());
-            for (DirectionsResultsListener listener : mListeners) {
-                listener.onDirectionsAvailable(result, mIsManualUpdate);
-            }
+            NKBus.get().post(result);
         }
 
         @Override
         public void onFail(NKDirectionsException result) {
             Logger.d("result: %s", result);
-            for (DirectionsResultsListener listener : mListeners) {
-                listener.onDirectionsError(result, mIsManualUpdate);
-            }
+            NKBus.get().post(result);
         }
-    }
-
-    public interface DirectionsResultsListener {
-
-        void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate);
-        void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate);
     }
 }
