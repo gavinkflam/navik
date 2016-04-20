@@ -1,6 +1,7 @@
 package hk.gavin.navik.preference;
 
 import android.content.Context;
+import hk.gavin.navik.core.location.NKLocation;
 
 public class MainPreferences extends AbstractPreferences {
 
@@ -34,9 +35,29 @@ public class MainPreferences extends AbstractPreferences {
         setBooleanPreference(Key.OFFLINE_MODE, offlineMode);
     }
 
+    public NKLocation getLastLocation() {
+        double lastLocationLat = getDoublePreference(Key.LAST_LOCATION_LAT);
+        double lastLocationLng = getDoublePreference(Key.LAST_LOCATION_LNG);
+
+        if (lastLocationLat == 0 && lastLocationLng == 0) {
+            // Return Tai Po Market Station as last location if no previous stored location
+            return new NKLocation(22.4447152, 114.1686471);
+        }
+        else {
+            return new NKLocation(lastLocationLat, lastLocationLng);
+        }
+    }
+
+    public void setLastLocation(NKLocation location) {
+        setDoublePreference(Key.LAST_LOCATION_LAT, location.latitude);
+        setDoublePreference(Key.LAST_LOCATION_LNG, location.longitude);
+    }
+
     public static final class Key {
         public static final String MAP_RESOURCES_PATH = "MapResourcesPath";
         public static final String SIMULATION_MODE = "SimulationMode";
         public static final String OFFLINE_MODE = "OfflineMode";
+        public static final String LAST_LOCATION_LAT = "LastLocationLat";
+        public static final String LAST_LOCATION_LNG = "LastLocationLng";
     }
 }

@@ -7,9 +7,9 @@ import java.util.Locale;
 
 public class NKLocation implements Serializable {
 
-    final double latitude;
-    final double longitude;
-    final double elevation;
+    public final double latitude;
+    public final double longitude;
+    public final double elevation;
 
     public NKLocation(double latitude, double longitude) {
         this.latitude = latitude;
