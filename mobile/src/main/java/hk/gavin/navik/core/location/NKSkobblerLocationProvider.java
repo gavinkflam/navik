@@ -15,6 +15,7 @@ public class NKSkobblerLocationProvider extends NKLocationProvider implements SK
 
         mProvider = new SKCurrentPositionProvider(getContext());
         mProvider.setCurrentPositionListener(this);
+        mProvider.requestLocationUpdates(true, true, true);
     }
 
     @Override
@@ -34,22 +35,5 @@ public class NKSkobblerLocationProvider extends NKLocationProvider implements SK
             setLastLocationAccuracy(newAccuracy);
             notifyLocationUpdate();
         }
-    }
-
-    @Override
-    public boolean addPositionUpdateListener(OnLocationUpdateListener listener) {
-        if (getOnLocationUpdateListeners().size() == 0) {
-            mProvider.requestLocationUpdates(true, true, true);
-        }
-        return super.addPositionUpdateListener(listener);
-    }
-
-    @Override
-    public boolean removePositionUpdateListener(OnLocationUpdateListener listener) {
-        boolean result = super.removePositionUpdateListener(listener);
-        if (getOnLocationUpdateListeners().size() == 0) {
-            mProvider.stopLocationUpdates();
-        }
-        return result;
     }
 }
