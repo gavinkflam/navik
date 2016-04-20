@@ -74,6 +74,14 @@ public class HomeFragmentController extends FragmentController {
         );
     }
 
+    public void showAppSetting() {
+        setEmptyRequest();
+        replaceFragment(
+                R.id.contentFrame, SettingFragment.class, UiContract.FragmentTag.SETTING,
+                true, true
+        );
+    }
+
     public void startBikeNavigation(NKDirections directions) {
         Intent data = new Intent();
         data.putExtra(UiContract.DataKey.DIRECTIONS, directions);

@@ -34,6 +34,9 @@ public abstract class AbstractHomeUiFragment extends AbstractUiFragment {
         else if (this instanceof RouteAnalysisFragment) {
             component().inject((RouteAnalysisFragment) this);
         }
+        else if (this instanceof SettingFragment) {
+            component().inject((SettingFragment) this);
+        }
     }
 
     public HomeComponent component() {
