@@ -7,6 +7,8 @@ import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.core.directions.NKDirectionsProvider;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.directions.NKSkobblerDirectionsProvider;
+import hk.gavin.navik.core.elevation.NKElevationProvider;
+import hk.gavin.navik.core.elevation.NKGoogleElevationProvider;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.geocode.NKSkobblerReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocationProvider;
@@ -23,6 +25,7 @@ public class ApplicationModule {
     private Optional<MainPreferences> mMainPreferences = Optional.absent();
     private Optional<? extends NKLocationProvider> mNKLocationProvider = Optional.absent();
     private Optional<? extends NKReverseGeocoder> mNKReverseGeocoder = Optional.absent();
+    private Optional<? extends NKElevationProvider> mNKElevationProvider = Optional.absent();
     private Optional<? extends NKWearManager> mNKWearManager = Optional.absent();
     private Optional<? extends NKDirectionsProvider> mNKDirectionsProvider = Optional.absent();
     private Optional<? extends NKInteractiveDirectionsProvider> mNKSkobblerInteractiveDirectionsProvider =
@@ -59,6 +62,14 @@ public class ApplicationModule {
             mNKReverseGeocoder = Optional.of(new NKSkobblerReverseGeocoder());
         }
         return mNKReverseGeocoder.get();
+    }
+
+    @Provides @Singleton
+    NKElevationProvider elevationProvider() {
+        if (!mNKElevationProvider.isPresent()) {
+            mNKElevationProvider = Optional.of(new NKGoogleElevationProvider());
+        }
+        return mNKElevationProvider.get();
     }
 
     @Provides @Singleton
