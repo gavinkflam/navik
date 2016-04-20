@@ -206,7 +206,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMa
     @Override
     public void onLongPress(NKLocation location) {
         mDirectionsProvider.addWaypoints(location);
-        mMap.addMarker(mDirectionsProvider.getNoOfWaypoints() + 1, location, NKMapFragment.MarkerIcon.Blue);
         mDirectionsProvider.getCyclingDirections();
     }
 
