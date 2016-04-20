@@ -8,6 +8,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.common.base.Optional;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Floats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,5 +74,9 @@ public class NKElevationChart extends LineChart {
         // Set chart data
         this.setData(new LineData(labels, dataSet));
         this.invalidate();
+    }
+
+    public void setData(double[] data) {
+        setData(Floats.toArray(Doubles.asList(data)));
     }
 }

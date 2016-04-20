@@ -26,6 +26,7 @@ public class RouteAnalysisFragment extends AbstractHomeUiFragment {
 
         // Inject dependencies for presenters
         component().inject(mRouteAnalysisPresenter);
+        mRouteAnalysisPresenter.invalidate();
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.route_analysis);
@@ -35,11 +36,12 @@ public class RouteAnalysisFragment extends AbstractHomeUiFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mRouteAnalysisPresenter.onViewCreated(view, savedInstanceState);
 
+        // Display directions data
         NKDirections directions =
                 (NKDirections) getRequestData().get().getSerializableExtra(UiContract.DataKey.DIRECTIONS);
         mRouteAnalysisPresenter.setDirections(directions);
-        mRouteAnalysisPresenter.onViewCreated(view, savedInstanceState);
     }
 
     @Override

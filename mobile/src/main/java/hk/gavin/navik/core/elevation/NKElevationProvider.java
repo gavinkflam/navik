@@ -1,10 +1,11 @@
 package hk.gavin.navik.core.elevation;
 
 import hk.gavin.navik.core.location.NKLocation;
+import org.jdeferred.Promise;
 
 import java.util.List;
 
-public abstract class NKElevationProvider {
+public interface NKElevationProvider {
 
-    public abstract void requestElevation(List<NKLocation> locations);
+    Promise<NKLocation[], Void, Void> requestElevation(List<NKLocation> locations);
 }

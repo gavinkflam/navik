@@ -8,6 +8,10 @@ import lombok.experimental.Accessors;
 @Accessors(prefix = "m")
 public abstract class AbstractPresenter {
 
+    public void invalidate() {
+        // Do nothing
+    }
+
     public void onCreate() {
         // Do nothing
     }
