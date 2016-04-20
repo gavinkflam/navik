@@ -165,7 +165,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMa
     @Subscribe
     public void onSelectCurrentLocation(SelectCurrentLocationEvent event) {
         if (mLocationProvider.isLastLocationAvailable()) {
-            event.selector.setLocation(mLocationProvider.getLastLocation());
+            event.selector.setLocation(mLocationProvider.getLastLocation().get());
         }
         else {
             getController().showMessage(R.string.error_location_not_available);
