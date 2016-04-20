@@ -1,14 +1,16 @@
 package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
+import com.google.common.eventbus.Subscribe;
 import hk.gavin.navik.R;
-import hk.gavin.navik.core.location.NKLocation;
+import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
-import hk.gavin.navik.core.navigation.NKNavigationListener;
 import hk.gavin.navik.core.navigation.NKNavigationManager;
-import hk.gavin.navik.core.navigation.NKNavigationState;
 import hk.gavin.navik.core.navigation.NKSkobblerNavigationManager;
+import hk.gavin.navik.core.navigation.event.NavigationEndedEvent;
+import hk.gavin.navik.core.navigation.event.NavigationStartedEvent;
+import hk.gavin.navik.core.navigation.event.NavigationStateUpdateEvent;
 import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.preference.MainPreferences;
 import lombok.Getter;
@@ -17,12 +19,12 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class NavigationFragment extends AbstractHomeUiFragment implements
-        NKMapFragment.MapEventsListener, NKNavigationListener {
+public class NavigationFragment extends AbstractHomeUiFragment {
 
     @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKWearManager mWearManager;
+
     NKMapFragment mMap;
     NKNavigationManager mNavigationManager;
 
@@ -35,11 +37,10 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
         // Properly set map display
         mMap = getController().getMap();
         mMap.hideMoveToCurrentLocationButton();
-        mMap.setMapEventsListener(this);
 
         // Create navigation manager and start navigation
         mNavigationManager = new NKSkobblerNavigationManager(getActivity(), R.id.nkSKMapContainer, mMap);
-        mNavigationManager.addNavigationListener(this);
+        mNavigationManager.setSimulation(mMainPreferences.getSimulationMode());
         mNavigationManager.startNavigation();
 
         // Update title and back button display
@@ -48,45 +49,40 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
     }
 
     @Override
-    public void onBackPressed() {
-        mNavigationManager.stopNavigation();
-        mNavigationManager.removeNavigationListener(this);
+    public void onResume() {
+        super.onResume();
+        NKBus.get().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        NKBus.get().unregister(this);
+        super.onPause();
     }
 
     @Override
     public void onStop() {
         mNavigationManager.stopNavigation();
-        mNavigationManager.removeNavigationListener(this);
         super.onStop();
     }
 
     @Override
-    public void onMapLoadComplete() {
-        // Do nothing
+    public void onBackPressed() {
+        mNavigationManager.stopNavigation();
     }
 
-    @Override
-    public void onLongPress(NKLocation location) {
-        // Do nothing
-    }
-
-    @Override
-    public void onMarkerClicked(int id, NKLocation location) {
-        // Do nothing
-    }
-
-    @Override
-    public void onNavigationStart() {
+    @Subscribe
+    public void onNavigationStarted(NavigationStartedEvent event) {
         mWearManager.startWearActivity();
     }
 
-    @Override
-    public void onNavigationStop() {
-
+    @Subscribe
+    public void onNavigationEnded(NavigationEndedEvent event) {
+        // Do nothing
     }
 
-    @Override
-    public void onNavigationStateUpdate(NKNavigationState navigationState) {
-        mWearManager.broadcastNavigationState(navigationState);
+    @Subscribe
+    public void onNavigationStateUpdate(NavigationStateUpdateEvent event) {
+        mWearManager.broadcastNavigationState(event.navigationState);
     }
 }

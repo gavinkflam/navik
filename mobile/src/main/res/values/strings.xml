@@ -1,16 +1,28 @@
 <resources>
-    <string name="action_settings">Settings</string>
-    <string name="action_offline_data">Offline Data</string>
+    <string name="settings">Settings</string>
+    <string name="offline_data">Offline Data</string>
+    <string name="import_gpx_file">Import GPX file</string>
 
     <string name="downward_triangle">&#9660;</string>
 
     <string name="location_prefix_from">from</string>
     <string name="location_prefix_to">to</string>
     <string name="current_location">Current location</string>
-    <string name="history">History</string>
     <string name="select_on_map">Select on map</string>
     <string name="select_starting_point">Select Starting Point</string>
     <string name="select_destination">Select Destination</string>
+
+    <string name="remove_waypoint">Remove Waypoint</string>
+    <string name="set_as_starting_point">Set as Starting Point</string>
+    <string name="set_as_destination">Set as Destination</string>
+    <string name="add_as_waypoint">Add as Waypoint</string>
+
+    <string name="error_location_not_available">Location not available</string>
+    <string name="error_route_not_available">Route not available</string>
+
+    <string name="simulation_mode">Simulation Mode</string>
+    <string name="offline_mode">Offline Mode</string>
+    <string name="manage">Manage</string>
 
     <string name="navigation">Navigation</string>
     <string name="route_analysis">Route Analysis</string>

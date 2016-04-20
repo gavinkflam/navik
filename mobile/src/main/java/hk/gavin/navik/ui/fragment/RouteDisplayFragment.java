@@ -1,28 +1,15 @@
 package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import hk.gavin.navik.R;
-import hk.gavin.navik.core.directions.NKDirections;
-import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
-import hk.gavin.navik.core.directions.exception.NKDirectionsException;
-import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.ui.presenter.RouteDisplayPresenter;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import javax.inject.Inject;
-
 @Accessors(prefix = "m")
-public class RouteDisplayFragment extends AbstractHomeUiFragment implements
-        NKInteractiveDirectionsProvider.DirectionsResultsListener {
+public class RouteDisplayFragment extends AbstractHomeUiFragment {
 
-    @Inject NKLocationProvider mLocationProvider;
-    @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
-
-    private NKMapFragment mMap;
-    private Optional<NKDirections> mDirections = Optional.absent();
+    RouteDisplayPresenter mRouteDisplayPresenter = new RouteDisplayPresenter();
 
     @Getter private final int mLayoutResId = R.layout.fragment_route_display;
 
@@ -30,38 +17,19 @@ public class RouteDisplayFragment extends AbstractHomeUiFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Properly set map display
-        mMap = getController().getMap();
-        mMap.showMoveToCurrentLocationButton();
-        mMap.moveToCurrentLocationOnceAvailable();
-
-        if (mMap.isMapLoaded() && mDirections.isPresent()) {
-            mMap.showRoute(mDirections.get(), true);
-        }
+        component().inject(mRouteDisplayPresenter);
+        mRouteDisplayPresenter.setMap(getController().getMap());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mDirectionsProvider.addDirectionsResultsListener(this);
+        mRouteDisplayPresenter.onResume();
     }
 
     @Override
     public void onPause() {
-        mDirectionsProvider.removeDirectionsResultsListener(this);
+        mRouteDisplayPresenter.onPause();
         super.onPause();
-    }
-
-    @Override
-    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate) {
-        mDirections = Optional.of(directionsList.get(0));
-        if (mMap.isMapLoaded()) {
-            mMap.showRoute(mDirections.get(), isManualUpdate);
-        }
-    }
-
-    @Override
-    public void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate) {
-        // Do nothing
     }
 }

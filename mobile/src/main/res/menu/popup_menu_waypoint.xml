@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".ui.fragment.RoutePlannerFragment">
+    <item android:id="@+id/remove_waypoint"
+          android:title="@string/remove_waypoint"/>
+</menu>

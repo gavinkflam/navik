@@ -7,22 +7,28 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
+import com.google.common.eventbus.Subscribe;
 import com.orhanobut.logger.Logger;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.*;
 import com.skobbler.ngx.routing.SKRouteManager;
 import hk.gavin.navik.R;
+import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
+import hk.gavin.navik.core.location.event.AccuracyUpdateEvent;
+import hk.gavin.navik.core.location.event.LocationUpdateEvent;
+import hk.gavin.navik.core.map.event.MapLoadCompleteEvent;
+import hk.gavin.navik.core.map.event.MapLongPressEvent;
+import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
-public class NKSkobblerMapFragment extends NKMapFragment
-        implements SKMapSurfaceListener, NKLocationProvider.OnLocationUpdateListener {
+public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurfaceListener {
 
     private NKLocationProvider mLocationProvider;
     private final SKRouteManager mRouteManager = SKRouteManager.getInstance();
@@ -42,7 +48,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
     @OnClick(R.id.moveToCurrentLocation)
     public void moveToCurrentLocation() {
         if (isMapLoaded() && mLocationProvider.isLastLocationAvailable()) {
-            SKCoordinate coordinate = mLocationProvider.getLastLocation().toSKCoordinate();
+            SKCoordinate coordinate = mLocationProvider.getLastLocation().get().toSKCoordinate();
 
             mMap.setPositionAsCurrent(coordinate, (float) mLocationProvider.getLastLocationAccuracy(), false);
             mMap.centerMapOnPositionSmooth(coordinate, 200);
@@ -130,6 +136,13 @@ public class NKSkobblerMapFragment extends NKMapFragment
     }
 
     @Override
+    public void clearMarkers() {
+        if (isMapLoaded()) {
+            mMap.deleteAllAnnotationsAndCustomPOIs();
+        }
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mLocationProvider = new NKSkobblerLocationProvider(context);
@@ -144,7 +157,7 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onPause() {
-        mLocationProvider.removePositionUpdateListener(this);
+        NKBus.get().unregister(this);
         mMapHolder.onPause();
         super.onPause();
     }
@@ -153,23 +166,25 @@ public class NKSkobblerMapFragment extends NKMapFragment
     public void onResume() {
         super.onResume();
         mMapHolder.onResume();
-        mLocationProvider.addPositionUpdateListener(this);
+        NKBus.get().register(this);
     }
 
-    @Override
-    public void onLocationUpdated(NKLocation location, double accuracy) {
+    @Subscribe
+    public void onLocationUpdated(LocationUpdateEvent event) {
         if (isMapLoaded()) {
             mMap.setPositionAsCurrent(
-                    location.toSKCoordinate(), (float) accuracy, isPendingMoveToCurrentLocation()
+                    event.location.toSKCoordinate(), (float) event.accuracy, isPendingMoveToCurrentLocation()
             );
             setPendingMoveToCurrentLocation(false);
         }
     }
 
-    @Override
-    public void onAccuracyUpdated(double accuracy) {
+    @Subscribe
+    public void onAccuracyUpdated(AccuracyUpdateEvent event) {
         if (mLocationProvider.isLastLocationAvailable()) {
-            onLocationUpdated(mLocationProvider.getLastLocation(), accuracy);
+            onLocationUpdated(
+                    new LocationUpdateEvent(event.provider, mLocationProvider.getLastLocation().get(), event.accuracy)
+            );
         }
     }
 
@@ -194,16 +209,19 @@ public class NKSkobblerMapFragment extends NKMapFragment
         mMap.getMapSettings().setShowBicycleLanes(true);
         mMap.getMapSettings().setCurrentPositionShown(true);
         mMap.getMapSettings().setCompassPosition(new SKScreenPoint(-50, -50));
-        mLocationProvider.addPositionUpdateListener(this);
 
         // Trigger location update immediately if applicable
         if (mLocationProvider.isLastLocationAvailable()) {
-            onLocationUpdated(mLocationProvider.getLastLocation(), mLocationProvider.getLastLocationAccuracy());
+            onLocationUpdated(
+                    new LocationUpdateEvent(
+                            mLocationProvider,
+                            mLocationProvider.getLastLocation().get(),
+                            mLocationProvider.getLastLocationAccuracy()
+                    )
+            );
         }
 
-        if (getMapEventsListener().isPresent()) {
-            getMapEventsListener().get().onMapLoadComplete();
-        }
+        NKBus.get().post(new MapLoadCompleteEvent(this));
     }
 
     @Override
@@ -240,12 +258,11 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onLongPress(SKScreenPoint skScreenPoint) {
-        if (getMapEventsListener().isPresent()) {
-            NKLocation location = NKLocation.fromSKCoordinate(
-                    mMap.pointToCoordinate(skScreenPoint)
-            );
-            getMapEventsListener().get().onLongPress(location);
-        }
+        NKBus.get().post(
+                new MapLongPressEvent(
+                        this, NKLocation.fromSKCoordinate(mMap.pointToCoordinate(skScreenPoint))
+                )
+        );
     }
 
     @Override
@@ -275,12 +292,11 @@ public class NKSkobblerMapFragment extends NKMapFragment
 
     @Override
     public void onAnnotationSelected(SKAnnotation skAnnotation) {
-        if (getMapEventsListener().isPresent()) {
-            getMapEventsListener().get().onMarkerClicked(
-                    skAnnotation.getUniqueID(),
-                    NKLocation.fromSKCoordinate(skAnnotation.getLocation())
-            );
-        }
+        NKBus.get().post(
+                new MapMarkerClickEvent(
+                        this, skAnnotation.getUniqueID(), NKLocation.fromSKCoordinate(skAnnotation.getLocation())
+                )
+        );
     }
 
     @Override
