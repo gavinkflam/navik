@@ -28,6 +28,10 @@ public abstract class AbstractPresenter {
         // Do nothing
     }
 
+    public void onResume() {
+        // Do nothing
+    }
+
     public void onPause() {
         // Do nothing
     }
