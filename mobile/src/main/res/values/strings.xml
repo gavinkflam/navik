@@ -12,6 +12,7 @@
     <string name="select_destination">Select Destination</string>
 
     <string name="error_location_not_available">Location not available</string>
+    <string name="error_route_not_available">Route not available</string>
 
     <string name="navigation">Navigation</string>
     <string name="route_analysis">Route Analysis</string>

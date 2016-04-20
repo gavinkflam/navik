@@ -195,6 +195,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMa
     @Subscribe
     public void onDirectionsError(NKDirectionsException exception) {
         mStartBikeNavigation.disable();
+        getController().showMessage(R.string.error_route_not_available);
     }
 
     @Override
