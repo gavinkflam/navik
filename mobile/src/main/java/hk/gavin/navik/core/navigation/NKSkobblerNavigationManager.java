@@ -10,10 +10,15 @@ import com.skobbler.ngx.sdktools.navigationui.NKSKToolsNavigationManager;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import hk.gavin.navik.R;
+import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
+import hk.gavin.navik.core.navigation.event.NavigationEndedEvent;
+import hk.gavin.navik.core.navigation.event.NavigationStartedEvent;
+import hk.gavin.navik.core.navigation.event.NavigationStateUpdateEvent;
 
-public class NKSkobblerNavigationManager extends NKNavigationManager implements SKToolsNavigationListener, NKSKNavigationStateListener {
+public class NKSkobblerNavigationManager extends NKNavigationManager implements
+        SKToolsNavigationListener, NKSKNavigationStateListener {
 
     private NKSKToolsNavigationManager mNKSKToolsNavigationManager;
     private SKMapViewHolder mSKMapViewHolder;
@@ -30,8 +35,14 @@ public class NKSkobblerNavigationManager extends NKNavigationManager implements 
     @Override
     public void startNavigation() {
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-        configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
         configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
+
+        if (isSimulation()) {
+            configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
+        }
+        else {
+            configuration.setNavigationType(SKNavigationSettings.SKNavigationType.REAL);
+        }
 
         mNKSKToolsNavigationManager.startNavigation(configuration, mSKMapViewHolder);
     }
@@ -43,16 +54,12 @@ public class NKSkobblerNavigationManager extends NKNavigationManager implements 
 
     @Override
     public void onNavigationStarted() {
-        for (NKNavigationListener listener : mNavigationListeners) {
-            listener.onNavigationStart();
-        }
+        NKBus.get().post(new NavigationStartedEvent());
     }
 
     @Override
     public void onNavigationEnded() {
-        for (NKNavigationListener listener : mNavigationListeners) {
-            listener.onNavigationStop();
-        }
+        NKBus.get().post(new NavigationEndedEvent());
     }
 
     @Override
@@ -72,10 +79,8 @@ public class NKSkobblerNavigationManager extends NKNavigationManager implements 
 
     @Override
     public void onSKNavigationStateUpdate(SKNavigationState skNavigationState) {
-        for (NKNavigationListener listener : mNavigationListeners) {
-            listener.onNavigationStateUpdate(
-                    NKSkobblerNavigationUtil.createNavigationState(skNavigationState)
-            );
-        }
+        NKBus.get().post(new NavigationStateUpdateEvent(
+                NKSkobblerNavigationUtil.createNavigationState(skNavigationState)
+        ));
     }
 }
