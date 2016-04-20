@@ -11,6 +11,11 @@
     <string name="select_starting_point">Select Starting Point</string>
     <string name="select_destination">Select Destination</string>
 
+    <string name="remove_waypoint">Remove Waypoint</string>
+    <string name="set_as_starting_point">Set as Starting Point</string>
+    <string name="set_as_destination">Set as Destination</string>
+    <string name="add_as_waypoint">Add as Waypoint</string>
+
     <string name="error_location_not_available">Location not available</string>
     <string name="error_route_not_available">Route not available</string>
 

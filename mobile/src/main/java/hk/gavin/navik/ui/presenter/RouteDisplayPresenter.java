@@ -80,7 +80,7 @@ public class RouteDisplayPresenter extends AbstractPresenter {
 
     private void updateDestinationMarker() {
         if (mDirectionsProvider.getDestination().isPresent()) {
-            mMap.addMarker(1, mDirectionsProvider.getStartingPoint().get(), NKMapFragment.MarkerIcon.Flag);
+            mMap.addMarker(1, mDirectionsProvider.getDestination().get(), NKMapFragment.MarkerIcon.Flag);
         }
         else {
             mMap.removeMarker(1);

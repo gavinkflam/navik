@@ -64,7 +64,7 @@ public class NKInteractiveDirectionsProvider {
         notifyWaypointsChange();
     }
 
-    public void removeWaypoints(int index) {
+    public void removeWaypoint(int index) {
         mWaypoints.remove(index);
         notifyWaypointsChange();
     }

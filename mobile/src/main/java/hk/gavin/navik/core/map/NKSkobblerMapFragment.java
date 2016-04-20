@@ -21,6 +21,9 @@ import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
 import hk.gavin.navik.core.location.event.AccuracyUpdateEvent;
 import hk.gavin.navik.core.location.event.LocationUpdateEvent;
+import hk.gavin.navik.core.map.event.MapLoadCompleteEvent;
+import hk.gavin.navik.core.map.event.MapLongPressEvent;
+import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -218,9 +221,7 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
             );
         }
 
-        if (getMapEventsListener().isPresent()) {
-            getMapEventsListener().get().onMapLoadComplete();
-        }
+        NKBus.get().post(new MapLoadCompleteEvent(this));
     }
 
     @Override
@@ -257,12 +258,11 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
 
     @Override
     public void onLongPress(SKScreenPoint skScreenPoint) {
-        if (getMapEventsListener().isPresent()) {
-            NKLocation location = NKLocation.fromSKCoordinate(
-                    mMap.pointToCoordinate(skScreenPoint)
-            );
-            getMapEventsListener().get().onLongPress(location);
-        }
+        NKBus.get().post(
+                new MapLongPressEvent(
+                        this, NKLocation.fromSKCoordinate(mMap.pointToCoordinate(skScreenPoint))
+                )
+        );
     }
 
     @Override
@@ -292,12 +292,11 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
 
     @Override
     public void onAnnotationSelected(SKAnnotation skAnnotation) {
-        if (getMapEventsListener().isPresent()) {
-            getMapEventsListener().get().onMarkerClicked(
-                    skAnnotation.getUniqueID(),
-                    NKLocation.fromSKCoordinate(skAnnotation.getLocation())
-            );
-        }
+        NKBus.get().post(
+                new MapMarkerClickEvent(
+                        this, skAnnotation.getUniqueID(), NKLocation.fromSKCoordinate(skAnnotation.getLocation())
+                )
+        );
     }
 
     @Override
