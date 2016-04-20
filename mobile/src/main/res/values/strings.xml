@@ -7,6 +7,7 @@
 
     <string name="location_prefix_from">from</string>
     <string name="location_prefix_to">to</string>
+    <string name="starting_point">Starting Point</string>
     <string name="current_location">Current location</string>
     <string name="select_on_map">Select on map</string>
     <string name="select_starting_point">Select Starting Point</string>

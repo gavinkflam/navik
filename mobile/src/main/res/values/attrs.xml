@@ -3,5 +3,6 @@
     <declare-styleable name="LocationSelector">
         <attr name="prefix" format="string" />
         <attr name="placeholder" format="string" />
+        <attr name="menu_resource" format="reference" />
     </declare-styleable>
 </resources>
