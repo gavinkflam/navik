@@ -1,6 +1,5 @@
 package hk.gavin.navik.core.map;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,19 +17,22 @@ import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.core.location.NKSkobblerLocationProvider;
 import hk.gavin.navik.core.location.event.AccuracyUpdateEvent;
 import hk.gavin.navik.core.location.event.LocationUpdateEvent;
 import hk.gavin.navik.core.map.event.MapLoadCompleteEvent;
 import hk.gavin.navik.core.map.event.MapLongPressEvent;
 import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
+import hk.gavin.navik.preference.MainPreferences;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+
+import javax.inject.Inject;
 
 @Accessors(prefix = "m")
 public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurfaceListener {
 
-    private NKLocationProvider mLocationProvider;
+    @Inject NKLocationProvider mLocationProvider;
+    @Inject MainPreferences mMainPreferences;
     private final SKRouteManager mRouteManager = SKRouteManager.getInstance();
 
     @Bind(R.id.moveToCurrentLocation) FloatingActionButton mMoveToCurrentLocationButton;
@@ -143,12 +145,6 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mLocationProvider = new NKSkobblerLocationProvider(context);
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMapHolder.setMapSurfaceListener(this);
@@ -206,6 +202,7 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
 
         setMapLoaded(true);
         mMap = mMapHolder.getMapSurfaceView();
+        mMap.centerMapOnPosition(mMainPreferences.getLastLocation().toSKCoordinate());
         mMap.getMapSettings().setShowBicycleLanes(true);
         mMap.getMapSettings().setCurrentPositionShown(true);
         mMap.getMapSettings().setCompassPosition(new SKScreenPoint(-50, -50));
