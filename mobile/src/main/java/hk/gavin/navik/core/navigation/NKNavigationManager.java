@@ -3,6 +3,7 @@ package hk.gavin.navik.core.navigation;
 import android.app.Activity;
 import hk.gavin.navik.core.map.NKMapFragment;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public abstract class NKNavigationManager {
     @Getter private Activity mActivity;
     @Getter private int mContainerId;
     @Getter private NKMapFragment mNKMapFragment;
+    @Getter @Setter private boolean mSimulation;
 
     protected List<NKNavigationListener> mNavigationListeners = new ArrayList<>();
 

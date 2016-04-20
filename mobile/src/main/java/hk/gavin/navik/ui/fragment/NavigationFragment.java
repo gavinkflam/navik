@@ -21,6 +21,7 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKNavi
     @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKWearManager mWearManager;
+
     NKMapFragment mMap;
     NKNavigationManager mNavigationManager;
 
@@ -37,6 +38,7 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKNavi
         // Create navigation manager and start navigation
         mNavigationManager = new NKSkobblerNavigationManager(getActivity(), R.id.nkSKMapContainer, mMap);
         mNavigationManager.addNavigationListener(this);
+        mNavigationManager.setSimulation(mMainPreferences.getSimulationMode());
         mNavigationManager.startNavigation();
 
         // Update title and back button display

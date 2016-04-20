@@ -13,7 +13,8 @@ import hk.gavin.navik.R;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 
-public class NKSkobblerNavigationManager extends NKNavigationManager implements SKToolsNavigationListener, NKSKNavigationStateListener {
+public class NKSkobblerNavigationManager extends NKNavigationManager implements
+        SKToolsNavigationListener, NKSKNavigationStateListener {
 
     private NKSKToolsNavigationManager mNKSKToolsNavigationManager;
     private SKMapViewHolder mSKMapViewHolder;
@@ -30,8 +31,14 @@ public class NKSkobblerNavigationManager extends NKNavigationManager implements 
     @Override
     public void startNavigation() {
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-        configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
         configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
+
+        if (isSimulation()) {
+            configuration.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
+        }
+        else {
+            configuration.setNavigationType(SKNavigationSettings.SKNavigationType.REAL);
+        }
 
         mNKSKToolsNavigationManager.startNavigation(configuration, mSKMapViewHolder);
     }
