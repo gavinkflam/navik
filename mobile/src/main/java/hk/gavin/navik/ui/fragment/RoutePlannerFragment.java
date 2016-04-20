@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.PopupMenu;
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -42,6 +43,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
+    @Bind(R.id.route_planner_center) View mRoutePlannerCenter;
 
     private Optional<NKDirections> mDirections = Optional.absent();
 
@@ -127,8 +129,8 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     }
 
     private void preparePopupMenus() {
-        mMapLongPressMenu = new PopupMenu(getActivity(), getView());
-        mWaypointkMenu = new PopupMenu(getActivity(), getView());
+        mMapLongPressMenu = new PopupMenu(getActivity(), mRoutePlannerCenter);
+        mWaypointkMenu = new PopupMenu(getActivity(), mRoutePlannerCenter);
 
         mMapLongPressMenu.inflate(R.menu.popup_menu_map_long_click);
         mWaypointkMenu.inflate(R.menu.popup_menu_waypoint);
