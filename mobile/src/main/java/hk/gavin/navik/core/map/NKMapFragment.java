@@ -39,6 +39,7 @@ public abstract class NKMapFragment extends AbstractUiFragment {
 
     abstract public void addMarker(int id, NKLocation location, MarkerIcon icon);
     abstract public void removeMarker(int id);
+    abstract public void clearMarkers();
 
     public enum MarkerIcon {
         Red, Green, Blue, Flag

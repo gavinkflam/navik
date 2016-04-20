@@ -130,6 +130,13 @@ public class NKSkobblerMapFragment extends NKMapFragment
     }
 
     @Override
+    public void clearMarkers() {
+        if (isMapLoaded()) {
+            mMap.deleteAllAnnotationsAndCustomPOIs();
+        }
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mLocationProvider = new NKSkobblerLocationProvider(context);
