@@ -19,7 +19,7 @@ import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.core.map.event.MapLongPressEvent;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
@@ -31,7 +31,7 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMapFragment.MapEventsListener {
+public class RoutePlannerFragment extends AbstractHomeUiFragment {
 
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKReverseGeocoder mReverseGeocoder;
@@ -41,7 +41,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMa
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
 
-    private NKMapFragment mMap;
     private Optional<NKDirections> mDirections = Optional.absent();
 
     @Getter private final int mLayoutResId = R.layout.fragment_route_planner;
@@ -68,10 +67,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getController().initializeRouteDisplayFragment();
-
-        // Add as map event listener
-        mMap = getController().getMap();
-        mMap.setMapEventsListener(this);
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.app_name);
@@ -198,18 +193,13 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements NKMa
         getController().showMessage(R.string.error_route_not_available);
     }
 
-    @Override
-    public void onMapLoadComplete() {
-        // Do nothing
-    }
-
-    @Override
-    public void onLongPress(NKLocation location) {
-        mDirectionsProvider.addWaypoints(location);
+    @Subscribe
+    public void onLongPress(MapLongPressEvent event) {
+        mDirectionsProvider.addWaypoints(event.location);
         mDirectionsProvider.getCyclingDirections();
     }
 
-    @Override
+    @Subscribe
     public void onMarkerClicked(int id, NKLocation location) {
         // Do nothing
     }

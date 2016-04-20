@@ -2,7 +2,6 @@ package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
 import hk.gavin.navik.R;
-import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.navigation.NKNavigationListener;
@@ -17,8 +16,7 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class NavigationFragment extends AbstractHomeUiFragment implements
-        NKMapFragment.MapEventsListener, NKNavigationListener {
+public class NavigationFragment extends AbstractHomeUiFragment implements NKNavigationListener {
 
     @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
@@ -35,7 +33,6 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
         // Properly set map display
         mMap = getController().getMap();
         mMap.hideMoveToCurrentLocationButton();
-        mMap.setMapEventsListener(this);
 
         // Create navigation manager and start navigation
         mNavigationManager = new NKSkobblerNavigationManager(getActivity(), R.id.nkSKMapContainer, mMap);
@@ -58,21 +55,6 @@ public class NavigationFragment extends AbstractHomeUiFragment implements
         mNavigationManager.stopNavigation();
         mNavigationManager.removeNavigationListener(this);
         super.onStop();
-    }
-
-    @Override
-    public void onMapLoadComplete() {
-        // Do nothing
-    }
-
-    @Override
-    public void onLongPress(NKLocation location) {
-        // Do nothing
-    }
-
-    @Override
-    public void onMarkerClicked(int id, NKLocation location) {
-        // Do nothing
     }
 
     @Override
