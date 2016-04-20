@@ -89,6 +89,13 @@ public class NKInteractiveDirectionsProvider {
         }
     }
 
+    public void getCyclingDirectionsFromGpxFile(String gpxPath) {
+        mProvider
+                .getCyclingDirectionsFromGpxFile(gpxPath)
+                .done(mDirectionsResultsCallback)
+                .fail(mDirectionsResultsCallback);
+    }
+
     private void notifyStartingPointChange() {
         NKBus.get().post(new StartingPointChangeEvent(mStartingPoint));
     }
