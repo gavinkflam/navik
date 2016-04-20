@@ -3,6 +3,7 @@ package hk.gavin.navik.core.directions;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.orhanobut.logger.Logger;
+import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
 import lombok.Setter;
@@ -22,9 +23,7 @@ public class NKInteractiveDirectionsProvider {
     protected Optional<NKLocation> mDestination = Optional.absent();
     protected List<NKLocation> mWaypoints = new ArrayList<>();
     @Setter protected int mNoOfDirections = 1;
-    @Setter protected boolean mIsManualUpdate = false;
 
-    private ArrayList<DirectionsResultsListener> mListeners = new ArrayList<>();
     private DirectionsResultsCallback mDirectionsResultsCallback = new DirectionsResultsCallback();
 
     public NKInteractiveDirectionsProvider(NKDirectionsProvider provider) {
@@ -63,14 +62,6 @@ public class NKInteractiveDirectionsProvider {
         mWaypoints = new ArrayList<>();
     }
 
-    public boolean addDirectionsResultsListener(DirectionsResultsListener listener) {
-        return mListeners.add(listener);
-    }
-
-    public boolean removeDirectionsResultsListener(DirectionsResultsListener listener) {
-        return mListeners.remove(listener);
-    }
-
     public void getCyclingDirections() {
         if (mStartingPoint.isPresent() && mDestination.isPresent()) {
             mProvider
@@ -89,23 +80,13 @@ public class NKInteractiveDirectionsProvider {
         @Override
         public void onDone(ImmutableList<NKDirections> result) {
             Logger.d("result size: %d", result.size());
-            for (DirectionsResultsListener listener : mListeners) {
-                listener.onDirectionsAvailable(result, mIsManualUpdate);
-            }
+            NKBus.get().post(result);
         }
 
         @Override
         public void onFail(NKDirectionsException result) {
             Logger.d("result: %s", result);
-            for (DirectionsResultsListener listener : mListeners) {
-                listener.onDirectionsError(result, mIsManualUpdate);
-            }
+            NKBus.get().post(result);
         }
-    }
-
-    public interface DirectionsResultsListener {
-
-        void onDirectionsAvailable(ImmutableList<NKDirections> directionsList, boolean isManualUpdate);
-        void onDirectionsError(NKDirectionsException exception, boolean isManualUpdate);
     }
 }
