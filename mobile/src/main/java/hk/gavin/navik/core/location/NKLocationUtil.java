@@ -3,6 +3,7 @@ package hk.gavin.navik.core.location;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.maps.model.ElevationResult;
 import com.google.maps.model.LatLng;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.SKViaPoint;
@@ -11,6 +12,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NKLocationUtil {
+
+    public static NKLocation fromElevationResult(ElevationResult result) {
+        return new NKLocation(result.location.lat, result.location.lng, result.elevation);
+    }
+
+    public static NKLocation[] fromElevationResults(ElevationResult[] results) {
+        NKLocation[] locations = new NKLocation[results.length];
+        for (int i = 0; i < results.length; i++) {
+            locations[i] = fromElevationResult(results[i]);
+        }
+
+        return locations;
+    }
+
+    public static double[] extractElevations(NKLocation[] locations) {
+        double[] elevations = new double[locations.length];
+        for (int i = 0; i < locations.length; i++) {
+            elevations[i] = locations[i].elevation;
+        }
+        return elevations;
+    }
 
     public static List<SKCoordinate> toSKCoordinateList(List<NKLocation> locationList) {
         return Lists.transform(locationList, toSKCoordinateFunction);
