@@ -45,12 +45,12 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
 
         mVisualAdvice.setImageBitmap(mNavigationState.visualAdviceImage.getBitmap());
         mDistanceToNextAdvice.setText(
-                FormattingUtility.formatDistanceReadable(mNavigationState.distanceToNextAdvice)
+                FormattingUtility.formatDistanceReadableRounded(mNavigationState.distanceToNextAdvice)
         );
         mNextStreetName.setText(mNavigationState.nextStreetName);
 
         mDistanceToDestination.setText(
-                FormattingUtility.formatDistanceReadable(mNavigationState.distanceToDestination)
+                FormattingUtility.formatDistanceReadableRounded(mNavigationState.distanceToDestination)
         );
         mCurrentSpeed.setText(
                 FormattingUtility.formatSpeedReadable(mNavigationState.currentSpeed)
