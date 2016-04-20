@@ -35,5 +35,6 @@ public class UiContract {
         public static final String ROUTE_DISPLAY = "route_display";
         public static final String NAVIGATION = "navigation";
         public static final String ROUTE_ANALYSIS = "route_analysis";
+        public static final String SETTING = "setting";
     }
 }

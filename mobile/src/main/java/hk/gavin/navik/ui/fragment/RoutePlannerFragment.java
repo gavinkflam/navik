@@ -147,10 +147,11 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_offline_data: {
+            case R.id.action_import_gpx_file: {
                 return true;
             }
             case R.id.action_settings: {
+                getController().showAppSetting();
                 return true;
             }
         }
