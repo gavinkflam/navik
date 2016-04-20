@@ -64,7 +64,9 @@ public class RouteDisplayPresenter extends AbstractPresenter {
 
     @Subscribe
     public void onDirectionsError(NKDirectionsException exception) {
-        // Do nothing
+        if (mMap.isMapLoaded()) {
+            mMap.clearCurrentRoute();
+        }
     }
 
     private void updateStartingPointMarker() {
