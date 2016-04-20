@@ -3,6 +3,8 @@ package hk.gavin.navik.ui.fragment;
 import android.os.Bundle;
 import android.view.View;
 import hk.gavin.navik.R;
+import hk.gavin.navik.contract.UiContract;
+import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.ui.presenter.RouteAnalysisPresenter;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -34,6 +36,9 @@ public class RouteAnalysisFragment extends AbstractHomeUiFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        NKDirections directions =
+                (NKDirections) getRequestData().get().getSerializableExtra(UiContract.DataKey.DIRECTIONS);
+        mRouteAnalysisPresenter.setDirections(directions);
         mRouteAnalysisPresenter.onViewCreated(view, savedInstanceState);
     }
 

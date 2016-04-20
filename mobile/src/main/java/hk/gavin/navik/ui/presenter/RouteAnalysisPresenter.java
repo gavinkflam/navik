@@ -5,10 +5,15 @@ import android.view.View;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindColor;
+import com.google.common.base.Optional;
 import hk.gavin.navik.R;
+import hk.gavin.navik.core.directions.NKDirections;
+import hk.gavin.navik.ui.decorator.NKDirectionsDecorator;
 import hk.gavin.navik.ui.widget.NKElevationChart;
 
 public class RouteAnalysisPresenter extends AbstractPresenter {
+
+    private Optional<NKDirectionsDecorator> mDirections = Optional.absent();
 
     @Bind(R.id.distance) TextView mDistance;
     @Bind(R.id.estimatedTime) TextView mEstimatedTime;
@@ -16,12 +21,21 @@ public class RouteAnalysisPresenter extends AbstractPresenter {
 
     @BindColor(R.color.colorPrimary) int mColorPrimary;
 
+    public void setDirections(NKDirections directions) {
+        mDirections = Optional.of(new NKDirectionsDecorator(directions));
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mNKElevationChart.setColor(mColorPrimary);
-        mNKElevationChart.setData(SAMPLE_ELEVATION_DATA);
+        if (mDirections.isPresent()) {
+            mDistance.setText(mDirections.get().distance());
+            mEstimatedTime.setText(mDirections.get().estimatedTime());
+
+            mNKElevationChart.setColor(mColorPrimary);
+            mNKElevationChart.setData(SAMPLE_ELEVATION_DATA);
+        }
     }
 
     private static float[] SAMPLE_ELEVATION_DATA = {
