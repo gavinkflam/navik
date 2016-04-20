@@ -4,6 +4,7 @@ import dagger.Component;
 import hk.gavin.navik.application.NKApplication;
 import hk.gavin.navik.core.directions.NKDirectionsProvider;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.elevation.NKElevationProvider;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.wear.NKWearManager;
@@ -21,6 +22,7 @@ public interface ApplicationComponent {
     MainPreferences mainPreferences();
     NKLocationProvider locationProvider();
     NKReverseGeocoder reverseGeocoder();
+    NKElevationProvider elevationProvider();
     NKWearManager wearManager();
     NKDirectionsProvider directionsProvider();
     NKInteractiveDirectionsProvider interactiveDirectionsProvider();

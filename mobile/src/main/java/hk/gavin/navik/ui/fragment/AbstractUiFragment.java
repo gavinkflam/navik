@@ -9,14 +9,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
+import com.google.common.base.Optional;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
 public abstract class AbstractUiFragment extends Fragment {
 
+    @Getter private Optional<Integer> mRequestCode = Optional.absent();
+    @Getter private Optional<Intent> mRequestData = Optional.absent();
+
     abstract protected int getLayoutResId();
 
-    public void onResultAvailable(int requestCode, int resultCode, Intent data) {
+    public void onRequestAvailable(int requestCode, Optional<Intent> requestData) {
+        mRequestCode = Optional.of(requestCode);
+        mRequestData = requestData;
+    }
+
+    public void onResultAvailable(Optional<Integer> requestCode, int resultCode, Optional<Intent> resultData) {
         // Do nothing
     }
 

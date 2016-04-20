@@ -13,7 +13,7 @@ import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
 import hk.gavin.navik.injection.HomeModule;
-import hk.gavin.navik.ui.controller.HomeController;
+import hk.gavin.navik.ui.fragmentcontroller.HomeFragmentController;
 
 import javax.inject.Inject;
 
@@ -22,7 +22,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
-    @Inject HomeController mController;
+    @Inject HomeFragmentController mController;
     @Inject NKWearManager mNKWearManager;
     private Optional<HomeComponent> mComponent = Optional.absent();
 

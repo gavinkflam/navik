@@ -9,10 +9,18 @@ public class NKLocation implements Serializable {
 
     final double latitude;
     final double longitude;
+    final double elevation;
 
     public NKLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+        this.elevation = 0;
+    }
+
+    public NKLocation(double latitude, double longitude, double elevation) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.elevation = elevation;
     }
 
     public static NKLocation fromSKCoordinate(SKCoordinate skCoordinate) {
