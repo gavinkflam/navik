@@ -64,7 +64,7 @@ public class NavigationFragment extends AbstractHomeUiFragment implements NKNavi
 
     @Override
     public void onNavigationStop() {
-
+        getController().goBack();
     }
 
     @Override
