@@ -21,6 +21,7 @@
     <string name="error_location_not_available">Location not available</string>
     <string name="error_route_not_available">Route not available</string>
     <string name="error_select_starting_point_first">Please select starting point first</string>
+    <string name="error_not_gpx_file">Selected file is not a GPX file</string>
 
     <string name="simulation_mode">Simulation Mode</string>
     <string name="offline_mode">Offline Mode</string>
