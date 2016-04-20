@@ -5,25 +5,35 @@ import butterknife.Bind;
 import butterknife.OnCheckedChanged;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKBus;
+import hk.gavin.navik.preference.MainPreferences;
+
+import javax.inject.Inject;
 
 public class AppSettingsPresenter extends AbstractPresenter {
+
+    @Inject MainPreferences mMainPreferences;
 
     @Bind(R.id.simulationMode) Switch simulationMode;
     @Bind(R.id.offlineMode) Switch offlineMode;
 
     @Override
     public void invalidate() {
+        if (mMainPreferences == null || simulationMode == null) {
+            return;
+        }
 
+        simulationMode.setChecked(mMainPreferences.getSimulationMode());
+        offlineMode.setChecked(mMainPreferences.getOfflineMode());
     }
 
     @OnCheckedChanged(R.id.simulationMode)
     void changeSimulationMode(boolean checked) {
-        // Do nothing
+        mMainPreferences.setSimulationMode(checked);
     }
 
     @OnCheckedChanged(R.id.offlineMode)
     void changeOfflineMode(boolean checked) {
-        // Do nothing
+        mMainPreferences.setOfflineMode(checked);
     }
 
     @Override
@@ -35,5 +45,4 @@ public class AppSettingsPresenter extends AbstractPresenter {
     public void onPause() {
         NKBus.get().unregister(this);
     }
-
 }
