@@ -12,7 +12,6 @@ import android.widget.PopupMenu;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
 import com.orhanobut.logger.Logger;
 import hk.gavin.navik.R;
@@ -20,6 +19,8 @@ import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.contract.DirectionsType;
+import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
@@ -247,9 +248,14 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     }
 
     @Subscribe
-    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList) {
-        mDirections = Optional.of(directionsList.get(0));
+    public void onDirectionsAvailable(DirectionsAvailableEvent event) {
+        mDirections = Optional.of(event.directionsList.get(0));
         mStartBikeNavigation.enable();
+
+        if (event.directionsType == DirectionsType.ExternalFile) {
+            mStartingPoint.setLocation(mDirections.get().startingPoint, true);
+            mDestination.setLocation(mDirections.get().destination, true);
+        }
     }
 
     @Subscribe
