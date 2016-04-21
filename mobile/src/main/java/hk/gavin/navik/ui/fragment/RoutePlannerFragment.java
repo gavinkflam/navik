@@ -157,7 +157,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
         switch (item.getItemId()) {
             case R.id.action_import_gpx_file: {
                 startActivityForResult(
-                        FilePickerUtility.pickFileIntent(getActivity(), "application/gpx+xml"),
+                        FilePickerUtility.pickGpxFileIntent(getActivity()),
                         UiContract.RequestCode.SELECT_GPX_FILE
                 );
                 return true;
