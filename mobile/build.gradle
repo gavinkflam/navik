@@ -43,6 +43,7 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+    jcenter()
 }
 
 configurations {
@@ -96,6 +97,9 @@ dependencies {
 
     // MPAndroidChart
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+
+    // NoNonsense-FilePicker
+    compile 'com.nononsenseapps:filepicker:2.5.2'
 }
 
 // Assign different version code and version name for each output

@@ -8,6 +8,7 @@ public class UiContract {
         public static final int STARTING_POINT_HISTORY = 2;
         public static final int DESTINATION_LOCATION = 3;
         public static final int DESTINATION_HISTORY = 4;
+        public static final int SELECT_GPX_FILE = 5;
     }
 
     public static final class ResultCode {

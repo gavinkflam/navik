@@ -1,23 +1,23 @@
 package hk.gavin.navik.ui.fragmentcontroller;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import hk.gavin.navik.R;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
+import hk.gavin.navik.ui.activity.HomeActivity;
 import hk.gavin.navik.ui.fragment.*;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
-public class HomeFragmentController extends FragmentController {
+public class HomeFragmentController extends FragmentController<HomeActivity> {
 
     @Getter private NKMapFragment mMap;
 
-    public HomeFragmentController(AppCompatActivity activity) {
+    public HomeFragmentController(HomeActivity activity) {
         super(activity);
     }
 
@@ -29,6 +29,7 @@ public class HomeFragmentController extends FragmentController {
         mMap = replaceFragment(
                 R.id.homeMap, NKSkobblerMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false
         );
+        getActivity().component().inject((NKSkobblerMapFragment) mMap);
     }
 
     public void showMessage(String notification) {

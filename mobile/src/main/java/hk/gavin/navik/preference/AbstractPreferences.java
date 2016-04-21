@@ -17,6 +17,10 @@ public abstract class AbstractPreferences {
         return mPreferences.getInt(key, 0);
     }
 
+    protected double getDoublePreference(String key) {
+        return Double.longBitsToDouble(mPreferences.getLong(key, Double.doubleToLongBits(0)));
+    }
+
     protected String getStringPreference(String key) {
         return mPreferences.getString(key, "");
     }
@@ -27,6 +31,11 @@ public abstract class AbstractPreferences {
 
     protected void setIntPreference(String key, int value) {
         mEditor.putInt(key, value);
+        mEditor.commit();
+    }
+
+    protected void setDoublePreference(String key, double value) {
+        mEditor.putLong(key, Double.doubleToRawLongBits(value));
         mEditor.commit();
     }
 
