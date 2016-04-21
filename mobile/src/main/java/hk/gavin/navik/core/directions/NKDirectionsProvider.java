@@ -10,4 +10,5 @@ public interface NKDirectionsProvider {
     NKDirectionsPromise getCyclingDirections(
             int noOfDirections, NKLocation startingPoint, NKLocation destination,
             Optional<ImmutableList<NKLocation>> viaPoints);
+    NKDirectionsPromise getCyclingDirectionsFromGpxFile(String gpxPath);
 }

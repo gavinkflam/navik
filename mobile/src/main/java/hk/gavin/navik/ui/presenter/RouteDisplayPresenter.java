@@ -7,6 +7,7 @@ import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.directions.event.DestinationChangeEvent;
+import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
 import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
 import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
@@ -55,8 +56,8 @@ public class RouteDisplayPresenter extends AbstractPresenter {
     }
 
     @Subscribe
-    public void onDirectionsAvailable(ImmutableList<NKDirections> directionsList) {
-        mDirections = Optional.of(directionsList.get(0));
+    public void onDirectionsAvailable(DirectionsAvailableEvent event) {
+        mDirections = Optional.of(event.directionsList.get(0));
         if (mMap.isMapLoaded()) {
             mMap.showRoute(mDirections.get(), true);
         }

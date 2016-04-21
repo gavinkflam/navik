@@ -4,6 +4,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.orhanobut.logger.Logger;
 import com.skobbler.ngx.routing.*;
+import com.skobbler.ngx.tracks.SKTrackElement;
+import com.skobbler.ngx.tracks.SKTracksFile;
+import com.skobbler.ngx.tracks.SKTracksPoint;
 import hk.gavin.navik.core.directions.exception.NKNoRoutesAvailableException;
 import hk.gavin.navik.core.directions.exception.NKUnknownDirectionsException;
 import hk.gavin.navik.core.directions.promise.NKDirectionsDeferredObject;
@@ -51,6 +54,36 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
 
         routeManager.setRouteListener(routeListener);
         routeManager.calculateRoute(routeSettings);
+        return deferred.promise();
+    }
+
+    @Override
+    public NKDirectionsPromise getCyclingDirectionsFromGpxFile(String gpxPath) {
+        Logger.d("gpxPath: %s", gpxPath);
+
+        NKDirectionsDeferredObject deferred = new NKDirectionsDeferredObject();
+        SKRouteManager routeManager = SKRouteManager.getInstance();
+
+        // Load file
+        SKTracksFile gpxFile = SKTracksFile.loadAtPath(gpxPath);
+        SKTrackElement trackElement = gpxFile.getRootTrackElement();
+
+        // Get starting point and destination
+        List<SKTracksPoint> points = trackElement.getPointsOnTrackElement();
+        NKLocation startingPoint = new NKLocation(points.get(0).getLatitude(), points.get(0).getLongitude());
+        NKLocation destination = new NKLocation(
+                points.get(points.size() - 1).getLatitude(),
+                points.get(points.size() - 1).getLongitude()
+        );
+
+        SKRouteListener routeListener = new NKSkobblerRouteListener(
+                routeManager, deferred, startingPoint, destination, Optional.<ImmutableList<NKLocation>>absent()
+        );
+        routeManager.setRouteListener(routeListener);
+        routeManager.createRouteFromTrackElement(
+                trackElement, SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST, true, true, true
+        );
+
         return deferred.promise();
     }
 

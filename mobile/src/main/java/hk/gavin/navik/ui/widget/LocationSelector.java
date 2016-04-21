@@ -122,14 +122,24 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mPopupMenu.setOnMenuItemClickListener(this);
     }
 
+    public void setLocation(NKLocation location, boolean silent) {
+        setLocation(Optional.of(location), silent);
+    }
+
     public void setLocation(NKLocation location) {
-        setLocation(Optional.of(location));
+        setLocation(Optional.of(location), false);
+    }
+
+    private void setLocation(Optional<NKLocation> location, boolean silent) {
+        mLocation = location;
+        updateLocationDisplay();
+        if (!silent) {
+            NKBus.get().post(new LocationSelectionChangeEvent(this, mLocation));
+        }
     }
 
     private void setLocation(Optional<NKLocation> location) {
-        mLocation = location;
-        updateLocationDisplay();
-        NKBus.get().post(new LocationSelectionChangeEvent(this, mLocation));
+        setLocation(location, false);
     }
 
     private void updateLocationName() {
