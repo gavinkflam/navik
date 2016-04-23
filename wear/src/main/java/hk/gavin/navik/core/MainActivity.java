@@ -1,5 +1,9 @@
 package hk.gavin.navik.core;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
@@ -13,7 +17,8 @@ import hk.gavin.navik.contract.WearContract;
 import hk.gavin.navik.core.navigation.NKNavigationState;
 import org.apache.commons.lang3.SerializationUtils;
 
-public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener {
+public class MainActivity extends WearableActivity implements
+        GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener {
 
     private static boolean IS_ACTIVE = false;
 
@@ -75,8 +80,11 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         IS_ACTIVE = true;
-        setAmbientEnabled();
+        registerReceiver(mStopReceiverBroadcastReceiver, new IntentFilter(WearContract.Path.STOP_WEAR_ACTIVITY));
         mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        // Do not turn off display
+        setAmbientEnabled();
 
         // Initialize view and presenter
         setContentView(R.layout.activity_main);
@@ -99,6 +107,7 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
 
     @Override
     protected void onDestroy() {
+        unregisterReceiver(mStopReceiverBroadcastReceiver);
         mApiClient.disconnect();
         super.onDestroy();
     }
@@ -123,4 +132,16 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     public static boolean isActive() {
         return IS_ACTIVE;
     }
+
+    private BroadcastReceiver mStopReceiverBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case WearContract.Path.STOP_WEAR_ACTIVITY: {
+                    finish();
+                    break;
+                }
+            }
+        }
+    };
 }

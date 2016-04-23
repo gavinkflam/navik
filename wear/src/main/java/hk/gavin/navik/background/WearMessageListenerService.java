@@ -10,20 +10,29 @@ public class WearMessageListenerService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if (
-                messageEvent.getPath().equalsIgnoreCase(WearContract.Path.START_WEAR_ACTIVITY) ||
-                        messageEvent.getPath().equalsIgnoreCase(WearContract.Path.NAVIGATION_STATE)
-        ) {
-            if (MainActivity.isActive()) {
-                return;
-            }
+        switch (messageEvent.getPath()) {
+            case WearContract.Path.START_WEAR_ACTIVITY:
+            case WearContract.Path.NAVIGATION_STATE: {
+                if (MainActivity.isActive()) {
+                    return;
+                }
 
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else {
-            super.onMessageReceived(messageEvent);
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+                break;
+            }
+            case WearContract.Path.STOP_WEAR_ACTIVITY: {
+                if (!MainActivity.isActive()) {
+                    return;
+                }
+
+                sendBroadcast(new Intent(WearContract.Path.STOP_WEAR_ACTIVITY));
+            }
+            default: {
+                super.onMessageReceived(messageEvent);
+            }
         }
     }
 }

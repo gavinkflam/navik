@@ -8,6 +8,7 @@ public class WearContract {
 
     public static final class Path {
         public static final String START_WEAR_ACTIVITY = "/navik/start_wear_activity";
+        public static final String STOP_WEAR_ACTIVITY = "/navik/stop_wear_activity";
         public static final String NAVIGATION_STATE = "/navik/navigation_state";
     }
 }
