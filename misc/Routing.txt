@@ -1,0 +1,69 @@
+
+kImposeTheUseOfSlopeRouting,1
+SA:energy
+S:-15,0
+S:-14,0
+S:-13,0
+S:-12,0
+S:-11,0
+S:-10,0
+S:-9,0
+S:-8,0
+S:-7,0
+S:-6,0
+S:-5,0
+S:-4,0
+S:-3,0
+S:-2,0
+S:-1,0
+S:0,5
+S:1,10
+S:2,30
+S:3,40
+S:4,60
+S:5,80
+S:6,80
+S:7,80
+S:8,80
+S:9,80
+S:10,100
+S:11,100
+S:12,100
+S:13,100
+S:14,100
+S:15,100
+
+H:bridleway                   		1	0.4	0.4	5
+H:construction                		2	0.4	0.4	5
+H:crossing                    		3	5	5	20
+H:cycleway                    		4	40	40	40
+H:ferry                       		5	0.4	0.4	20
+H:footway                     		6	0.4	20	5
+H:ford                        		7	0.4	0.4	5
+H:living_street               		8	5	5	15
+H:motorway                    		9	0.4	5	20
+H:motorway_link               		10	0.4	5	20
+H:path                        		11	0.4	20	5
+H:pedestrian                  		12	0.4	20	5
+H:primary                     		13	5	5	20
+H:primary_link                		14	5	5	20
+H:residential                 		15	5	5	5
+H:road                        		16	5	5	20
+H:secondary                   		17	5	5	20
+H:secondary_link              		18	5	5	20
+H:service                     		19	0.4	0.4	5
+H:steps                       		20	0.4	0.4	0.4
+H:tertiary                    		21	5	5	20
+H:tertiary_link               		22	5	5	20
+H:track                       		23	0.4	0.4	5
+H:trunk                       		24	5	5	5
+H:trunk_link                  		25	5	5	5
+H:unclassified                		26	5	5	5
+H:ferryPed                    		310	0.4	0.4	20
+H:residential_limited         		311	5	5	20
+H:unpavedTrack                		377	0.4	0.4	0.4
+H:permissive                		378	5	5	20
+H:destination                		379	5	5	20
+H:pier                        		380	0.4	0.4	20
+H:train_ferry               		391	0.4	0.4	50
+
