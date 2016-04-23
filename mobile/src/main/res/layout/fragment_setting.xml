@@ -17,33 +17,6 @@
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
-                android:id="@+id/offlineDataCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/offlineDataTitle"
-                        android:layout_centerInParent="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="@string/offline_data"/>
-                    <Button
-                        android:id="@+id/manageOfflineData"
-                        android:layout_alignParentRight="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/manage"/>
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
                 android:id="@+id/offlineModeCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
