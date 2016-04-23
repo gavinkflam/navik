@@ -25,8 +25,12 @@ public abstract class AbstractPreferences {
         return mPreferences.getString(key, "");
     }
 
+    protected boolean getBooleanPreference(String key, boolean def) {
+        return mPreferences.getBoolean(key, def);
+    }
+
     protected boolean getBooleanPreference(String key) {
-        return mPreferences.getBoolean(key, false);
+        return getBooleanPreference(key, false);
     }
 
     protected void setIntPreference(String key, int value) {

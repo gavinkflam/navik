@@ -28,7 +28,7 @@ public class MainPreferences extends AbstractPreferences {
     }
 
     public boolean getOfflineMode() {
-        return getBooleanPreference(Key.OFFLINE_MODE);
+        return getBooleanPreference(Key.OFFLINE_MODE, true);
     }
 
     public void setOfflineMode(boolean offlineMode) {
