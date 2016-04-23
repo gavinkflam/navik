@@ -78,7 +78,7 @@ public class NavigationFragment extends AbstractHomeUiFragment {
 
     @Subscribe
     public void onNavigationEnded(NavigationEndedEvent event) {
-        // Do nothing
+        mWearManager.stopWearActivity();
     }
 
     @Subscribe

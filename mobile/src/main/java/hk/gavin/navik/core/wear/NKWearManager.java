@@ -36,6 +36,14 @@ public class NKWearManager implements GoogleApiClient.ConnectionCallbacks, Resul
         }
     }
 
+    public void stopWearActivity() {
+        if (transcriptionNodeId != null) {
+            Wearable.MessageApi.sendMessage(
+                    mGoogleApiClient, transcriptionNodeId, WearContract.Path.STOP_WEAR_ACTIVITY, null
+            );
+        }
+    }
+
     public void broadcastNavigationState(NKNavigationState navigationState) {
         if (transcriptionNodeId != null) {
             Wearable.MessageApi.sendMessage(
