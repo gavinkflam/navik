@@ -3,15 +3,17 @@ package hk.gavin.navik.util;
 import com.skobbler.ngx.*;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
-import com.skobbler.ngx.util.SKLogging;
 import hk.gavin.navik.application.NKApplication;
+import org.jdeferred.Promise;
+import org.jdeferred.impl.DeferredObject;
 
 import java.io.File;
 
 public class SkobblerUtility {
 
-    public static boolean prepareAndInitializeLibrary(final NKApplication application) {
-        SKLogging.enableLogs(false);
+    public static Promise<Boolean, Void, Void> prepareAndInitializeLibrary() {
+        final DeferredObject<Boolean, Void, Void> deferred = new DeferredObject<>();
+        final NKApplication application = NKApplication.getInstance();
 
         if (!new File(application.getMapResourcesPath()).exists()) {
             new SKPrepareMapTextureThread(
@@ -21,17 +23,17 @@ public class SkobblerUtility {
                         @Override
                         public void onMapTexturesPrepared(boolean prepared) {
                             // Map resources were copied
-                            initializeLibrary(application);
+                            deferred.resolve(initializeLibrary(application));
                         }
 
                     }
             ).start();
         }
         else {
-            initializeLibrary(application);
+            deferred.resolve(initializeLibrary(application));
         }
 
-        return true;
+        return deferred;
     }
 
     public static boolean initializeLibrary(NKApplication application) {

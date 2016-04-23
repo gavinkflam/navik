@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
+import com.skobbler.ngx.util.SKLogging;
 
 public class LoggerUtility {
 
@@ -12,5 +13,6 @@ public class LoggerUtility {
         Logger.init("NK")
                 .logLevel(isDebuggable ? LogLevel.FULL : LogLevel.NONE)
                 .hideThreadInfo();
+        SKLogging.enableLogs(false);
     }
 }
