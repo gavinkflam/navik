@@ -1,6 +1,7 @@
 package hk.gavin.navik.core;
 
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
 import butterknife.ButterKnife;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -8,25 +9,78 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import hk.gavin.navik.R;
-import hk.gavin.navik.background.NavigationStatePresenter;
 import hk.gavin.navik.contract.WearContract;
 import hk.gavin.navik.core.navigation.NKNavigationState;
 import org.apache.commons.lang3.SerializationUtils;
 
 public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener {
 
-    private NavigationStatePresenter mPresenter = new NavigationStatePresenter();
+    private static boolean IS_ACTIVE = false;
 
     private GoogleApiClient mApiClient;
-    private NKNavigationState mNavigationState;
+    private Vibrator mVibrator;
+
+    private NavigationStateDecorator mNavigationState;
+    private NavigationStateDecorator mPreviousNavigationState;
+    private NavigationStatePresenter mPresenter = new NavigationStatePresenter();
+
+    public void setNavigationState(NKNavigationState navigationState) {
+        mPreviousNavigationState = mNavigationState;
+        mNavigationState = new NavigationStateDecorator(navigationState);
+        vibrateIfNecessary();
+
+        mPresenter.setNavigationState(mNavigationState);
+        mPresenter.invalidate();
+    }
+
+    private void vibrateIfNecessary() {
+        NavigationStateDecorator previousNavigationState = mPreviousNavigationState != null ?
+                mPreviousNavigationState : mNavigationState;
+        TurnLevel notifyTurnLevel;
+
+        if (
+                previousNavigationState.object.currentStreetName.equals(mNavigationState.object.currentStreetName) &&
+                previousNavigationState.object.distanceToNextAdvice >= mNavigationState.object.distanceToNextAdvice
+        ) {
+            if (mNavigationState.turnLevel().equals(previousNavigationState.turnLevel())) {
+                // Same road, same turn level
+                notifyTurnLevel = TurnLevel.Safe;
+            }
+            else {
+                // Same road, different turn level
+                notifyTurnLevel = mNavigationState.turnLevel();
+            }
+        }
+        else {
+            // New road
+            notifyTurnLevel = mNavigationState.turnLevel();
+        }
+
+        // Issue vibration notification according to turn level
+        switch (notifyTurnLevel) {
+            case Immediate: {
+                // 3 vibrations
+                mVibrator.vibrate(new long[] {0, 200, 250, 200, 250, 200}, -1);
+                break;
+            }
+            case Soon: {
+                // 2 vibrations
+                mVibrator.vibrate(new long[] {0, 200, 250, 200}, -1);
+                break;
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        IS_ACTIVE = true;
+        setAmbientEnabled();
+        mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        // Initialize view and presenter
         setContentView(R.layout.activity_main);
         ButterKnife.bind(mPresenter, this);
-
-        setAmbientEnabled();
         mPresenter.invalidate();
 
         // Connect to Google api client
@@ -35,6 +89,12 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
                 .addApi(Wearable.API)
                 .build();
         mApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        IS_ACTIVE = false;
+        super.onStop();
     }
 
     @Override
@@ -56,9 +116,11 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if (messageEvent.getPath().equalsIgnoreCase(WearContract.Path.NAVIGATION_STATE)) {
-            mNavigationState = SerializationUtils.deserialize(messageEvent.getData());
-            mPresenter.setNavigationState(mNavigationState);
-            mPresenter.invalidate();
+            setNavigationState((NKNavigationState) SerializationUtils.deserialize(messageEvent.getData()));
         }
+    }
+
+    public static boolean isActive() {
+        return IS_ACTIVE;
     }
 }

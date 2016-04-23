@@ -1,4 +1,4 @@
-package hk.gavin.navik.background;
+package hk.gavin.navik.core;
 
 import android.support.wearable.view.BoxInsetLayout;
 import android.view.View;
@@ -8,7 +8,6 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindColor;
 import hk.gavin.navik.R;
-import hk.gavin.navik.core.navigation.NKNavigationState;
 import hk.gavin.navik.util.FormattingUtility;
 
 public class NavigationStatePresenter {
@@ -25,9 +24,9 @@ public class NavigationStatePresenter {
     @BindColor(R.color.colorSoon) int mColorSoon;
     @BindColor(R.color.colorImmediate) int mColorImmediate;
 
-    private NKNavigationState mNavigationState;
+    private NavigationStateDecorator mNavigationState;
 
-    public void setNavigationState(NKNavigationState navigationState) {
+    public void setNavigationState(NavigationStateDecorator navigationState) {
         mNavigationState = navigationState;
         invalidate();
     }
@@ -40,31 +39,33 @@ public class NavigationStatePresenter {
         mSplashScreen.setVisibility(View.GONE);
 
         // Display information
-        mVisualAdvice.setImageBitmap(mNavigationState.visualAdviceImage.getBitmap());
+        mVisualAdvice.setImageBitmap(mNavigationState.visualAdviceImage());
         mDistanceToNextAdvice.setText(
-                FormattingUtility.formatDistanceReadableRounded(mNavigationState.distanceToNextAdvice)
+                FormattingUtility.formatDistanceReadableRounded(mNavigationState.object.distanceToNextAdvice)
         );
-        mNextStreetName.setText(mNavigationState.nextStreetName);
+        mNextStreetName.setText(mNavigationState.object.nextStreetName);
 
         mDistanceToDestination.setText(
-                FormattingUtility.formatDistanceReadableRounded(mNavigationState.distanceToDestination)
+                FormattingUtility.formatDistanceReadableRounded(mNavigationState.object.distanceToDestination)
         );
         mCurrentSpeed.setText(
-                FormattingUtility.formatSpeedReadable(mNavigationState.currentSpeed)
+                FormattingUtility.formatSpeedReadable(mNavigationState.object.currentSpeed)
         );
 
         // Determine background color
-        if (mNavigationState.distanceToNextAdvice > 249) {
-            // Safe for 249m up
-            mContainer.setBackgroundColor(mColorSafe);
-        }
-        else if (mNavigationState.distanceToNextAdvice > 99) {
-            // Soon for 100m - 199m
-            mContainer.setBackgroundColor(mColorSoon);
-        }
-        else {
-            // Immediate for under 99m
-            mContainer.setBackgroundColor(mColorImmediate);
+        switch (mNavigationState.turnLevel()) {
+            case Safe: {
+                mContainer.setBackgroundColor(mColorSafe);
+                break;
+            }
+            case Soon: {
+                mContainer.setBackgroundColor(mColorSoon);
+                break;
+            }
+            case Immediate: {
+                mContainer.setBackgroundColor(mColorImmediate);
+                break;
+            }
         }
     }
 
