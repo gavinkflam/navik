@@ -1,4 +1,4 @@
-package hk.gavin.navik;
+package hk.gavin.navik.core;
 
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
@@ -14,6 +14,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
+import hk.gavin.navik.R;
 import hk.gavin.navik.contract.WearContract;
 import hk.gavin.navik.core.navigation.NKNavigationState;
 import hk.gavin.navik.util.FormattingUtility;

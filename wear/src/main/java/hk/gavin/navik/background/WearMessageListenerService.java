@@ -1,9 +1,10 @@
-package hk.gavin.navik;
+package hk.gavin.navik.background;
 
 import android.content.Intent;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 import hk.gavin.navik.contract.WearContract;
+import hk.gavin.navik.core.MainActivity;
 
 public class WearMessageListenerService extends WearableListenerService {
 
