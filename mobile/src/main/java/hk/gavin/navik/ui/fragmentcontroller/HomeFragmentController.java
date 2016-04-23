@@ -7,7 +7,6 @@ import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 import hk.gavin.navik.ui.activity.HomeActivity;
-import hk.gavin.navik.ui.activity.NavigationActivity;
 import hk.gavin.navik.ui.fragment.*;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -73,11 +72,5 @@ public class HomeFragmentController extends FragmentController<HomeActivity> {
                 R.id.contentFrame, SettingFragment.class, UiContract.FragmentTag.SETTING,
                 true, true
         );
-    }
-
-    public void startBikeNavigation(NKDirections directions) {
-        Intent data = new Intent(getActivity(), NavigationActivity.class);
-        data.putExtra(UiContract.DataKey.DIRECTIONS, directions);
-        getActivity().startActivityForResult(data, UiContract.RequestCode.NAVIGATION);
     }
 }

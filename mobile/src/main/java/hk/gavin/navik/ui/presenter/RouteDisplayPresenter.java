@@ -13,6 +13,7 @@ import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.map.NKMapFragment;
+import hk.gavin.navik.ui.event.NavigationCompleteEvent;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -67,6 +68,13 @@ public class RouteDisplayPresenter extends AbstractPresenter {
     public void onDirectionsError(NKDirectionsException exception) {
         if (mMap.isMapLoaded()) {
             mMap.clearCurrentRoute();
+        }
+    }
+
+    @Subscribe
+    public void onNavigationCompleted(NavigationCompleteEvent event) {
+        if (mMap.isMapLoaded()) {
+            mMap.clearMarkers();
         }
     }
 
