@@ -22,9 +22,6 @@ public abstract class AbstractHomeUiFragment extends AbstractUiFragment {
         if (this instanceof LocationSelectionFragment) {
             component().inject((LocationSelectionFragment) this);
         }
-        else if (this instanceof NavigationFragment) {
-            component().inject((NavigationFragment) this);
-        }
         else if (this instanceof RouteDisplayFragment) {
             component().inject((RouteDisplayFragment) this);
         }

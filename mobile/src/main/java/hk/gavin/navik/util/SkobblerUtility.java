@@ -1,6 +1,7 @@
 package hk.gavin.navik.util;
 
 import com.skobbler.ngx.*;
+import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
 import hk.gavin.navik.application.NKApplication;
@@ -54,6 +55,8 @@ public class SkobblerUtility {
         mapsInitSettings.setAdvisorSettings(advisorSettings);
         mapsInitSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
         mapsInitSettings.setPreinstalledMapsPath(mapResourcesPath +"/PreinstalledMaps");
+
+        SKMapSurfaceView.preserveGLContext = false;
 
         try {
             SKMaps.getInstance().initializeSKMaps(application, mapsInitSettings);

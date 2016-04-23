@@ -9,6 +9,7 @@ public class UiContract {
         public static final int DESTINATION_LOCATION = 3;
         public static final int DESTINATION_HISTORY = 4;
         public static final int SELECT_GPX_FILE = 5;
+        public static final int NAVIGATION = 6;
     }
 
     public static final class ResultCode {
@@ -33,6 +34,7 @@ public class UiContract {
         public static final String SELECT_STARTING_POINT = "select_starting_point";
         public static final String SELECT_DESTINATION = "select_destination";
         public static final String HOME_MAP = "home_map";
+        public static final String NAVIGATION_MAP = "navigation_map";
         public static final String ROUTE_DISPLAY = "route_display";
         public static final String NAVIGATION = "navigation";
         public static final String ROUTE_ANALYSIS = "route_analysis";

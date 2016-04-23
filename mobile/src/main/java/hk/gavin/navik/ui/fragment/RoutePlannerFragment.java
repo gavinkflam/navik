@@ -28,6 +28,7 @@ import hk.gavin.navik.core.location.NKLocationProvider;
 import hk.gavin.navik.core.map.event.MapLongPressEvent;
 import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import hk.gavin.navik.preference.MainPreferences;
+import hk.gavin.navik.ui.activity.NavigationActivity;
 import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
@@ -69,7 +70,9 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @OnClick(R.id.startBikeNavigation)
     void startBikeNavigation() {
         if (mDirections.isPresent()) {
-            getController().startBikeNavigation(mDirections.get());
+            Intent data = new Intent(getActivity(), NavigationActivity.class);
+            data.putExtra(UiContract.DataKey.DIRECTIONS, mDirections.get());
+            startActivityForResult(data, UiContract.RequestCode.NAVIGATION);
         }
     }
 
@@ -188,6 +191,22 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
                         getController().showMessage(R.string.error_not_gpx_file);
                     }
                 }
+                break;
+            }
+            case UiContract.RequestCode.NAVIGATION: {
+                Logger.d("onActivityResult: UiContract.RequestCode.NAVIGATION");
+
+                // Clear route and location selection
+                mDirections = Optional.absent();
+                mStartingPoint.removeLocation();
+                mDestination.removeLocation();
+
+                mDirectionsProvider.removeStartingPoint();
+                mDirectionsProvider.removeDestination();
+                mDirectionsProvider.clearWaypoints();
+
+                // Post event
+                NKBus.get().post(new NavigationActivity());
                 break;
             }
         }
