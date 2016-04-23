@@ -1,6 +1,8 @@
 package hk.gavin.navik.application;
 
 import android.app.Application;
+import com.skobbler.ngx.sdktools.navigationui.NKSKToolsLogicManager;
+import com.skobbler.ngx.sdktools.navigationui.SKToolsLogicManager;
 import hk.gavin.navik.injection.ApplicationComponent;
 import hk.gavin.navik.injection.ApplicationModule;
 import hk.gavin.navik.injection.DaggerApplicationComponent;
@@ -11,6 +13,11 @@ import hk.gavin.navik.util.StorageUtility;
 import javax.inject.Inject;
 
 public class NKApplication extends Application {
+
+    static {
+        // Hook navigation state update event
+        SKToolsLogicManager.CLASS = NKSKToolsLogicManager.class;
+    }
 
     private static NKApplication mInstance;
     private ApplicationComponent mApplicationComponent;

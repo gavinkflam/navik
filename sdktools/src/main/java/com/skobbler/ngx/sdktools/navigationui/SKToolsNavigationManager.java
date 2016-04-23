@@ -6,10 +6,6 @@ import com.skobbler.ngx.map.SKMapViewHolder;
 
 public class SKToolsNavigationManager {
 
-    public SKToolsNavigationManager() {
-        // Do nothing
-    }
-
     public SKToolsNavigationManager(Activity activity, int rootId) {
         SKToolsLogicManager.getInstance().setActivity(activity, rootId);
     }

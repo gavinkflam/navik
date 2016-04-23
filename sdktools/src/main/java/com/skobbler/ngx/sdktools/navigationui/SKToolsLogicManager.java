@@ -35,6 +35,8 @@ import java.util.List;
 public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationListener, SKRouteListener,
         SKCurrentPositionListener {
 
+    public static Class<? extends SKToolsLogicManager> CLASS;
+
     /**
      * Singleton instance for current class
      */
@@ -145,7 +147,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (instance == null) {
             synchronized (SKToolsLogicManager.class) {
                 if (instance == null) {
-                    instance = new SKToolsLogicManager();
+                    try {
+                        instance = CLASS.newInstance();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

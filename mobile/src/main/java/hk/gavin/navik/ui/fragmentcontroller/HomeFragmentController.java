@@ -1,7 +1,6 @@
 package hk.gavin.navik.ui.fragmentcontroller;
 
 import android.content.Intent;
-import android.widget.Toast;
 import hk.gavin.navik.R;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
@@ -30,14 +29,6 @@ public class HomeFragmentController extends FragmentController<HomeActivity> {
                 R.id.homeMap, NKSkobblerMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false
         );
         getActivity().component().inject((NKSkobblerMapFragment) mMap);
-    }
-
-    public void showMessage(String notification) {
-        Toast.makeText(getActivity(), notification, Toast.LENGTH_SHORT).show();
-    }
-
-    public void showMessage(int notificationRes) {
-        showMessage(getActivity().getString(notificationRes));
     }
 
     public RouteDisplayFragment initializeRouteDisplayFragment() {
@@ -79,17 +70,6 @@ public class HomeFragmentController extends FragmentController<HomeActivity> {
         setEmptyRequest();
         replaceFragment(
                 R.id.contentFrame, SettingFragment.class, UiContract.FragmentTag.SETTING,
-                true, true
-        );
-    }
-
-    public void startBikeNavigation(NKDirections directions) {
-        Intent data = new Intent();
-        data.putExtra(UiContract.DataKey.DIRECTIONS, directions);
-        setRequest(UiContract.RequestCode.DEFAULT, data);
-
-        replaceFragment(
-                R.id.contentFrame, NavigationFragment.class, UiContract.FragmentTag.NAVIGATION,
                 true, true
         );
     }
