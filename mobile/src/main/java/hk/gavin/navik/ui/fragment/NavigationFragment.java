@@ -84,6 +84,7 @@ public class NavigationFragment extends AbstractNavigationUiFragment {
     @Subscribe
     public void onNavigationEnded(NavigationEndedEvent event) {
         mWearManager.stopWearActivity();
+        getActivity().finish();
     }
 
     @Subscribe
