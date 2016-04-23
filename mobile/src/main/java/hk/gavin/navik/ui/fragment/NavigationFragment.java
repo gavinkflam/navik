@@ -62,12 +62,8 @@ public class NavigationFragment extends AbstractNavigationUiFragment {
     @Override
     public void onStop() {
         mNavigationManager.stopNavigation();
+        mWearManager.stopWearActivity();
         super.onStop();
-    }
-
-    @Override
-    public void onBackPressed() {
-        mNavigationManager.stopNavigation();
     }
 
     @Subscribe
