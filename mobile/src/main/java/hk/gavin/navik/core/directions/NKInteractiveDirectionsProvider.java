@@ -11,7 +11,6 @@ import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
 import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
-import hk.gavin.navik.preference.MainPreferences;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,7 +24,6 @@ import java.util.List;
 public class NKInteractiveDirectionsProvider {
 
     protected final NKDirectionsProvider mProvider;
-    protected final MainPreferences mPreferences;
 
     @Getter protected Optional<NKLocation> mStartingPoint = Optional.absent();
     @Getter protected Optional<NKLocation> mDestination = Optional.absent();
@@ -37,9 +35,8 @@ public class NKInteractiveDirectionsProvider {
     private DirectionsResultsCallback mExternalFileDirectionsResultsCallback =
             new DirectionsResultsCallback(DirectionsType.ExternalFile);
 
-    public NKInteractiveDirectionsProvider(NKDirectionsProvider provider, MainPreferences preferences) {
+    public NKInteractiveDirectionsProvider(NKDirectionsProvider provider) {
         mProvider = provider;
-        mPreferences = preferences;
     }
 
     public void setStartingPoint(NKLocation startingPoint) {
@@ -89,7 +86,6 @@ public class NKInteractiveDirectionsProvider {
         if (mStartingPoint.isPresent() && mDestination.isPresent()) {
             mProvider
                     .getCyclingDirections(
-                            mPreferences.getOfflineMode(),
                             mNoOfDirections, mStartingPoint.get(), mDestination.get(),
                             Optional.of(ImmutableList.copyOf(mWaypoints))
                     )

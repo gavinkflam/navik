@@ -92,7 +92,7 @@ public class ApplicationModule {
     NKInteractiveDirectionsProvider interactiveDirectionsProvider() {
         if (!mNKSkobblerInteractiveDirectionsProvider.isPresent()) {
             mNKSkobblerInteractiveDirectionsProvider = Optional.of(
-                    new NKInteractiveDirectionsProvider(directionsProvider(), mainPreferences())
+                    new NKInteractiveDirectionsProvider(directionsProvider())
             );
         }
         return mNKSkobblerInteractiveDirectionsProvider.get();

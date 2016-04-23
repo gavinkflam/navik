@@ -27,14 +27,6 @@ public class MainPreferences extends AbstractPreferences {
         setBooleanPreference(Key.SIMULATION_MODE, simulationMode);
     }
 
-    public boolean getOfflineMode() {
-        return getBooleanPreference(Key.OFFLINE_MODE, true);
-    }
-
-    public void setOfflineMode(boolean offlineMode) {
-        setBooleanPreference(Key.OFFLINE_MODE, offlineMode);
-    }
-
     public NKLocation getLastLocation() {
         double lastLocationLat = getDoublePreference(Key.LAST_LOCATION_LAT);
         double lastLocationLng = getDoublePreference(Key.LAST_LOCATION_LNG);

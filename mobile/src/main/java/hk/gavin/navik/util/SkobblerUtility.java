@@ -50,7 +50,9 @@ public class SkobblerUtility {
         advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
         advisorSettings.setAdvisorVoice("en");
         advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
+
         mapsInitSettings.setAdvisorSettings(advisorSettings);
+        mapsInitSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
         mapsInitSettings.setPreinstalledMapsPath(mapResourcesPath +"/PreinstalledMaps");
 
         try {

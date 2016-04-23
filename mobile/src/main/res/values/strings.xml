@@ -23,7 +23,6 @@
     <string name="error_not_gpx_file">Selected file is not a GPX file</string>
 
     <string name="simulation_mode">Simulation Mode</string>
-    <string name="offline_mode">Offline Mode</string>
 
     <string name="navigation">Navigation</string>
     <string name="route_analysis">Route Analysis</string>

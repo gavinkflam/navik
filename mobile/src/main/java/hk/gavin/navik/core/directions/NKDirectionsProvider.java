@@ -8,7 +8,7 @@ import hk.gavin.navik.core.location.NKLocation;
 public interface NKDirectionsProvider {
 
     NKDirectionsPromise getCyclingDirections(
-            boolean offline, int noOfDirections, NKLocation startingPoint, NKLocation destination,
+            int noOfDirections, NKLocation startingPoint, NKLocation destination,
             Optional<ImmutableList<NKLocation>> viaPoints);
     NKDirectionsPromise getCyclingDirectionsFromGpxFile(String gpxPath);
 }
