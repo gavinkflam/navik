@@ -21,7 +21,7 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
 
     @Override
     public NKDirectionsPromise getCyclingDirections(
-            int noOfDirections, NKLocation startingPoint, NKLocation destination,
+            boolean offline, int noOfDirections, NKLocation startingPoint, NKLocation destination,
             Optional<ImmutableList<NKLocation>> viaPoints) {
         Logger.d(
                 "noOfDirections: %d, startingPoint: (%s), destination: (%s), viapoints size: %d",
@@ -51,6 +51,10 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
         routeSettings.setHighWaysAvoided(true);
         routeSettings.setTollRoadsAvoided(true);
         routeSettings.setUseRoadSlopes(true);
+
+        if (offline) {
+            routeSettings.setRouteConnectionMode(SKRouteSettings.SKRouteConnectionMode.OFFLINE);
+        }
 
         routeManager.setRouteListener(routeListener);
         routeManager.calculateRoute(routeSettings);
