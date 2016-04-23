@@ -14,11 +14,13 @@ import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
 import hk.gavin.navik.injection.HomeModule;
 import hk.gavin.navik.ui.fragmentcontroller.HomeFragmentController;
+import hk.gavin.navik.util.SkobblerUtility;
+import org.jdeferred.DoneCallback;
 
 import javax.inject.Inject;
 
 public class HomeActivity extends AppCompatActivity
-        implements AbstractNavikActivity<HomeComponent> {
+        implements AbstractNavikActivity<HomeComponent>, DoneCallback<Boolean> {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
@@ -44,7 +46,17 @@ public class HomeActivity extends AppCompatActivity
     protected void onViewCreated() {
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        mController.initialize();
+
+        SkobblerUtility
+                .prepareAndInitializeLibrary()
+                .done(this);
+    }
+
+    @Override
+    public void onDone(Boolean result) {
+        if (result) {
+            mController.initialize();
+        }
     }
 
     @Override

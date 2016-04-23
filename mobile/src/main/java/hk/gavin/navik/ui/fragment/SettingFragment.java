@@ -2,7 +2,6 @@ package hk.gavin.navik.ui.fragment;
 
 import android.os.Bundle;
 import android.view.View;
-import butterknife.OnClick;
 import hk.gavin.navik.R;
 import hk.gavin.navik.ui.presenter.AppSettingsPresenter;
 import lombok.Getter;
@@ -17,11 +16,6 @@ public class SettingFragment extends AbstractHomeUiFragment {
 
     public SettingFragment() {
         setHasOptionsMenu(false);
-    }
-
-    @OnClick(R.id.manageOfflineData)
-    void manageOfflineData() {
-        // Do nothing
     }
 
     @Override

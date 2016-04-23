@@ -14,7 +14,6 @@ public class AppSettingsPresenter extends AbstractPresenter {
     @Inject MainPreferences mMainPreferences;
 
     @Bind(R.id.simulationMode) Switch simulationMode;
-    @Bind(R.id.offlineMode) Switch offlineMode;
 
     @Override
     public void invalidate() {
@@ -23,17 +22,11 @@ public class AppSettingsPresenter extends AbstractPresenter {
         }
 
         simulationMode.setChecked(mMainPreferences.getSimulationMode());
-        offlineMode.setChecked(mMainPreferences.getOfflineMode());
     }
 
     @OnCheckedChanged(R.id.simulationMode)
     void changeSimulationMode(boolean checked) {
         mMainPreferences.setSimulationMode(checked);
-    }
-
-    @OnCheckedChanged(R.id.offlineMode)
-    void changeOfflineMode(boolean checked) {
-        mMainPreferences.setOfflineMode(checked);
     }
 
     @Override

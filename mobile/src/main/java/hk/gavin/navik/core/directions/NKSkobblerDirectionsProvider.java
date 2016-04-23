@@ -51,6 +51,7 @@ public class NKSkobblerDirectionsProvider implements NKDirectionsProvider {
         routeSettings.setHighWaysAvoided(true);
         routeSettings.setTollRoadsAvoided(true);
         routeSettings.setUseRoadSlopes(true);
+        routeSettings.setRouteConnectionMode(SKRouteSettings.SKRouteConnectionMode.OFFLINE);
 
         routeManager.setRouteListener(routeListener);
         routeManager.calculateRoute(routeSettings);
