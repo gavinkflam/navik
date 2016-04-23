@@ -35,12 +35,12 @@ import java.util.List;
 public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationListener, SKRouteListener,
         SKCurrentPositionListener {
 
+    public static Class<? extends SKToolsLogicManager> CLASS;
+
     /**
      * Singleton instance for current class
      */
     private static volatile SKToolsLogicManager instance = null;
-
-    public static Class<? extends SKToolsLogicManager> CLASS;
 
     /**
      * the map view instance

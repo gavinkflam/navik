@@ -5,6 +5,10 @@ import hk.gavin.navik.application.NKBus;
 
 public class NKSKToolsLogicManager extends SKToolsLogicManager {
 
+    protected NKSKToolsLogicManager() {
+        super();
+    }
+
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
         super.onUpdateNavigationState(skNavigationState);
