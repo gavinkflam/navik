@@ -1,13 +1,13 @@
 package hk.gavin.navik.ui.fragmentcontroller;
 
 import android.content.Intent;
-import android.widget.Toast;
 import hk.gavin.navik.R;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 import hk.gavin.navik.ui.activity.HomeActivity;
+import hk.gavin.navik.ui.activity.NavigationActivity;
 import hk.gavin.navik.ui.fragment.*;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -30,14 +30,6 @@ public class HomeFragmentController extends FragmentController<HomeActivity> {
                 R.id.homeMap, NKSkobblerMapFragment.class, UiContract.FragmentTag.HOME_MAP, false, false
         );
         getActivity().component().inject((NKSkobblerMapFragment) mMap);
-    }
-
-    public void showMessage(String notification) {
-        Toast.makeText(getActivity(), notification, Toast.LENGTH_SHORT).show();
-    }
-
-    public void showMessage(int notificationRes) {
-        showMessage(getActivity().getString(notificationRes));
     }
 
     public RouteDisplayFragment initializeRouteDisplayFragment() {
@@ -84,13 +76,8 @@ public class HomeFragmentController extends FragmentController<HomeActivity> {
     }
 
     public void startBikeNavigation(NKDirections directions) {
-        Intent data = new Intent();
+        Intent data = new Intent(getActivity(), NavigationActivity.class);
         data.putExtra(UiContract.DataKey.DIRECTIONS, directions);
-        setRequest(UiContract.RequestCode.DEFAULT, data);
-
-        replaceFragment(
-                R.id.contentFrame, NavigationFragment.class, UiContract.FragmentTag.NAVIGATION,
-                true, true
-        );
+        getActivity().startActivityForResult(data, UiContract.RequestCode.NAVIGATION);
     }
 }

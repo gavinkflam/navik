@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 import com.google.common.base.Optional;
 import hk.gavin.navik.R;
 import hk.gavin.navik.contract.UiContract;
@@ -32,6 +33,14 @@ public abstract class FragmentController<T extends AppCompatActivity> implements
 
     public void initialize() {
         mManager.addOnBackStackChangedListener(this);
+    }
+
+    public void showMessage(String notification) {
+        Toast.makeText(getActivity(), notification, Toast.LENGTH_SHORT).show();
+    }
+
+    public void showMessage(int notificationRes) {
+        showMessage(getActivity().getString(notificationRes));
     }
 
     public void goBack() {

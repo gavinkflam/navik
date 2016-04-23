@@ -1,6 +1,7 @@
 package hk.gavin.navik.core.navigation;
 
 import android.app.Activity;
+import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.map.NKMapFragment;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,6 @@ public abstract class NKNavigationManager {
         mNKMapFragment = nkMapFragment;
     }
 
-    public abstract void startNavigation();
+    public abstract void startNavigation(NKDirections directions);
     public abstract void stopNavigation();
 }

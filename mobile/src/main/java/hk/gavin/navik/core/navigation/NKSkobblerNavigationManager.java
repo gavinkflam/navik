@@ -4,6 +4,7 @@ import android.app.Activity;
 import com.skobbler.ngx.map.SKMapViewHolder;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
 import com.skobbler.ngx.navigation.SKNavigationState;
+import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.sdktools.navigationui.NKSKNavigationStateListener;
 import com.skobbler.ngx.sdktools.navigationui.NKSKToolsNavigationManager;
@@ -11,6 +12,8 @@ import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKBus;
+import hk.gavin.navik.core.directions.NKDirections;
+import hk.gavin.navik.core.directions.NKSkobblerDirections;
 import hk.gavin.navik.core.map.NKMapFragment;
 import hk.gavin.navik.core.map.NKSkobblerMapFragment;
 import hk.gavin.navik.core.navigation.event.NavigationEndedEvent;
@@ -22,6 +25,7 @@ public class NKSkobblerNavigationManager extends NKNavigationManager implements
 
     private NKSKToolsNavigationManager mNKSKToolsNavigationManager;
     private SKMapViewHolder mSKMapViewHolder;
+    private SKRouteManager mSKRouteManager = SKRouteManager.getInstance();
 
     public NKSkobblerNavigationManager(Activity activity, int containerId, NKMapFragment nkMapFragment) {
         super(activity, containerId, nkMapFragment);
@@ -33,7 +37,12 @@ public class NKSkobblerNavigationManager extends NKNavigationManager implements
     }
 
     @Override
-    public void startNavigation() {
+    public void startNavigation(NKDirections directions) {
+        if (!(directions instanceof NKSkobblerDirections)) {
+            return;
+        }
+
+        mSKRouteManager.loadRouteFromCache(((NKSkobblerDirections) directions).cacheId);
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
         configuration.setRouteType(SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST);
 

@@ -27,7 +27,7 @@ public class NKInteractiveDirectionsProvider {
 
     @Getter protected Optional<NKLocation> mStartingPoint = Optional.absent();
     @Getter protected Optional<NKLocation> mDestination = Optional.absent();
-    @Getter protected List<NKLocation> mWaypoints = new ArrayList<>();
+    protected List<NKLocation> mWaypoints = new ArrayList<>();
     @Setter protected int mNoOfDirections = 1;
 
     private DirectionsResultsCallback mOrdinaryDirectionsResultsCallback =
