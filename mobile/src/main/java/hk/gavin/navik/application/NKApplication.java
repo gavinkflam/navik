@@ -6,7 +6,6 @@ import hk.gavin.navik.injection.ApplicationModule;
 import hk.gavin.navik.injection.DaggerApplicationComponent;
 import hk.gavin.navik.preference.MainPreferences;
 import hk.gavin.navik.util.LoggerUtility;
-import hk.gavin.navik.util.SkobblerUtility;
 import hk.gavin.navik.util.StorageUtility;
 
 import javax.inject.Inject;
@@ -46,13 +45,11 @@ public class NKApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LoggerUtility.initializeLogger(this);
 
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .build();
         mApplicationComponent.inject(this);
-
-        SkobblerUtility.prepareAndInitializeLibrary(this);
-        LoggerUtility.initializeLogger(this);
     }
 }
