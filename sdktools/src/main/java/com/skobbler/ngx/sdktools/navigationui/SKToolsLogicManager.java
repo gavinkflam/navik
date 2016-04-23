@@ -40,6 +40,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      */
     private static volatile SKToolsLogicManager instance = null;
 
+    public static Class<? extends SKToolsLogicManager> CLASS;
+
     /**
      * the map view instance
      */
@@ -145,7 +147,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (instance == null) {
             synchronized (SKToolsLogicManager.class) {
                 if (instance == null) {
-                    instance = new SKToolsLogicManager();
+                    try {
+                        instance = CLASS.newInstance();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
