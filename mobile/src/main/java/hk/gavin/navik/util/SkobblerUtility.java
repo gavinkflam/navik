@@ -49,6 +49,7 @@ public class SkobblerUtility {
         advisorSettings.setAdvisorVoice("en");
         advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
         mapsInitSettings.setAdvisorSettings(advisorSettings);
+        mapsInitSettings.setPreinstalledMapsPath(mapResourcesPath +"/PreinstalledMaps");
 
         try {
             SKMaps.getInstance().initializeSKMaps(application, mapsInitSettings);

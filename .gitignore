@@ -152,5 +152,4 @@ crashlytics-build.properties
 fabric.properties
 
 # Skobbler sdk
-/mobile/src/main/assets/SKMaps.zip
 /mobile/src/main/jniLibs/
