@@ -193,6 +193,7 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
         mMap.getMapSettings().setShowBicycleLanes(true);
         mMap.getMapSettings().setCurrentPositionShown(true);
         mMap.getMapSettings().setCompassPosition(new SKScreenPoint(-50, -50));
+        mMap.setZoom(12f);
 
         // Trigger location update immediately if applicable
         if (mLocationProvider.isLastLocationAvailable()) {
