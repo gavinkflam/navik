@@ -24,10 +24,6 @@ public class WearMessageListenerService extends WearableListenerService {
                 break;
             }
             case WearContract.Path.STOP_WEAR_ACTIVITY: {
-                if (!MainActivity.isActive()) {
-                    return;
-                }
-
                 sendBroadcast(new Intent(WearContract.Path.STOP_WEAR_ACTIVITY));
             }
             default: {
