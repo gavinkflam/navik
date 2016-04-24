@@ -28,7 +28,6 @@ public class RouteDisplayPresenter extends AbstractPresenter {
     public void setMap(NKMapFragment map) {
         mMap = map;
         mMap.showMoveToCurrentLocationButton();
-        mMap.moveToCurrentLocationOnceAvailable();
     }
 
     @Override

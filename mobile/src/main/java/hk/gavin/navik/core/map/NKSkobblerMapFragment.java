@@ -58,16 +58,6 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
     }
 
     @Override
-    public void moveToCurrentLocationOnceAvailable() {
-        if (isMapLoaded() && mLocationProvider.isLastLocationAvailable()) {
-            moveToCurrentLocation();
-        }
-        else {
-            setPendingMoveToCurrentLocation(true);
-        }
-    }
-
-    @Override
     public void showMoveToCurrentLocationButton() {
         setDisplayMoveToCurrentLocationButton(true);
         updateMoveToCurrentLocationButtonDisplay();
@@ -168,10 +158,7 @@ public class NKSkobblerMapFragment extends NKMapFragment implements SKMapSurface
     @Subscribe
     public void onLocationUpdated(LocationUpdateEvent event) {
         if (isMapLoaded()) {
-            mMap.setPositionAsCurrent(
-                    event.location.toSKCoordinate(), (float) event.accuracy, isPendingMoveToCurrentLocation()
-            );
-            setPendingMoveToCurrentLocation(false);
+            mMap.setPositionAsCurrent(event.location.toSKCoordinate(), (float) event.accuracy, false);
         }
     }
 
