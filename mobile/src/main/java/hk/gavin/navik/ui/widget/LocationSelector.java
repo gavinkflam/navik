@@ -20,7 +20,6 @@ import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
-import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
 import hk.gavin.navik.ui.widget.event.SelectAsStartingPointEvent;
 import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
 import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
@@ -122,24 +121,13 @@ public class LocationSelector extends FrameLayout implements PopupMenu.OnMenuIte
         mPopupMenu.setOnMenuItemClickListener(this);
     }
 
-    public void setLocation(NKLocation location, boolean silent) {
-        setLocation(Optional.of(location), silent);
-    }
-
     public void setLocation(NKLocation location) {
-        setLocation(Optional.of(location), false);
-    }
-
-    private void setLocation(Optional<NKLocation> location, boolean silent) {
-        mLocation = location;
-        updateLocationDisplay();
-        if (!silent) {
-            NKBus.get().post(new LocationSelectionChangeEvent(this, mLocation));
-        }
+        setLocation(Optional.of(location));
     }
 
     private void setLocation(Optional<NKLocation> location) {
-        setLocation(location, false);
+        mLocation = location;
+        updateLocationDisplay();
     }
 
     private void updateLocationName() {

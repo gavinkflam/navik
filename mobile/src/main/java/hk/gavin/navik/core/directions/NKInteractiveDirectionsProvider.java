@@ -104,7 +104,7 @@ public class NKInteractiveDirectionsProvider {
     }
 
     private void notifyDestinationChange() {
-        NKBus.get().post(new DestinationChangeEvent(mStartingPoint));
+        NKBus.get().post(new DestinationChangeEvent(mDestination));
     }
 
     private void notifyWaypointsChange() {

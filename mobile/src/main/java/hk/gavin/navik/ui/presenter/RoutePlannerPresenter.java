@@ -7,12 +7,21 @@ import com.google.common.eventbus.Subscribe;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.NKDirections;
-import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
-import hk.gavin.navik.core.directions.event.RoutingInProgressEvent;
+import hk.gavin.navik.core.directions.contract.DirectionsType;
+import hk.gavin.navik.core.directions.event.*;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
+import hk.gavin.navik.core.geocode.NKReverseGeocoder;
+import hk.gavin.navik.ui.widget.LocationSelector;
 import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 
+import javax.inject.Inject;
+
 public class RoutePlannerPresenter extends AbstractPresenter {
+
+    @Inject NKReverseGeocoder mReverseGeocoder;
+
+    @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
+    @Bind(R.id.destination) LocationSelector mDestination;
 
     @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
     @Bind(R.id.showRouteAnalysis) FloatingActionButton mShowRouteAnalysis;
@@ -41,6 +50,32 @@ public class RoutePlannerPresenter extends AbstractPresenter {
         NKBus.get().unregister(this);
     }
 
+    public void onDependencyResolved() {
+        // Initialize location selector
+        mStartingPoint.initialize(mReverseGeocoder);
+        mDestination.initialize(mReverseGeocoder);
+    }
+
+    @Subscribe
+    public void onStartingPointChanged(StartingPointChangeEvent event) {
+        if (event.location.isPresent()) {
+            mStartingPoint.setLocation(event.location.get());
+        }
+        else {
+            mStartingPoint.removeLocation();
+        }
+    }
+
+    @Subscribe
+    public void onDestinationChanged(DestinationChangeEvent event) {
+        if (event.location.isPresent()) {
+            mDestination.setLocation(event.location.get());
+        }
+        else {
+            mDestination.removeLocation();
+        }
+    }
+
     @Subscribe
     public void onRoutingInProgress(RoutingInProgressEvent event) {
         mRoutingInProgress = true;
@@ -52,6 +87,11 @@ public class RoutePlannerPresenter extends AbstractPresenter {
         mDirections = Optional.of(event.directionsList.get(0));
         mRoutingInProgress = false;
         invalidate();
+
+        if (event.directionsType == DirectionsType.ExternalFile) {
+            mStartingPoint.setLocation(mDirections.get().startingPoint);
+            mDestination.setLocation(mDirections.get().destination);
+        }
     }
 
     @Subscribe
