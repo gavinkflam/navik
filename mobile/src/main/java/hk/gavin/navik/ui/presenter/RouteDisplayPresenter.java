@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.contract.DirectionsType;
 import hk.gavin.navik.core.directions.event.DestinationChangeEvent;
 import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
 import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
@@ -28,7 +29,6 @@ public class RouteDisplayPresenter extends AbstractPresenter {
     public void setMap(NKMapFragment map) {
         mMap = map;
         mMap.showMoveToCurrentLocationButton();
-        mMap.moveToCurrentLocationOnceAvailable();
     }
 
     @Override
@@ -58,9 +58,12 @@ public class RouteDisplayPresenter extends AbstractPresenter {
 
     @Subscribe
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
-        mDirections = Optional.of(event.directionsList.get(0));
+        mDirections = Optional.of(event.directions);
         if (mMap.isMapLoaded()) {
-            mMap.showRoute(mDirections.get(), true);
+            mMap.showRoute(
+                    mDirections.get(),
+                    event.directions.getDirectionsType().equals(DirectionsType.ExternalFile)
+            );
         }
     }
 

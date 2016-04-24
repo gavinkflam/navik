@@ -8,4 +8,5 @@ import java.util.List;
 public interface NKElevationProvider {
 
     Promise<NKLocation[], Void, Void> requestElevation(List<NKLocation> locations);
+    Promise<NKLocation[], Void, Void> requestElevation(List<NKLocation> locations, int limit);
 }

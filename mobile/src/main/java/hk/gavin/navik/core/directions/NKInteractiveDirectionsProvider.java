@@ -5,10 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.orhanobut.logger.Logger;
 import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.contract.DirectionsType;
-import hk.gavin.navik.core.directions.event.DestinationChangeEvent;
-import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
-import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
-import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
+import hk.gavin.navik.core.directions.event.*;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
 import lombok.Getter;
@@ -29,6 +26,7 @@ public class NKInteractiveDirectionsProvider {
     @Getter protected Optional<NKLocation> mDestination = Optional.absent();
     protected List<NKLocation> mWaypoints = new ArrayList<>();
     @Setter protected int mNoOfDirections = 1;
+    @Getter protected Optional<NKDirections> mLastDirections = Optional.absent();
 
     private DirectionsResultsCallback mOrdinaryDirectionsResultsCallback =
             new DirectionsResultsCallback(DirectionsType.Ordinary);
@@ -84,6 +82,7 @@ public class NKInteractiveDirectionsProvider {
 
     public void getCyclingDirections() {
         if (mStartingPoint.isPresent() && mDestination.isPresent()) {
+            NKBus.get().post(new RoutingInProgressEvent());
             mProvider
                     .getCyclingDirections(
                             mNoOfDirections, mStartingPoint.get(), mDestination.get(),
@@ -106,7 +105,7 @@ public class NKInteractiveDirectionsProvider {
     }
 
     private void notifyDestinationChange() {
-        NKBus.get().post(new DestinationChangeEvent(mStartingPoint));
+        NKBus.get().post(new DestinationChangeEvent(mDestination));
     }
 
     private void notifyWaypointsChange() {
@@ -124,15 +123,18 @@ public class NKInteractiveDirectionsProvider {
 
         @Override
         public void onDone(ImmutableList<NKDirections> result) {
+            mLastDirections = Optional.of(result.get(0));
+
             if (mDirectionsType == DirectionsType.ExternalFile) {
-                NKDirections directions = result.get(0);
-                setStartingPoint(directions.startingPoint);
-                setDestination(directions.destination);
+                mLastDirections.get().setDirectionsType(DirectionsType.ExternalFile);
+
+                setStartingPoint(mLastDirections.get().startingPoint);
+                setDestination(mLastDirections.get().destination);
                 clearWaypoints();
             }
 
             Logger.d("result size: %d", result.size());
-            NKBus.get().post(new DirectionsAvailableEvent(result, mDirectionsType));
+            NKBus.get().post(new DirectionsAvailableEvent(mLastDirections.get()));
         }
 
         @Override

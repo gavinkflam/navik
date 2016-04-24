@@ -41,7 +41,7 @@ public class RouteAnalysisPresenter extends AbstractPresenter implements DoneCal
         mDistance.setText(mDirections.get().distance());
         mEstimatedTime.setText(mDirections.get().estimatedTime());
         mElevationProvider
-                .requestElevation(mDirections.get().object.locations)
+                .requestElevation(mDirections.get().object.locations, 300)
                 .done(this);
     }
 
@@ -49,5 +49,6 @@ public class RouteAnalysisPresenter extends AbstractPresenter implements DoneCal
     public void onDone(NKLocation[] result) {
         mNKElevationChart.setColor(mColorPrimary);
         mNKElevationChart.setData(NKLocationUtil.extractElevations(result));
+        mNKElevationChart.invalidate();
     }
 }

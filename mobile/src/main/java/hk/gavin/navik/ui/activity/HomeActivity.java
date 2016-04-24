@@ -26,7 +26,9 @@ public class HomeActivity extends AppCompatActivity
 
     @Inject HomeFragmentController mController;
     @Inject NKWearManager mNKWearManager;
+
     private Optional<HomeComponent> mComponent = Optional.absent();
+    private boolean mIsInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +49,16 @@ public class HomeActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
-        SkobblerUtility
-                .prepareAndInitializeLibrary()
-                .done(this);
+        if (!mIsInitialized) {
+            SkobblerUtility
+                    .prepareAndInitializeLibrary()
+                    .done(this);
+        }
     }
 
     @Override
     public void onDone(Boolean result) {
+        mIsInitialized = true;
         if (result) {
             mController.initialize();
         }
