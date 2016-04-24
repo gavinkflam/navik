@@ -117,11 +117,11 @@ public class RoutePlannerPresenter extends AbstractPresenter implements PopupMen
 
     @Subscribe
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
-        mDirections = Optional.of(event.directionsList.get(0));
+        mDirections = Optional.of(event.directions);
         mRoutingInProgress = false;
         invalidate();
 
-        if (event.directionsType == DirectionsType.ExternalFile) {
+        if (event.directions.getDirectionsType().equals(DirectionsType.ExternalFile)) {
             mStartingPoint.setLocation(mDirections.get().startingPoint);
             mDestination.setLocation(mDirections.get().destination);
         }

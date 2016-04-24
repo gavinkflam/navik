@@ -17,6 +17,7 @@ import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
+import hk.gavin.navik.core.directions.contract.DirectionsType;
 import hk.gavin.navik.core.directions.event.*;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
@@ -227,19 +228,29 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment {
         }
     }
 
+    private void getCyclingDirections() {
+        if (
+                mDirectionsProvider.getLastDirections().isPresent() &&
+                        mDirectionsProvider.getLastDirections().get().getDirectionsType().equals(DirectionsType.ExternalFile)
+                ) {
+            return;
+        }
+        mDirectionsProvider.getCyclingDirections();
+    }
+
     @Subscribe
     public void onStartingPointChanged(StartingPointChangeEvent event) {
-        mDirectionsProvider.getCyclingDirections();
+        getCyclingDirections();
     }
 
     @Subscribe
     public void onDestinationChanged(DestinationChangeEvent event) {
-        mDirectionsProvider.getCyclingDirections();
+        getCyclingDirections();
     }
 
     @Subscribe
     public void onWaypointsChanged(WaypointsChangeEvent event) {
-        mDirectionsProvider.getCyclingDirections();
+        getCyclingDirections();
     }
 
     @Subscribe
@@ -250,7 +261,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment {
     @Subscribe
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
         getController().showMessage(R.string.routing_completed);
-        mDirections = Optional.of(event.directionsList.get(0));
+        mDirections = Optional.of(event.directions);
     }
 
     @Subscribe

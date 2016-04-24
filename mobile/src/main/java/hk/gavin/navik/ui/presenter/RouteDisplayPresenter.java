@@ -58,9 +58,12 @@ public class RouteDisplayPresenter extends AbstractPresenter {
 
     @Subscribe
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
-        mDirections = Optional.of(event.directionsList.get(0));
+        mDirections = Optional.of(event.directions);
         if (mMap.isMapLoaded()) {
-            mMap.showRoute(mDirections.get(), (event.directionsType == DirectionsType.ExternalFile));
+            mMap.showRoute(
+                    mDirections.get(),
+                    event.directions.getDirectionsType().equals(DirectionsType.ExternalFile)
+            );
         }
     }
 
