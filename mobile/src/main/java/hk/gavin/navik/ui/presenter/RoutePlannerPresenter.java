@@ -56,22 +56,6 @@ public class RoutePlannerPresenter extends AbstractPresenter implements PopupMen
             mStartBikeNavigation.disable();
             mShowRouteAnalysis.setEnabled(false);
         }
-
-        // Starting point display
-        if (mDirectionsProvider != null && mDirectionsProvider.getStartingPoint().isPresent()) {
-            mStartingPoint.setLocation(mDirectionsProvider.getStartingPoint().get());
-        }
-        else {
-            mStartingPoint.removeLocation();
-        }
-
-        // Destination display
-        if (mDirectionsProvider != null && mDirectionsProvider.getDestination().isPresent()) {
-            mDestination.setLocation(mDirectionsProvider.getDestination().get());
-        }
-        else {
-            mDestination.removeLocation();
-        }
     }
 
     public void removeDirections() {
