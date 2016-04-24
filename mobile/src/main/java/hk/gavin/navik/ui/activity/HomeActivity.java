@@ -7,8 +7,11 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.common.base.Optional;
+import com.google.common.eventbus.Subscribe;
 import hk.gavin.navik.R;
 import hk.gavin.navik.application.NKApplication;
+import hk.gavin.navik.application.NKBus;
+import hk.gavin.navik.core.navigation.event.NavigationEndedEvent;
 import hk.gavin.navik.core.wear.NKWearManager;
 import hk.gavin.navik.injection.DaggerHomeComponent;
 import hk.gavin.navik.injection.HomeComponent;
@@ -25,7 +28,7 @@ public class HomeActivity extends AppCompatActivity
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
     @Inject HomeFragmentController mController;
-    @Inject NKWearManager mNKWearManager;
+    @Inject NKWearManager mWearManager;
 
     private Optional<HomeComponent> mComponent = Optional.absent();
     private boolean mIsInitialized = false;
@@ -40,8 +43,20 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        NKBus.get().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        NKBus.get().unregister(this);
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
-        mNKWearManager.onDestroy();
+        mWearManager.onDestroy();
         super.onDestroy();
     }
 
@@ -84,6 +99,11 @@ public class HomeActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Subscribe
+    public void onNavigationEnded(NavigationEndedEvent event) {
+        mWearManager.stopWearActivity();
     }
 
     public HomeComponent component() {

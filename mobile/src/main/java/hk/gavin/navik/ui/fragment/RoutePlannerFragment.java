@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -170,17 +171,22 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment {
             case UiContract.RequestCode.NAVIGATION: {
                 Logger.d("onActivityResult: UiContract.RequestCode.NAVIGATION");
 
-                // Clear route and location selection
-                mDirections = Optional.absent();
-                mDirectionsProvider.removeStartingPoint();
-                mDirectionsProvider.removeDestination();
-                mDirectionsProvider.clearWaypoints();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Clear route and location selection
+                        mDirections = Optional.absent();
+                        mDirectionsProvider.removeStartingPoint();
+                        mDirectionsProvider.removeDestination();
+                        mDirectionsProvider.clearWaypoints();
 
-                mPresenter.removeDirections();
-                mPresenter.invalidate();
+                        mPresenter.removeDirections();
+                        mPresenter.invalidate();
 
-                // Post event
-                NKBus.get().post(new NavigationActivity());
+                        // Post event
+                        NKBus.get().post(new NavigationActivity());
+                    }
+                }, 500);
                 break;
             }
         }
