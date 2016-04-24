@@ -21,6 +21,7 @@ import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.directions.contract.DirectionsType;
 import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
+import hk.gavin.navik.core.directions.event.RoutingInProgressEvent;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
@@ -231,7 +232,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
             }
         }
     }
-
     @Subscribe
     public void onSelectCurrentLocation(SelectCurrentLocationEvent event) {
         if (mLocationProvider.isLastLocationAvailable()) {
@@ -267,7 +267,13 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     }
 
     @Subscribe
+    public void onRoutingInProgress(RoutingInProgressEvent event) {
+        getController().showMessage(R.string.routing_in_progress);
+    }
+
+    @Subscribe
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
+        getController().showMessage(R.string.routing_completed);
         mDirections = Optional.of(event.directionsList.get(0));
         mStartBikeNavigation.enable();
 

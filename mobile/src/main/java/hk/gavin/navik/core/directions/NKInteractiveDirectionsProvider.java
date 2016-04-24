@@ -5,10 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.orhanobut.logger.Logger;
 import hk.gavin.navik.application.NKBus;
 import hk.gavin.navik.core.directions.contract.DirectionsType;
-import hk.gavin.navik.core.directions.event.DestinationChangeEvent;
-import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
-import hk.gavin.navik.core.directions.event.StartingPointChangeEvent;
-import hk.gavin.navik.core.directions.event.WaypointsChangeEvent;
+import hk.gavin.navik.core.directions.event.*;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
 import lombok.Getter;
@@ -84,6 +81,7 @@ public class NKInteractiveDirectionsProvider {
 
     public void getCyclingDirections() {
         if (mStartingPoint.isPresent() && mDestination.isPresent()) {
+            NKBus.get().post(new RoutingInProgressEvent());
             mProvider
                     .getCyclingDirections(
                             mNoOfDirections, mStartingPoint.get(), mDestination.get(),
