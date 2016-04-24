@@ -7,6 +7,7 @@ import com.google.maps.model.ElevationResult;
 import com.orhanobut.logger.Logger;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationUtil;
+import hk.gavin.navik.util.CollectionUtility;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
@@ -40,5 +41,10 @@ public class NKGoogleElevationProvider implements NKElevationProvider {
                     }
                 });
         return def.promise();
+    }
+
+    @Override
+    public Promise<NKLocation[], Void, Void> requestElevation(List<NKLocation> locations, int limit) {
+        return requestElevation(CollectionUtility.sampleIfExceedLimit(locations, limit));
     }
 }

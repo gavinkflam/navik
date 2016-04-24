@@ -73,7 +73,6 @@ public class NKElevationChart extends LineChart {
 
         // Set chart data
         this.setData(new LineData(labels, dataSet));
-        this.invalidate();
     }
 
     public void setData(double[] data) {
