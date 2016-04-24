@@ -48,22 +48,17 @@ public class NavigationFragment extends AbstractNavigationUiFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         NKBus.get().register(this);
     }
 
     @Override
-    public void onPause() {
+    public void onDestroy() {
         NKBus.get().unregister(this);
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
         mNavigationManager.stopNavigation();
         mWearManager.stopWearActivity();
-        super.onStop();
+        super.onDestroy();
     }
 
     @Subscribe
