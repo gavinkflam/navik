@@ -47,6 +47,7 @@ public class RoutePlannerPresenter extends AbstractPresenter implements PopupMen
     private Optional<MapMarkerClickEvent> mLastMapMarkerClickEvent = Optional.absent();
 
     public void invalidate() {
+        // Buttons state
         if (mDirections.isPresent() && !mRoutingInProgress) {
             mStartBikeNavigation.enable();
             mShowRouteAnalysis.setEnabled(true);
@@ -55,6 +56,26 @@ public class RoutePlannerPresenter extends AbstractPresenter implements PopupMen
             mStartBikeNavigation.disable();
             mShowRouteAnalysis.setEnabled(false);
         }
+
+        // Starting point display
+        if (mDirectionsProvider != null && mDirectionsProvider.getStartingPoint().isPresent()) {
+            mStartingPoint.setLocation(mDirectionsProvider.getStartingPoint().get());
+        }
+        else {
+            mStartingPoint.removeLocation();
+        }
+
+        // Destination display
+        if (mDirectionsProvider != null && mDirectionsProvider.getDestination().isPresent()) {
+            mDestination.setLocation(mDirectionsProvider.getDestination().get());
+        }
+        else {
+            mDestination.removeLocation();
+        }
+    }
+
+    public void removeDirections() {
+        mDirections = Optional.absent();
     }
 
     private void preparePopupMenus(Activity activity) {

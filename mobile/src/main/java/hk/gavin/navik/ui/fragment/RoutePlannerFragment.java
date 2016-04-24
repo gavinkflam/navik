@@ -176,6 +176,9 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment {
                 mDirectionsProvider.removeDestination();
                 mDirectionsProvider.clearWaypoints();
 
+                mPresenter.removeDirections();
+                mPresenter.invalidate();
+
                 // Post event
                 NKBus.get().post(new NavigationActivity());
                 break;
