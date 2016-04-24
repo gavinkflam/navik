@@ -8,8 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
-import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
@@ -20,19 +18,13 @@ import hk.gavin.navik.contract.UiContract;
 import hk.gavin.navik.core.directions.NKDirections;
 import hk.gavin.navik.core.directions.NKInteractiveDirectionsProvider;
 import hk.gavin.navik.core.directions.contract.DirectionsType;
-import hk.gavin.navik.core.directions.event.DirectionsAvailableEvent;
-import hk.gavin.navik.core.directions.event.RoutingInProgressEvent;
+import hk.gavin.navik.core.directions.event.*;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
-import hk.gavin.navik.core.geocode.NKReverseGeocoder;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.core.map.event.MapLongPressEvent;
-import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import hk.gavin.navik.preference.MainPreferences;
 import hk.gavin.navik.ui.activity.NavigationActivity;
-import hk.gavin.navik.ui.widget.LocationSelector;
-import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
-import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
+import hk.gavin.navik.ui.presenter.RoutePlannerPresenter;
 import hk.gavin.navik.ui.widget.event.SelectAsStartingPointEvent;
 import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
 import hk.gavin.navik.ui.widget.event.SelectLocationOnMapEvent;
@@ -43,24 +35,14 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class RoutePlannerFragment extends AbstractHomeUiFragment implements PopupMenu.OnMenuItemClickListener {
+public class RoutePlannerFragment extends AbstractHomeUiFragment {
 
     @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
-    @Inject NKReverseGeocoder mReverseGeocoder;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
-    @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
-    @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
-    @Bind(R.id.destination) LocationSelector mDestination;
-    @Bind(R.id.route_planner_center) View mRoutePlannerCenter;
-
+    private RoutePlannerPresenter mPresenter = new RoutePlannerPresenter();
     private Optional<NKDirections> mDirections = Optional.absent();
-
-    private PopupMenu mMapLongPressMenu;
-    private PopupMenu mWaypointkMenu;
-    private Optional<MapLongPressEvent> mLastMapLongPressEvent = Optional.absent();
-    private Optional<MapMarkerClickEvent> mLastMapMarkerClickEvent = Optional.absent();
 
     @Getter private final int mLayoutResId = R.layout.fragment_route_planner;
 
@@ -88,35 +70,37 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getController().initializeRouteDisplayFragment();
-        preparePopupMenus();
+
+        // Initialize presenter
+        component().inject(mPresenter);
+        mPresenter.onDependencyResolved();
+        mPresenter.onActivityCreated(getActivity());
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.app_name);
         getController().setDisplayHomeAsUp(false);
-
-        // Initialize location selector
-        mStartingPoint.initialize(mReverseGeocoder);
-        mDestination.initialize(mReverseGeocoder);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         NKBus.get().register(this);
-        if (mDirections.isPresent()) {
-            mStartBikeNavigation.enable();
-        }
-        else {
-            mStartBikeNavigation.disable();
-        }
+        mPresenter.onResume();
     }
 
     @Override
     public void onPause() {
         mMainPreferences.setLastLocation(getController().getMap().getMapCenter());
         NKBus.get().unregister(this);
+        mPresenter.onPause();
         super.onPause();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mPresenter.onViewCreated(view, savedInstanceState);
+        mPresenter.invalidate();
     }
 
     @Override
@@ -127,29 +111,18 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
             switch (requestCode.get()) {
                 case UiContract.RequestCode.STARTING_POINT_LOCATION: {
                     if (resultCode == UiContract.ResultCode.OK) {
-                        mStartingPoint.setLocation(location);
+                        mDirectionsProvider.setStartingPoint(location);
                     }
                     break;
                 }
                 case UiContract.RequestCode.DESTINATION_LOCATION: {
                     if (resultCode == UiContract.ResultCode.OK) {
-                        mDestination.setLocation(location);
+                        mDirectionsProvider.setDestination(location);
                     }
                     break;
                 }
             }
         }
-    }
-
-    private void preparePopupMenus() {
-        mMapLongPressMenu = new PopupMenu(getActivity(), mRoutePlannerCenter);
-        mWaypointkMenu = new PopupMenu(getActivity(), mRoutePlannerCenter);
-
-        mMapLongPressMenu.inflate(R.menu.popup_menu_map_long_click);
-        mWaypointkMenu.inflate(R.menu.popup_menu_waypoint);
-
-        mMapLongPressMenu.setOnMenuItemClickListener(this);
-        mWaypointkMenu.setOnMenuItemClickListener(this);
     }
 
     @Override
@@ -199,12 +172,12 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
 
                 // Clear route and location selection
                 mDirections = Optional.absent();
-                mStartingPoint.removeLocation();
-                mDestination.removeLocation();
-
                 mDirectionsProvider.removeStartingPoint();
                 mDirectionsProvider.removeDestination();
                 mDirectionsProvider.clearWaypoints();
+
+                mPresenter.removeDirections();
+                mPresenter.invalidate();
 
                 // Post event
                 NKBus.get().post(new NavigationActivity());
@@ -214,28 +187,20 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     }
 
     @Subscribe
-    public void onLocationSelectionChanged(LocationSelectionChangeEvent event) {
-        switch (event.selector.getId()) {
-            case R.id.startingPoint: {
-                if (mStartingPoint.getLocation().isPresent()) {
-                    mDirectionsProvider.setStartingPoint(mStartingPoint.getLocation().get());
-                    mDirectionsProvider.getCyclingDirections();
-                }
-                break;
-            }
-            case R.id.destination: {
-                if (mDestination.getLocation().isPresent()) {
-                    mDirectionsProvider.setDestination(mDestination.getLocation().get());
-                    mDirectionsProvider.getCyclingDirections();
-                }
-                break;
-            }
-        }
-    }
-    @Subscribe
     public void onSelectCurrentLocation(SelectCurrentLocationEvent event) {
         if (mLocationProvider.isLastLocationAvailable()) {
-            event.selector.setLocation(mLocationProvider.getLastLocation().get());
+            NKLocation location = mLocationProvider.getLastLocation().get();
+
+            switch (event.selector.getId()) {
+                case R.id.startingPoint: {
+                    mDirectionsProvider.setStartingPoint(location);
+                    break;
+                }
+                case R.id.destination: {
+                    mDirectionsProvider.setDestination(location);
+                    break;
+                }
+            }
         }
         else {
             getController().showMessage(R.string.error_location_not_available);
@@ -258,12 +223,37 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
 
     @Subscribe
     public void onSelectStartingPointAsDestination(SelectAsStartingPointEvent event) {
-        if (mStartingPoint.getLocation().isPresent()) {
-            mDestination.setLocation(mStartingPoint.getLocation().get());
+        if (mDirectionsProvider.getStartingPoint().isPresent()) {
+            mDirectionsProvider.setDestination(mDirectionsProvider.getStartingPoint().get());
         }
         else {
             getController().showMessage(R.string.error_select_starting_point_first);
         }
+    }
+
+    private void getCyclingDirections() {
+        if (
+                mDirectionsProvider.getLastDirections().isPresent() &&
+                        mDirectionsProvider.getLastDirections().get().getDirectionsType().equals(DirectionsType.ExternalFile)
+                ) {
+            return;
+        }
+        mDirectionsProvider.getCyclingDirections();
+    }
+
+    @Subscribe
+    public void onStartingPointChanged(StartingPointChangeEvent event) {
+        getCyclingDirections();
+    }
+
+    @Subscribe
+    public void onDestinationChanged(DestinationChangeEvent event) {
+        getCyclingDirections();
+    }
+
+    @Subscribe
+    public void onWaypointsChanged(WaypointsChangeEvent event) {
+        getCyclingDirections();
     }
 
     @Subscribe
@@ -274,54 +264,11 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Subscribe
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
         getController().showMessage(R.string.routing_completed);
-        mDirections = Optional.of(event.directionsList.get(0));
-        mStartBikeNavigation.enable();
-
-        if (event.directionsType == DirectionsType.ExternalFile) {
-            mStartingPoint.setLocation(mDirections.get().startingPoint, true);
-            mDestination.setLocation(mDirections.get().destination, true);
-        }
+        mDirections = Optional.of(event.directions);
     }
 
     @Subscribe
     public void onDirectionsError(NKDirectionsException exception) {
-        mStartBikeNavigation.disable();
         getController().showMessage(R.string.error_route_not_available);
-    }
-
-    @Subscribe
-    public void onLongPress(MapLongPressEvent event) {
-        mLastMapLongPressEvent = Optional.of(event);
-        mMapLongPressMenu.show();
-    }
-
-    @Subscribe
-    public void onMarkerClicked(MapMarkerClickEvent event) {
-        if (event.markerId > 1) {
-            mLastMapMarkerClickEvent = Optional.of(event);
-            mWaypointkMenu.show();
-        }
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.set_as_starting_point:
-                mStartingPoint.setLocation(mLastMapLongPressEvent.get().location);
-                return true;
-            case R.id.set_as_destination:
-                mDestination.setLocation(mLastMapLongPressEvent.get().location);
-                return true;
-            case R.id.add_as_waypoint:
-                mDirectionsProvider.addWaypoints(mLastMapLongPressEvent.get().location);
-                mDirectionsProvider.getCyclingDirections();
-                return true;
-            case R.id.remove_waypoint:
-                mDirectionsProvider.removeWaypoint(mLastMapMarkerClickEvent.get().markerId - 2);
-                mDirectionsProvider.getCyclingDirections();
-                return true;
-        }
-
-        return false;
     }
 }

@@ -7,6 +7,7 @@ import hk.gavin.navik.ui.fragment.*;
 import hk.gavin.navik.ui.presenter.AppSettingsPresenter;
 import hk.gavin.navik.ui.presenter.RouteAnalysisPresenter;
 import hk.gavin.navik.ui.presenter.RouteDisplayPresenter;
+import hk.gavin.navik.ui.presenter.RoutePlannerPresenter;
 
 @PerActivity
 @Component(dependencies = ApplicationComponent.class, modules = HomeModule.class)
@@ -23,5 +24,6 @@ public interface HomeComponent extends AbstractActivityComponent {
 
     void inject(RouteAnalysisPresenter presenter);
     void inject(RouteDisplayPresenter presenter);
+    void inject(RoutePlannerPresenter presenter);
     void inject(AppSettingsPresenter presenter);
 }

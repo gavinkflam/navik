@@ -12,16 +12,12 @@ import lombok.experimental.Accessors;
 public abstract class NKMapFragment extends AbstractUiFragment {
 
     @Getter @Setter(AccessLevel.PROTECTED) private boolean mMapLoaded = false;
-
-    @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED)
-    private boolean mPendingMoveToCurrentLocation = false;
     @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED)
     private boolean mDisplayMoveToCurrentLocationButton = false;
 
     abstract public NKLocation getMapCenter();
 
     abstract public void moveToCurrentLocation();
-    abstract public void moveToCurrentLocationOnceAvailable();
 
     abstract public void showMoveToCurrentLocationButton();
     abstract public void hideMoveToCurrentLocationButton();
