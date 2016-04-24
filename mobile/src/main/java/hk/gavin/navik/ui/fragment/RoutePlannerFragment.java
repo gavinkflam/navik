@@ -8,8 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
-import butterknife.Bind;
 import butterknife.OnClick;
 import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
@@ -23,8 +21,6 @@ import hk.gavin.navik.core.directions.event.*;
 import hk.gavin.navik.core.directions.exception.NKDirectionsException;
 import hk.gavin.navik.core.location.NKLocation;
 import hk.gavin.navik.core.location.NKLocationProvider;
-import hk.gavin.navik.core.map.event.MapLongPressEvent;
-import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import hk.gavin.navik.preference.MainPreferences;
 import hk.gavin.navik.ui.activity.NavigationActivity;
 import hk.gavin.navik.ui.presenter.RoutePlannerPresenter;
@@ -38,21 +34,14 @@ import lombok.experimental.Accessors;
 import javax.inject.Inject;
 
 @Accessors(prefix = "m")
-public class RoutePlannerFragment extends AbstractHomeUiFragment implements PopupMenu.OnMenuItemClickListener {
+public class RoutePlannerFragment extends AbstractHomeUiFragment {
 
     @Inject MainPreferences mMainPreferences;
     @Inject NKLocationProvider mLocationProvider;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
-    @Bind(R.id.route_planner_center) View mRoutePlannerCenter;
-
     private RoutePlannerPresenter mPresenter = new RoutePlannerPresenter();
     private Optional<NKDirections> mDirections = Optional.absent();
-
-    private PopupMenu mMapLongPressMenu;
-    private PopupMenu mWaypointkMenu;
-    private Optional<MapLongPressEvent> mLastMapLongPressEvent = Optional.absent();
-    private Optional<MapMarkerClickEvent> mLastMapMarkerClickEvent = Optional.absent();
 
     @Getter private final int mLayoutResId = R.layout.fragment_route_planner;
 
@@ -84,12 +73,11 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
         // Initialize presenter
         component().inject(mPresenter);
         mPresenter.onDependencyResolved();
+        mPresenter.onActivityCreated(getActivity());
 
         // Update title and back button display
         getController().setActionBarTitle(R.string.app_name);
         getController().setDisplayHomeAsUp(false);
-
-        preparePopupMenus();
     }
 
     @Override
@@ -134,17 +122,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
                 }
             }
         }
-    }
-
-    private void preparePopupMenus() {
-        mMapLongPressMenu = new PopupMenu(getActivity(), mRoutePlannerCenter);
-        mWaypointkMenu = new PopupMenu(getActivity(), mRoutePlannerCenter);
-
-        mMapLongPressMenu.inflate(R.menu.popup_menu_map_long_click);
-        mWaypointkMenu.inflate(R.menu.popup_menu_waypoint);
-
-        mMapLongPressMenu.setOnMenuItemClickListener(this);
-        mWaypointkMenu.setOnMenuItemClickListener(this);
     }
 
     @Override
@@ -279,41 +256,5 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Subscribe
     public void onDirectionsError(NKDirectionsException exception) {
         getController().showMessage(R.string.error_route_not_available);
-    }
-
-    @Subscribe
-    public void onLongPress(MapLongPressEvent event) {
-        mLastMapLongPressEvent = Optional.of(event);
-        mMapLongPressMenu.show();
-    }
-
-    @Subscribe
-    public void onMarkerClicked(MapMarkerClickEvent event) {
-        if (event.markerId > 1) {
-            mLastMapMarkerClickEvent = Optional.of(event);
-            mWaypointkMenu.show();
-        }
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.set_as_starting_point:
-                mDirectionsProvider.setStartingPoint(mLastMapLongPressEvent.get().location);
-                return true;
-            case R.id.set_as_destination:
-                mDirectionsProvider.setDestination(mLastMapLongPressEvent.get().location);
-                return true;
-            case R.id.add_as_waypoint:
-                mDirectionsProvider.addWaypoints(mLastMapLongPressEvent.get().location);
-                mDirectionsProvider.getCyclingDirections();
-                return true;
-            case R.id.remove_waypoint:
-                mDirectionsProvider.removeWaypoint(mLastMapMarkerClickEvent.get().markerId - 2);
-                mDirectionsProvider.getCyclingDirections();
-                return true;
-        }
-
-        return false;
     }
 }

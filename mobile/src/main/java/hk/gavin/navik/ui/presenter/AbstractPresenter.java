@@ -1,5 +1,6 @@
 package hk.gavin.navik.ui.presenter;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import butterknife.ButterKnife;
@@ -16,7 +17,7 @@ public abstract class AbstractPresenter {
         // Do nothing
     }
 
-    public void onActivityCreated() {
+    public void onActivityCreated(Activity activity) {
         // Do nothing
     }
 
