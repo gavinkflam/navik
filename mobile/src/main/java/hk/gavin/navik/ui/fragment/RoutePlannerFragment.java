@@ -30,8 +30,8 @@ import hk.gavin.navik.core.map.event.MapLongPressEvent;
 import hk.gavin.navik.core.map.event.MapMarkerClickEvent;
 import hk.gavin.navik.preference.MainPreferences;
 import hk.gavin.navik.ui.activity.NavigationActivity;
+import hk.gavin.navik.ui.presenter.RoutePlannerPresenter;
 import hk.gavin.navik.ui.widget.LocationSelector;
-import hk.gavin.navik.ui.widget.TwoStatedFloatingActionButton;
 import hk.gavin.navik.ui.widget.event.LocationSelectionChangeEvent;
 import hk.gavin.navik.ui.widget.event.SelectAsStartingPointEvent;
 import hk.gavin.navik.ui.widget.event.SelectCurrentLocationEvent;
@@ -50,11 +50,11 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Inject NKReverseGeocoder mReverseGeocoder;
     @Inject NKInteractiveDirectionsProvider mDirectionsProvider;
 
-    @Bind(R.id.startBikeNavigation) TwoStatedFloatingActionButton mStartBikeNavigation;
     @Bind(R.id.startingPoint) LocationSelector mStartingPoint;
     @Bind(R.id.destination) LocationSelector mDestination;
     @Bind(R.id.route_planner_center) View mRoutePlannerCenter;
 
+    private RoutePlannerPresenter mPresenter = new RoutePlannerPresenter();
     private Optional<NKDirections> mDirections = Optional.absent();
 
     private PopupMenu mMapLongPressMenu;
@@ -87,6 +87,7 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        component().inject(mPresenter);
         getController().initializeRouteDisplayFragment();
         preparePopupMenus();
 
@@ -102,21 +103,23 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     @Override
     public void onResume() {
         super.onResume();
-
         NKBus.get().register(this);
-        if (mDirections.isPresent()) {
-            mStartBikeNavigation.enable();
-        }
-        else {
-            mStartBikeNavigation.disable();
-        }
+        mPresenter.onResume();
     }
 
     @Override
     public void onPause() {
         mMainPreferences.setLastLocation(getController().getMap().getMapCenter());
         NKBus.get().unregister(this);
+        mPresenter.onPause();
         super.onPause();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mPresenter.onViewCreated(view, savedInstanceState);
+        mPresenter.invalidate();
     }
 
     @Override
@@ -275,7 +278,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
     public void onDirectionsAvailable(DirectionsAvailableEvent event) {
         getController().showMessage(R.string.routing_completed);
         mDirections = Optional.of(event.directionsList.get(0));
-        mStartBikeNavigation.enable();
 
         if (event.directionsType == DirectionsType.ExternalFile) {
             mStartingPoint.setLocation(mDirections.get().startingPoint, true);
@@ -285,7 +287,6 @@ public class RoutePlannerFragment extends AbstractHomeUiFragment implements Popu
 
     @Subscribe
     public void onDirectionsError(NKDirectionsException exception) {
-        mStartBikeNavigation.disable();
         getController().showMessage(R.string.error_route_not_available);
     }
 
