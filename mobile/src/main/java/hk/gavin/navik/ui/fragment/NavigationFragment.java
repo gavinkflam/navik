@@ -56,8 +56,8 @@ public class NavigationFragment extends AbstractNavigationUiFragment {
     @Override
     public void onDestroy() {
         NKBus.get().unregister(this);
-        mNavigationManager.stopNavigation();
         mWearManager.stopWearActivity();
+        mNavigationManager.stopNavigation();
         super.onDestroy();
     }
 
